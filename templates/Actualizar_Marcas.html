@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/styles.css">
-    <title>Sistema de administración</title>
+    <title>Agregar Productos Local 1</title>
 </head>
 <body>
     <header>
@@ -21,9 +21,9 @@
                 <ul class="dropdown-content">
                     <li>Ver Productos</li>
                     <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li>Actualizar Productos </li>
-                    <li><a href="Actualizar_Marcas.html">Actualizar Marca</a></li>
+                    <li>Agregar Productos Local 2</li>
+                    <li><a href="Actualizar_Productos.html">Actualizar Productos</a></li> 
+                    <li><a href="Actualizar_Marcas.html"> Marca </a></li>
                 </ul>
             </li>
             <li class="dropdown">
@@ -58,11 +58,30 @@
         </ul>
     </aside>
 
-    <!-- Contenido central -->
-    <main class="content">
-        <h1>ZC</h1>
-        <p>ZULEYKAS CLOSET</p>
-    </main>
+
+   <!-- Contenido central -->
+   <main class="content" style="background-color: #f8a8b9;">
+    <h2>ACTUALIZAR PRODUCTOS</h2>
+    <form>
+        <div class="form-group">
+            <label for="update-marca">Nombre de Marca</label>
+            <input type="text" id="update-marca">
+        </div>
+        <div class="form-group">
+            <label for="State">Estado</label>
+            <div>
+                <input type="checkbox" id="Active">
+                <label for="Activo">Activo</label>
+            </div>
+            <div>
+                <input type="checkbox" id="Inactive">
+                <label for="Inactivo">Inactivo</label>
+            </div>
+        </div>
+        <button type="submit">Actualizar</button>
+    </form>
+</main>
+
     <script src="../static/script.js"></script>
 </body>
 </html>

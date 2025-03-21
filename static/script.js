@@ -37,6 +37,58 @@ document.addEventListener("DOMContentLoaded", () => {
             dropdown.classList.remove("active", "clicked");
         });
     });
+
+    // Ocultar y mostrar Agregar Proveedor Local 1
+    const proveedorLocal1 = document.getElementById('proveedor_local1');
+    if (proveedorLocal1) {
+        proveedorLocal1.addEventListener('change', function() {
+            const nuevoProveedor = document.getElementById('nuevo-proveedor_local1');
+            if (this.value === 'nuevo') {
+                nuevoProveedor.style.display = 'block';
+            } else {
+                nuevoProveedor.style.display = 'none';
+            }
+        });
+    }
+
+    // Ocultar y mostrar Agregar Marca Local 1
+    const marcaLocal1 = document.getElementById('marca_local1');
+    if (marcaLocal1) {
+        marcaLocal1.addEventListener('change', function() {
+            const nuevaMarca = document.getElementById('nueva-marca_local1');
+            if (this.value === 'nueva') {
+                nuevaMarca.style.display = 'block';
+            } else {
+                nuevaMarca.style.display = 'none';
+            }
+        });
+    }
+
+    // Ocultar y mostrar Agregar Proveedor Local 2
+    const proveedorLocal2 = document.getElementById('proveedor_local2');
+    if (proveedorLocal2) {
+        proveedorLocal2.addEventListener('change', function() {
+            const nuevoProveedor = document.getElementById('nuevo-proveedor_local2');
+            if (this.value === 'nuevo') {
+                nuevoProveedor.style.display = 'block';
+            } else {
+                nuevoProveedor.style.display = 'none';
+            }
+        });
+    }
+
+    // Ocultar y mostrar Agregar Marca Local 2
+    const marcaLocal2 = document.getElementById('marca_local2');
+    if (marcaLocal2) {
+        marcaLocal2.addEventListener('change', function() {
+            const nuevaMarca = document.getElementById('nueva-marca_local2');
+            if (this.value === 'nueva') {
+                nuevaMarca.style.display = 'block';
+            } else {
+                nuevaMarca.style.display = 'none';
+            }
+        });
+    }
 });
 
 // Ocultar y mostrar Agregar Proveedor
