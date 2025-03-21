@@ -1,0 +1,101 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Barra superior */
+header {
+    background-color: #f8a8b9;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    z-index: 10;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Botón de cerrar sesión */
+.logout-button {
+    background-color: #d11a2a;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilo del menú lateral */
+.sidebar {
+    width: 200px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    height: calc(100vh - 40px); /* Adjust based on header height */
+    position: fixed;
+    top: 40px; /* Adjust based on header height */
+    left: 0;
+    border-right: 1px solid #ddd;
+    z-index: 5;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    border-bottom: 1px solid #ddd;
+}
+
+.sidebar li:hover {
+    background-color: #ddd;
+}
+
+.dropdown-content {
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+/* Mostrar el dropdown activo */
+.dropdown.active .dropdown-content {
+    max-height: 500px; /* Ajusta según tu contenido */
+    transition: max-height 0.4s ease-in;
+}
+
+/* Estilo opcional para los ítems del dropdown */
+.dropdown-content li {
+    padding: 8px;
+    font-size: 16px;
+    border-bottom: none;
+}
+
+.dropdown-content li:hover {
+    background-color: #f8a8b9;
+    color: #fff;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin-left: 200px; /* Adjust based on sidebar width */
+    padding: 20px;
+    padding-top: 80px; /* Adjust based on header height */
+}
