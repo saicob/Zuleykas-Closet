@@ -38,3 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// Ocultar y mostrar Agregar Proveedor
+document.getElementById('proveedor').addEventListener('change', function() {
+    const nuevoProveedor = document.getElementById('nuevo-proveedor');
+    if (this.value === 'nuevo') {
+        nuevoProveedor.style.display = 'block';
+    } else {
+        nuevoProveedor.style.display = 'none';
+    }
+});
+
+// Ocultar y mostrar Agregar Marca
+document.getElementById('marca').addEventListener('change', function() {
+    const nuevaMarca = document.getElementById('nueva-marca');
+    if (this.value === 'nueva') {
+        nuevaMarca.style.display = 'block';
+    } else {
+        nuevaMarca.style.display = 'none';
+    }
+});

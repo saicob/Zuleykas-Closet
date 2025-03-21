@@ -91,11 +91,39 @@ header h1 {
 
 .content {
     display: flex;
-    justify-content: center;
+    justify-content: top;
     align-items: center;
     flex-direction: column;
     height: 100vh;
     margin-left: 200px; /* Adjust based on sidebar width */
     padding: 20px;
     padding-top: 80px; /* Adjust based on header height */
+    background-color: #f8a8b9; /* Background color to match the image */
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+input[type="file"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
