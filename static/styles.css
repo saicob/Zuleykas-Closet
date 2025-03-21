@@ -117,6 +117,13 @@ form {
     border-radius: 10px;
 }
 
+.rentability-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -149,6 +156,47 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
+    background-color: #d11a2a;
+    color: #fff;
+}
+
+.month-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.month-button {
+    background-color: #f8a8b9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+    transition: background-color 0.3s;
+}
+
+.month-button:hover {
+    background-color: #d11a2a;
+    color: #fff;
+}
+
+.consultar-button {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #d11a2a;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #d11a2a;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.consultar-button:hover {
     background-color: #d11a2a;
     color: #fff;
 }
