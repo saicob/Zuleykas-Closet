@@ -1,9 +1,9 @@
 import sql from 'mssql';
 
 const dbSettings = {
-    user: 'sas',
-    password: 'saicobi#',
-    server: 'LAPTOP-D7T1S5MH',  //pongan el nombre de su servidor
+    user: 'evans',
+    password: '6565',
+    server: 'EVANSPC\MSSQLSERVER01',  //pongan el nombre de su servidor
     database: 'Zuleyka',
     port: 1434, //probar si funciona este puerto, sino ponga el puerto de su sql server
     options: {

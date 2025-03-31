@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/styles.css">
-    <title>Agregar Productos Local 1</title>
+    <title>Local Tienda 1</title>
 </head>
 <body>
     <header>
@@ -22,7 +22,7 @@
                     <li><a href="index.html">Ver Productos</a></li>
                     <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
                     <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Productos.html">Actualizar Productos</a></li> 
+                    <li><a href="Actualizar_Productos.html">Actualizar Productos</a></li>
                     <li><a href="Actualizar_Marcas.html">Actualizar Marca</a></li>
                 </ul>
             </li>
@@ -58,30 +58,51 @@
         </ul>
     </aside>
 
-
-   <!-- Contenido central -->
-   <main class="content" style="background-color: #f8a8b9;">
-    <h2>Actualizar Marcas</h2>
-    <form>
-        <div class="form-group">
-            <label for="update-marca">Nombre de Marca</label>
-            <input type="text" id="update-marca">
-        </div>
-        <div class="form-group">
-            <label for="State">Estado</label>
-            <div>
-                <input type="checkbox" id="Active">
-                <label for="Activo">Activo</label>
+    <main class="content" style="background-color: #f8a8b9;">
+    <h2>Actualizar Empleado</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <form>
+            
+            <div class="form-group">
+            <label for="Nombre">Nombre</label>
+            <input type="text" id="actualizar-nombre">
             </div>
-            <div>
-                <input type="checkbox" id="Inactive">
-                <label for="Inactivo">Inactivo</label>
+            <div class="form-group">
+                <label for="Apellido">Apellido</label>
+                <input type="text" id="actualizar-apellido">
             </div>
-        </div>
-        <button type="submit">Actualizar</button>
-    </form>
-</main>
 
+            <div><button type="submit" class="btn">Actualizar</button></div>    
+        </form>  
+
+        <form>
+            <div class="form-group">
+                <label for="sucursal">Sucursal</label>
+                <div>
+                    <input type="checkbox" id="tienda1">
+                    <label for="local2">Tienda 1</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tienda2">
+                    <label for="local2">Tienda 2</label>
+                </div>
+            </div> 
+
+            <div class="form-group">
+                <label for="Estado">Estado</label>
+                <div>
+                    <input type="checkbox" id="Activo">
+                    <label for="Activo">Activo</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="Inactivo">
+                    <label for="Inactivo">Inactivo</label>
+                </div>
+            </div> 
+        </form>
+    </div> 
+       
+    </main>
     <script src="../static/script.js"></script>
 </body>
 </html>
