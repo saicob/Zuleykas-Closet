@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Sistema de administración</title>
+    <title>Ver Productos</title>
 </head>
 <body>
     <header>
@@ -60,11 +60,40 @@
 
     <!-- Contenido central -->
     <main class="content">
-        <h1>ZC</h1>
-        <p>ZULEYKAS CLOSET</p>
-        <div id="rentability-date">
-        </div>
+        <h2>Lista de Productos</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody id="productos-table">
+                <!-- Los datos se llenarán dinámicamente -->
+            </tbody>
+        </table>
     </main>
     <script src="/script.js"></script>
+    <script>
+        // Obtener productos desde el backend
+        fetch('/api/productos')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('productos-table');
+                data.forEach(producto => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${producto.id}</td>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.precio}</td>
+                        <td>${producto.stock}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error al obtener los productos:', error));
+    </script>
 </body>
 </html>
