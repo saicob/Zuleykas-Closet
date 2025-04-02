@@ -1,11 +1,11 @@
 import sql from 'mssql';
 
 const dbSettings = {
-    user: 'sas',
-    password: 'saicobi#',
-    server: 'LAPTOP-D7T1S5MH',  //pongan el nombre de su servidor o la dirección IP si no funciona el nombre
+    user: 'evans2',
+    password: '1234',
+    server: '127.0.0.1',  //pongan el nombre de su servidor o la dirección IP si no funciona el nombre
     database: 'Zuleyka',  //usar EXEC xp_readerrorlog 0, 1, N'Server is listening on'; en MSSQL para ver el ip y el puerto que usa
-    port: 1434, //en mi caso el puerto es 57794, pero puede variar en cada caso 
+    port: 57794, //en mi caso el puerto es 57794, pero puede variar en cada caso 
                 // configurar el puerto en el firewall de windows para que no lo bloquee
                 //configurar en sql server para que acepte conexiones TCP/IP y poner el puerto que ocupa
     options: {
