@@ -89,6 +89,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Toggle between sections when a table row is clicked
+    const tableBody = document.getElementById('productos-table');
+    const verProductosSection = document.getElementById('Ver_Productos');
+    const actualizarProductoSection = document.getElementById('Actualizar_Producto');
+    const actualizarButton = document.getElementById('actualizar-button');
+
+    tableBody.addEventListener('click', (event) => {
+        const row = event.target.closest('tr');
+        if (row) {
+            verProductosSection.style.display = 'none';
+            actualizarProductoSection.style.display = 'block';
+        }
+    });
+
+    // Refresh the page when the actualizar button is clicked
+    if (actualizarButton) {
+        actualizarButton.addEventListener('click', () => {
+            location.reload();
+        });
+    }
+
+    // Initially show the Ver_Productos section and hide Actualizar_Producto
+    verProductosSection.style.display = 'block';
+    actualizarProductoSection.style.display = 'none';
 });
 
 // Ocultar y mostrar Agregar Proveedor
