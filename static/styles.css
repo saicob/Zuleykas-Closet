@@ -206,3 +206,30 @@ button[type="submit"]:hover {
     background-color: #d11a2a;
     color: #fff;
 }
+
+table {
+    width: 100%; /* Adjusted width to make the table wider */
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table thead th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
