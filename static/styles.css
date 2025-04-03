@@ -19,13 +19,13 @@ a {
 
 /* Barra superior */
 header {
-    background-color: #f8a8b9;
+    background-color: #f9becb;
     color: #fff;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #f9becb;
     z-index: 10;
     position: fixed;
     width: 100%;
@@ -68,10 +68,19 @@ header h1 {
     padding: 10px;
     cursor: pointer;
     font-size: 18px;
-    border-bottom: 1px solid #ddd;
 }
 
 .sidebar li:hover {
+    background-color: #ddd;
+}
+
+.sidebar .menu-item {
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.sidebar .menu-item:hover {
     background-color: #ddd;
 }
 
@@ -109,7 +118,7 @@ header h1 {
     margin-left: 200px; /* Adjust based on sidebar width */
     padding: 20px;
     padding-top: 60px; /* Adjust based on header height */
-    background-color: #f8a8b9; /* Background color to match the image */
+    background-color: #f9becb; /* Updated background color */
 }
 
 form {
@@ -117,10 +126,11 @@ form {
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    max-width: 400px;
-    background-color: #f8a8b9;
+    max-width: 600px; /* Updated width for the form */
+    background-color: #ffffff; /* Added background color */
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow for better visibility */
 }
 
 .rentability-form {
@@ -133,6 +143,7 @@ form {
 .form-group {
     display: flex;
     flex-direction: column;
+    gap: 5px; /* Add spacing between label and input */
 }
 
 label {
@@ -166,7 +177,35 @@ button[type="submit"]:hover {
     color: #fff;
 }
 
-.month-buttons {
+button.submit-button, button.cancel-button {
+    padding: 10px 20px;
+    border: 1px solid #d11a2a;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+
+button.submit-button {
+    background-color: #fff;
+    color: #d11a2a;
+}
+
+button.submit-button:hover {
+    background-color: #d11a2a;
+    color: #fff;
+}
+
+button.cancel-button {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+button.cancel-button:hover {
+    background-color: #ddd;
+}
+
+month-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;

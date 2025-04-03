@@ -22,15 +22,11 @@
                     <li><a href="VerProductos.html">Ver Productos</a></li>
                     <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
                     <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Productos.html">Actualizar Productos</a></li>
-                    <li><a href="Actualizar_Marcas.html">Actualizar Marca</a></li>
+                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
                 </ul>
             </li>
-            <li class="dropdown">
-                <div class="menu-item">🤝 Proveedores</div>
-                <ul class="dropdown-content">
-                    <li><a href="Actualizar_Proveedores.html">Actualizar Proveedores</a></li>
-                </ul>
+            <li>
+                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
             </li>
             <li class="dropdown">
                 <div class="menu-item">💸 Ventas</div>
@@ -41,12 +37,8 @@
                     <li><a href="Local2.html">Local 2</a></li>
                 </ul>
             </li>
-            <li class="dropdown">
-                <div class="menu-item">👥 Empleados</div>
-                <ul class="dropdown-content">
-                    <li><a href="Lista_de_Empleados.html">Lista de Empleados</a></li>
-                    <li><a href="Actualizar_Empleado.html">Actualizar Empleado</a></li>
-                </ul>
+            <li>
+                <a href="Lista_de_Empleados.html" class="menu-item">👥 Empleados</a>
             </li>
             <li class="dropdown">
                 <div class="menu-item">🚚 Deliveries</div>
@@ -60,20 +52,71 @@
 
     <!-- Contenido central -->
     <main class="content">
-        <h2>Lista de Empleados</h2>
-        <form>
-            <div class="form-group" style="display: flex; align-items: center; gap: 20px;">
-                <div style="flex: 1;">
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" id="nombre-empleado" name="nombre" required>
+        <section id="Lista_Empleados" style="display: none;">
+            <form>
+                <h2>Lista de Empleados</h2>
+                <div class="form-group" style="display: flex; align-items: center; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre-empleado" name="nombre" required>
+                    </div>
+                    <div>
+                        <button type="submit" class="submit-button">Mostrar</button>
+                        <button type="submit" class="submit-button">Mostrar Todo</button>
+                    </div>
                 </div>
-                <div>
-                    <button type="submit" class="submit-button">Mostrar</button>
-                    <button type="submit" class="submit-button">Mostrar Todo</button>
-                </div>
-               
-            </div>
-        </form>
+            </form>
+        </section>
+         <!-- Sección Actualizar Empleado -->
+        <section id="Actualizar_Empleado" style="display: block;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <form>
+                 <h2>Actualizar Empleado</h2>
+                     <form>
+                         <div class="form-group">
+                         <label for="Nombre">Nombre</label>
+                         <input type="text" id="actualizar-nombre">
+                         </div>
+                         <div class="form-group">
+                             <label for="Apellido">Apellido</label>
+                             <input type="text" id="actualizar-apellido">
+                         </div>
+                         
+                             <div class="form-group">
+                                 <label for="sucursal">Sucursal</label>
+                                 <div>
+                                     <input type="checkbox" id="tienda1">
+                                     <label for="local2">Tienda 1</label>
+                                 </div>
+                                 <div>
+                                     <input type="checkbox" id="tienda2">
+                                     <label for="local2">Tienda 2</label>
+                                 </div>
+                             </div> 
+         
+                             <div class="form-group">
+                                 <label for="Estado">Estado</label>
+                                 <div>
+                                     <input type="checkbox" id="Activo">
+                                     <label for="Activo">Activo</label>
+                                 </div>
+                                 <div>
+                                     <input type="checkbox" id="Inactivo">
+                                     <label for="Inactivo">Inactivo</label>
+                                 </div>
+                             </div> 
+                         
+                             <div><button type="submit" class="btn">Actualizar</button>
+                                 <button type="submit" class="btn">Cancelar</button>
+                             </div>  
+                             
+                     </form>  
+         
+                </form>    
+             </div> 
+        </section>
+
+
     </main>
     <script src="/script.js"></script>
 </body>
