@@ -21,17 +21,78 @@ export const getProductByName = async (req, res) => {
 }
 
 export const createProduct = async (req, res) => { 
-    const { nombre, precio, stock } = req.body; // Obtener los datos del producto desde el cuerpo de la solicitud
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('nombre', sql.VarChar, nombre) // Usar sql.VarChar para el tipo de dato
-        .input('precio', sql.Decimal(10, 2), precio) // Usar sql.Decimal para el tipo de dato
-        .input('stock', sql.Int, stock) // Usar sql.Int para el tipo de dato
-        .query('INSERT INTO producto (nombre, precio, stock) VALUES (@nombre, @precio, @stock)')
-    
-    console.log(result)
-    res.send("Creando un producto")
-}
+    try {
+    const {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      estado,
+      codigo_tienda,
+      codigo_imagen,
+      codigo_categoria,
+      tipo_producto,
+      datos_tipo,
+      codigo_marca
+    } = req.body;
+
+    // Insertar en producto
+    const result = await pool.query(`
+      INSERT INTO producto (nombre, descripcion, precio, stock, estado, codigo_tienda, codigo_imagen, codigo_categoria)
+      OUTPUT INSERTED.codigo_producto
+      VALUES (@nombre, @descripcion, @precio, @stock, @estado, @codigo_tienda, @codigo_imagen, @codigo_categoria)
+    `, {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      estado,
+      codigo_tienda,
+      codigo_imagen,
+      codigo_categoria
+    });
+
+    const codigo_producto = result.recordset[0].codigo_producto;
+
+    // Insertar según tipo
+    if (tipo_producto === 'ropa') {
+      await pool.query(`
+        INSERT INTO ropa (codigo_talla, codigo_producto, codigo_marca)
+        VALUES (@codigo_talla, @codigo_producto, @codigo_marca)
+      `, {
+        codigo_talla: datos_tipo.codigo_talla,
+        codigo_producto,
+        codigo_marca
+      });
+    } else if (tipo_producto === 'accesorio') {
+      await pool.query(`
+        INSERT INTO accesorio (medida, material, codigo_marca, codigo_producto)
+        VALUES (@medida, @material, @codigo_marca, @codigo_producto)
+      `, {
+        medida: datos_tipo.medida,
+        material: datos_tipo.material,
+        codigo_marca,
+        codigo_producto
+      });
+    } else if (tipo_producto === 'cosmetico') {
+      await pool.query(`
+        INSERT INTO cosmetico (fecha_fabricacion, fecha_caducidad, codigo_producto, codigo_marca)
+        VALUES (@fecha_fabricacion, @fecha_caducidad, @codigo_producto, @codigo_marca)
+      `, {
+        fecha_fabricacion: datos_tipo.fecha_fabricacion,
+        fecha_caducidad: datos_tipo.fecha_caducidad,
+        codigo_producto,
+        codigo_marca
+      });
+    }
+
+    res.status(201).json({ message: 'Producto agregado exitosamente', codigo_producto });
+  } catch (error) {
+    console.error('Error al agregar producto:', error);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
 
 export const getProductsJSON = async (req, res) => {
     try {

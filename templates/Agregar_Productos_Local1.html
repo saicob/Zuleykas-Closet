@@ -118,5 +118,44 @@
         </form>
     </main>
     <script src="/script.js"></script>
+    <script>
+        document.getElementById('formAgregarProducto').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            const body = {
+                nombre: formData.get("nombre"),
+                descripcion: formData.get("descripcion"),
+                precio: parseFloat(formData.get("precio")),
+                stock: parseInt(formData.get("stock")),
+                estado: true,
+                codigo_tienda: parseInt(formData.get("codigo_tienda")),
+                codigo_imagen: parseInt(formData.get("codigo_imagen")),
+                codigo_categoria: parseInt(formData.get("codigo_categoria")),
+                tipo_producto: formData.get("tipo_producto"),
+                codigo_marca: parseInt(formData.get("codigo_marca")),
+                datos_tipo: {
+                    // Aquí puedes adaptar según el tipo seleccionado
+                    codigo_talla: parseInt(formData.get("codigo_talla")),
+                    medida: parseInt(formData.get("medida")),
+                    material: formData.get("material"),
+                    fecha_fabricacion: formData.get("fecha_fabricacion"),
+                    fecha_caducidad: formData.get("fecha_caducidad")
+                }
+            };
+
+            const res = await fetch('/api/productos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            const result = await res.json();
+            alert(result.message || 'Producto agregado');
+        });
+    </script>
 </body>
 </html>
