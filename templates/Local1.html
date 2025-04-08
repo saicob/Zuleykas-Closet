@@ -22,15 +22,11 @@
                     <li><a href="VerProductos.html">Ver Productos</a></li>
                     <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
                     <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Productos.html">Actualizar Productos</a></li>
-                    <li><a href="Actualizar_Marcas.html">Actualizar Marca</a></li>
+                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
                 </ul>
             </li>
-            <li class="dropdown">
-                <div class="menu-item">🤝 Proveedores</div>
-                <ul class="dropdown-content">
-                    <li><a href="Actualizar_Proveedores.html">Actualizar Proveedores</a></li>
-                </ul>
+            <li>
+                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
             </li>
             <li class="dropdown">
                 <div class="menu-item">💸 Ventas</div>
@@ -41,12 +37,8 @@
                     <li><a href="Local2.html">Local 2</a></li>
                 </ul>
             </li>
-            <li class="dropdown">
-                <div class="menu-item">👥 Empleados</div>
-                <ul class="dropdown-content">
-                    <li><a href="Lista_de_Empleados.html">Lista de Empleados</a></li>
-                    <li><a href="Actualizar_Empleado.html">Actualizar Empleado</a></li>
-                </ul>
+            <li>
+                <a href="Lista_de_Empleados.html" class="menu-item">👥 Empleados</a>
             </li>
             <li class="dropdown">
                 <div class="menu-item">🚚 Deliveries</div>
@@ -59,65 +51,53 @@
     </aside>
 
     <!-- Contenido central -->
-    <main class="content" style="background-color: #f8a8b9;">
-        <h2>Crear Venta Local 1</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-            <form>
+    <main class="content">
+        <form>
+            <h2>Crear Venta Local 1</h2>
             <div class="form-group">
                 <label for="empleado">Empleado</label>
                 <select id="empleadol1">
-                <option value="ninguno">Ninguno</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="productos">Productos</label>
-                <select id="productosl1">
-                <option value="ninguno">Ninguno</option>
+                    <option value="ninguno">Ninguno</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="cliente">Cliente</label>
                 <input type="text" id="clientel1">
-                
             </div>
-
-            <div>
-                <label for="total">Total</label>
-                <input type="number" id="totall1" readonly style="width: 80px;">
+            <div class="form-group">
+                <label for="productos">Productos</label>
+                <select id="productosl1">
+                    <option value="ninguno">Ninguno</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stockl1" value="0" readonly style="width: 80px;">
                 </div>
-            </form>
-
-
-            <form>
-            <div class="form-group">
-                <label for="stock">Stock</label>
-                <input type="number" id="stockl1" value="0" readonly style="width: 80px;">
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" id="cantidadl1" value="0" style="width: 80px;">
+                </div>
+                <div class="form-group">
+                    <label for="subtotal">Subtotal</label>
+                    <input type="number" id="subtotall1" value="0" readonly style="width: 80px;">
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="preciol1" value="0" readonly style="width: 80px;">
+                </div>
+                <div>
+                    <label for="total">Total</label>
+                    <input type="number" id="totall1" readonly style="width: 80px;">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="cantidad">Cantidad</label>
-                <input type="number" id="cantidadl1" value="0" style="width: 80px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr ; gap: 10px;">
+                <button type="submit" id="agregar">Agregar</button>
+                <button type="submit" id="Eliminar">Cancelar</button>
+                <button type="submit" id="pagar">Finalizar</button>
             </div>
-            <div class="form-group">
-                <label for="subtotal">Subtotal</label>
-                <input type="number" id="subtotall1" value="0" readonly style="width: 80px;">
-            </div>
-            <div class="form-group">
-                <label for="precio">Precio</label>
-                <input type="number" id="preciol1" value="0" readonly style= "width: 80px;">
-            </div>
-            </form>
-        </div>
-
-
-        <!-- Formulario para acciones y cálculo del total -->
-        <form>
-           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr ; gap: 10px;">
-            <button type="submit" id="agregar">Agregar</button>
-            <button type="submit" id="actualizar">Actualizar</button>
-            <button type="submit" id="Eliminar">Eliminar</button>
-            <button type="submit" id="pagar">Finalizar</button>
-            </div>
-         </form> 
+        </form>
     </main>
     <script src="/script.js"></script>
 </body>

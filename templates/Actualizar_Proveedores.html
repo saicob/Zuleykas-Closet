@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Proveedores</title>
+</head>
+<body>
+    <header>
+        <h1>Sistema de administración</h1>
+        <button class="logout-button">
+            <img src="logout-icon.png" alt="Cerrar sesión">
+        </button>
+    </header>
+    <!-- Menú lateral -->
+    <aside class="sidebar">
+        <ul>
+            <li class="dropdown">
+                <div class="menu-item">📦 Productos</div>
+                <ul class="dropdown-content">
+                    <li><a href="VerProductos.html">Ver Productos</a></li>
+                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
+                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
+            </li>
+            <li class="dropdown">
+                <div class="menu-item">💸 Ventas</div>
+                <ul class="dropdown-content">
+                    <li><a href="Informe_de_Ventas.html">Informe de Venta</a></li>
+                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                    <li><a href="Local1.html">Local 1</a></li>
+                    <li><a href="Local2.html">Local 2</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="Lista_de_Empleados.html" class="menu-item">👥 Empleados</a>
+            </li>
+            <li class="dropdown">
+                <div class="menu-item">🚚 Deliveries</div>
+                <ul class="dropdown-content">
+                    <li><a href="Deliveries_Local1.html">Local 1</a></li>
+                    <li><a href="Deliveries_Local2.html">Local 2</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+
+   <!-- Contenido central -->
+   <main class="content" style="background-color: #f9becb;">
+    <section id="Proveedores" style="display: none;">
+        <h2>Proveedores</h2>
+    
+    </section>
+
+    <section id="Agregar Proveedor" style="display: block;">
+        <form>
+            <h2>Agregar Proveedor</h2>
+            <div class="form-group">
+                <label for="proveedor">Proveedor</label>
+                <input type="text" id="proveedor" placeholder="Nombre del proveedor">
+            </div>
+            <div class="form-group">
+                <label for="State">Estado</label>
+                <div style="display: flex; gap: 10px;">
+                    <div>
+                        <input type="checkbox" id="Active">
+                        <label for="Active">Activo</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="Inactive">
+                        <label for="Inactive">Inactivo</label>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button type="submit" class="submit-button">Actualizar</button>
+                <button type="button" class="cancel-button">Cancelar</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+    <script src="/script.js"></script>
+</body>
+</html>
