@@ -37,33 +37,23 @@
                     <li><a href="Local2.html">Local 2</a></li>
                 </ul>
             </li>
-            <li>
-                <a href="Lista_de_Empleados.html" class="menu-item">👥 Empleados</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">🚚 Deliveries</div>
-                <ul class="dropdown-content">
-                    <li><a href="Deliveries_Local1.html">Local 1</a></li>
-                    <li><a href="Deliveries_Local2.html">Local 2</a></li>
-                </ul>
-            </li>
         </ul>
     </aside>
 
     <!-- Contenido central -->
     <main class="content">
-        <form>
-            <h2>Agregar Producto Local 1</h2>
+       <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr 1fr ; gap: 10px;">
+            <button id="agregar-producto-local1" type="submit">Agregar Producto Local 1</button>
+            <button id="reabastecer-producto-local1" type="submit">Reabastecer Producto Local 1</button>
+        </div>
+        <section id="Agregar_Nuevo_Producto_Local1" style="display: block;">
+            <form>
+            <h2>Agregar Nuevo Producto Local 1</h2>
             <div class="form-group">
                 <label for="proveedor_local1">Proveedor</label>
                 <select id="proveedor_local1">
                     <option value="ninguno">Ninguno</option>
-                    <option value="nuevo">Nuevo</option>
                 </select>
-            </div>
-            <div class="form-group" id="nuevo-proveedor_local1" style="display: none;">
-                <label for="nuevo-proveedor-input_local1">Agregar proveedor</label>
-                <input type="text" id="nuevo-proveedor-input_local1">
             </div>
             <div class="form-group">
                 <label for="nombre-producto_local1">Nombre Producto</label>
@@ -107,8 +97,76 @@
                 <input type="file" id="imagen_local1">
             </div>
             <button type="submit">Agregar Producto</button>
-        </form>
+            </form>
+        </section>
+
+        <section id="Reabastecer_Producto_Local1" style="display: none;">
+            <form>
+            <h2>Reabastecer Producto Local 1</h2>
+            <div class="form-group">
+                <label for="proveedor_local1">Proveedor</label>
+                <select id="proveedor_local1">
+                    <option value="ninguno">Ninguno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nombre-producto_local1">Nombre Producto</label>
+                <select id="nombre-producto_local1">
+                    <option value="ninguno">Ninguno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="precio-compra1">Precio Compra</label>
+                <input type="text" id="precio-compra1">
+            </div>
+            <div class="form-group">
+                <label for="cantidad_local1">Cantidad</label>
+                <input type="text" id="cantidad_local1">
+            </div>
+            <div class="form-group">
+                <label for="marca_local1">Marca</label>
+                <select id="marca_local1">
+                    <option value="ninguno">Ninguno</option>
+                    <option value="nueva">Nueva</option>
+                </select>
+            </div>
+            <div class="form-group" id="nueva-marca_local1" style="display: none;">
+                <label for="nueva-marca-input_local1">Agregar Marca</label>
+                <input type="text" id="nueva-marca-input_local1">
+            </div>
+            <div class="form-group">
+                <label for="fecha-llegada_local1">Fecha de llegada</label>
+                <input type="date" id="fecha-llegada_local1">
+            </div>
+            <div class="form-group">
+                <label for="precio-venta1">Precio Venta</label>
+                <input type="text" id="precio-venta1">
+            </div>
+            <div class="form-group">
+                <label for="categoria_local1">Categoría</label>
+                <input type="text" id="categoria_local1" value="No encontrada">
+            </div>
+            <div class="form-group">
+                <label for="imagen_local1">Añadir Imagen</label>
+                <input type="file" id="imagen_local1">
+            </div>
+            <button type="submit">Agregar Producto</button>
+            </form>
+        </section>
     </main>
     <script src="/script.js"></script>
+    <script>
+        document.getElementById('agregar-producto-local1').addEventListener('click', (e) => {
+            e.preventDefault(); // Evita el comportamiento predeterminado del botón
+            document.getElementById('Agregar_Nuevo_Producto_Local1').style.display = 'block';
+            document.getElementById('Reabastecer_Producto_Local1').style.display = 'none';
+        });
+
+        document.getElementById('reabastecer-producto-local1').addEventListener('click', (e) => {
+            e.preventDefault(); // Evita el comportamiento predeterminado del botón
+            document.getElementById('Agregar_Nuevo_Producto_Local1').style.display = 'none';
+            document.getElementById('Reabastecer_Producto_Local1').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
