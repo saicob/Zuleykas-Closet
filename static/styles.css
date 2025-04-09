@@ -281,7 +281,6 @@ table tbody tr:hover {
     display: block; /* Show the active section */
 }
 
-
 .autocomplete-container {
     position: relative;
     width: 300px;
@@ -318,4 +317,66 @@ table tbody tr:hover {
 
 .suggestion:hover {
     background-color: #f0f0f0;
+}
+
+/* Ajustar el diseño para pantallas pequeñas */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    form {
+        width: 100%;
+        padding: 10px;
+    }
+
+    table {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .autocomplete-container {
+        width: 100%;
+    }
+}
+
+/* Ajustar el diseño para pantallas muy pequeñas (móviles) */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 18px;
+    }
+
+    .sidebar li {
+        font-size: 16px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        font-size: 14px;
+        padding: 5px;
+    }
 }
