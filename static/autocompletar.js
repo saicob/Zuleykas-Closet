@@ -29,12 +29,36 @@ input.addEventListener('input', async () => {
             div.addEventListener('click', () => {
                 input.value = prod.nombre;
                 suggestionsContainer.innerHTML = '';
+
+                // Autorrellenar campos al seleccionar un producto
+                document.getElementById('stockl1').value = prod.stock;
+                document.getElementById('preciol1').value = prod.precio;
+                document.getElementById('cantidadl1').value = 0; // Reiniciar cantidad
+                document.getElementById('subtotall1').value = 0; // Reiniciar subtotal
             });
             suggestionsContainer.appendChild(div);
         });
     } catch (err) {
         console.error('Error al buscar productos:', err);
     }
+});
+
+// Actualizar subtotal al cambiar la cantidad
+document.getElementById('cantidadl1').addEventListener('input', () => {
+    const stock = parseInt(document.getElementById('stockl1').value, 10);
+    const precio = parseFloat(document.getElementById('preciol1').value);
+    const cantidad = parseInt(document.getElementById('cantidadl1').value, 10);
+
+    if (cantidad > stock) {
+        alert('La cantidad no puede superar el stock disponible.');
+        document.getElementById('cantidadl1').value = stock; // Ajustar cantidad al stock máximo
+    }
+    if(cantidad < 0){
+        alert('La cantidad no puede ser negativa.');
+        document.getElementById('cantidadl1').value = 0; // Ajustar cantidad a 0
+    }
+    const nuevaCantidad = parseInt(document.getElementById('cantidadl1').value, 10);
+    document.getElementById('subtotall1').value = (nuevaCantidad * precio).toFixed(2);
 });
 
 // Cierra sugerencias al hacer clic fuera
