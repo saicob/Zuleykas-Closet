@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
     <title>Local Tienda 1</title>
 </head>
+
 <body>
     <header>
         <h1>Sistema de administración</h1>
@@ -100,5 +102,50 @@
         </form>
     </main>
     <script src="/script.js"></script>
+    <script src="/realizarventa.js"></script>
+    <select id="select-categorias">
+        <option value="">Seleccione una categoría</option>
+    </select>
+
+    <script>
+        async function cargarProductos() {
+            try {
+                const res = await fetch('http://localhost:3000/api/productos');
+                const categorias = await res.json();
+
+                const select = document.getElementById('productosl1');
+                categorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.codigo_categoria;
+                    option.textContent = cat.nombre;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error cargando productos:', err);
+            }
+            try {
+                const res = await fetch('http://localhost:3000/api/empleado');
+                const categorias = await res.json();
+
+                console.log("in")
+                const select = document.getElementById('empleadol1');
+                categorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.codigo_empleado;
+                    option.textContent = cat.nombre;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error cargando empleados:', err);
+            }
+        }
+
+
+
+
+        window.addEventListener('DOMContentLoaded', cargarCategorias);
+    </script>
+
 </body>
+
 </html>
