@@ -4,7 +4,7 @@ const input = document.getElementById('productInput');
 const suggestionsContainer = document.getElementById('suggestions');
 
 input.addEventListener('input', async () => {
-    const query = input.value.trim();
+    const query = input.value.trim().toLowerCase();
 
     if (query.length === 0) {
         suggestionsContainer.innerHTML = '';
@@ -12,20 +12,23 @@ input.addEventListener('input', async () => {
     }
 
     try {
-        const response = await fetch(`/api/productos?search=${encodeURIComponent(query)}`);
+        const response = await fetch(`/api/productos`);
         const productos = await response.json();
+
+        const filteredProducts = productos.filter(prod =>
+            prod.nombre.toLowerCase().startsWith(query) // Filtrar por inicio de caracteres
+        );
 
         suggestionsContainer.innerHTML = '';
 
-        productos.forEach(prod => {
+        filteredProducts.forEach(prod => {
             const div = document.createElement('div');
             div.classList.add('suggestion');
             div.textContent = prod.nombre;
-            div.dataset.id = prod.codigo_producto; // Si necesitas guardar el ID
+            div.dataset.id = prod.codigo_producto;
             div.addEventListener('click', () => {
                 input.value = prod.nombre;
                 suggestionsContainer.innerHTML = '';
-                // Aquí podrías hacer algo con el prod.id si es necesario
             });
             suggestionsContainer.appendChild(div);
         });
