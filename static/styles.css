@@ -280,3 +280,42 @@ table tbody tr:hover {
 #Ver_Productos.active, #Actualizar_Producto.active {
     display: block; /* Show the active section */
 }
+
+
+.autocomplete-container {
+    position: relative;
+    width: 300px;
+    margin: 50px auto;
+}
+
+/* input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+} */
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 4px 4px;
+}
+
+.suggestion {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestion:hover {
+    background-color: #f0f0f0;
+}

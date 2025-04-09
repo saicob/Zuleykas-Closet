@@ -50,12 +50,16 @@
                 <label for="cliente">Cliente</label>
                 <input type="text" id="clientel1">
             </div>
-            <div class="form-group">
+            <div class="autocomplete-container">
+                <input type="text" id="productInput" placeholder="Buscar producto..." />
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+            <!-- <div class="form-group">
                 <label for="productos">Productos</label>
                 <select id="productosl1">
                     <option value="ninguno">Ninguno</option>
                 </select>
-            </div>
+            </div> -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
                 <div class="form-group">
                     <label for="stock">Stock</label>
@@ -90,7 +94,7 @@
     <select id="select-categorias">
         <option value="">Seleccione una categoría</option>
     </select>
-
+    <script src="/autocompletar.js"></script>
     <script>
         async function cargarProductos() {
             try {
