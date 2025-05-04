@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
     <title>Ver Productos</title>
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
-<body style="background-color: pink;">
+<body>
     <header style="background-color: pink; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
         <h1>Sistema de administración</h1>
         <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
             Cerrar Sesión
         </button>
     </header>
+
     <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
         <ul style="list-style: none; padding: 0;">
             <li><strong>📦 Productos</strong></li>
@@ -31,27 +39,205 @@
             <li><a href="Lista_de_Empleados.html">Empleados</a></li>
         </ul>
     </aside>
-    <main style="margin-left: 220px; padding: 20px;">
-        <section>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <label for="buscar">Buscar</label>
-                <input type="text" id="buscar" placeholder="Value" style="padding: 5px;">
-            </div>
-            <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; background-color: white;">
-                <thead style="background-color: lightgray;">
+
+    <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+        <section id="Tabla-Productos" style="display: block;">
+            <h2>Lista de Productos</h2>
+            <table id="productos-table" class="display" style="width: 100%; background-color: white; overflow: auto;">
+                <thead style="background-color: rgb(255, 252, 252);">
                     <tr>
-                        <th style="padding: 10px;">Nombre</th>
-                        <th style="padding: 10px;">Estado</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Categoria</th>
+                        <th>Proveedor</th>
+                        <th>Fecha de Llegada</th>
+                        <th>Fecha de Vencimiento</th>
+                        <th>Estado</th>
+                        <th>Imagen</th>
+
                     </tr>
                 </thead>
-                <tbody id="productos-table">
-                    <tr>
-                        <td style="padding: 10px;">Victoria's Secret</td>
-                        <td style="padding: 10px;">Activo</td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
         </section>
+
+        <section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+            <div id="drag-handle" style="cursor: move; background-color: #f0f0f0; padding: 10px; margin-bottom: 10px;">
+                <h2 style="margin: 0;">Actualizar Producto</h2>
+            </div>
+            <form>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="proveedor">Proveedor</label>
+                        <input type="text" id="proveedor">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label for="precio-compra">Precio de Compra</label>
+                        <input type="text" id="precio-compra">
+                    </div>
+                    <div class="form-group">
+                        <label for="precio-venta">Precio de Venta</label>
+                        <input type="text" id="precio-venta">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="text" id="cantidad">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-llegada">Fecha de Llegada</label>
+                        <input type="date" id="fecha-llegada">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label for="fecha-vencimiento">Fecha de Vencimiento</label>
+                        <input type="date" id="fecha-vencimiento">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoría</label>
+                        <input type="text" id="categoria">
+                    </div>
+                </div>
+                
+                    <div class="form-group">
+                        <label for="imagen">Añadir Imagen</label>
+                        <input type="file" id="imagen" accept="image/*">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" rows="6" cols="50" style="resize: none;"></textarea>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button type="submit" id="Cancelar">Cancelar</button>
+                    <button  id="Actualizar">Actualizar</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
     </main>
+
+    <script>
+        $(document).ready(function() {
+            const actualizarProductoSection = $('#Actualizar-Producto');
+            const dragHandle = $('#drag-handle');
+            const overlay = $('#overlay');
+            const form = actualizarProductoSection.find('form');
+
+            const inputs = {
+                nombre: $('#nombre'),
+                proveedor: $('#proveedor'),
+                precioCompra: $('#precio-compra'),
+                precioVenta: $('#precio-venta'),
+                cantidad: $('#cantidad'),
+                fechaLlegada: $('#fecha-llegada'),
+                fechaVencimiento: $('#fecha-vencimiento'),
+                categoria: $('#categoria'),
+                descripcion: $('#descripcion')
+            };
+
+            const table = $('#productos-table').DataTable({
+                scrollX: true, // Enable horizontal scrolling
+                scrollY: "400px", // Enable vertical scrolling with a fixed height
+                scrollCollapse: true,
+                ajax: {
+                    url: 'http://localhost:3000/api/productos',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'nombre' },
+                    { data: 'descripcion' },
+                    { data: 'precio' },
+                    { data: 'stock' },
+                    { data: 'categoria' },
+                    { data: 'proveedor' },
+                    { data: 'fecha_fabricacion' },
+                    { data: 'fecha_caducidad' },
+                    { data: 'estado' },
+                    {
+                        data: 'imagen',
+                        render: function(data) {
+                            return `<img src="${data}" alt="Imagen" style="width: 50px; height: 50px;">`;
+                        }
+                    }
+                ],
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            });
+
+            // Show the Actualizar-Producto section and overlay, and autofill inputs when a row is clicked
+            $('#productos-table tbody').on('click', 'tr', function() {
+                const data = table.row(this).data();
+                if (data) {
+                    inputs.nombre.val(data.nombre);
+                    inputs.proveedor.val(data.proveedor || ''); // Assuming 'proveedor' exists in the data
+                    inputs.precioCompra.val(data.precioCompra || ''); // Assuming 'precioCompra' exists in the data
+                    inputs.precioVenta.val(data.precio || '');
+                    inputs.cantidad.val(data.stock || '');
+                    inputs.fechaLlegada.val(data.fechaLlegada || ''); // Assuming 'fechaLlegada' exists in the data
+                    inputs.fechaVencimiento.val(data.fechaVencimiento || ''); // Assuming 'fechaVencimiento' exists in the data
+                    inputs.categoria.val(data.categoria || ''); // Assuming 'categoria' exists in the data
+                    inputs.descripcion.val(data.descripcion || '');
+                    actualizarProductoSection.css('display', 'block');
+                    overlay.css('display', 'block');
+                }
+            });
+
+            // Hide the Actualizar-Producto section, overlay, and clear the form when "Cancelar" is clicked
+            $('#Cancelar').on('click', function(event) {
+                event.preventDefault(); // Prevent form submission
+                form[0].reset(); // Clear all form inputs
+                actualizarProductoSection.css('display', 'none');
+                overlay.css('display', 'none');
+            });
+
+            // Make the Actualizar-Producto section draggable only by the drag handle
+            let isDragging = false;
+            let offset = { x: 0, y: 0 };
+
+            dragHandle.on('mousedown', function(event) {
+                isDragging = true;
+                offset.x = event.clientX - actualizarProductoSection.offset().left;
+                offset.y = event.clientY - actualizarProductoSection.offset().top;
+                $(document).on('mousemove', onMouseMove);
+            });
+
+            $(document).on('mouseup', function() {
+                isDragging = false;
+                $(document).off('mousemove', onMouseMove);
+            });
+
+            function onMouseMove(event) {
+                if (isDragging) {
+                    actualizarProductoSection.css({
+                        top: event.clientY - offset.y + 'px',
+                        left: event.clientX - offset.x + 'px',
+                        transform: 'none'
+                    });
+                }
+            }
+        });
+    </script>
 </body>
 </html>
