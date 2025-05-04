@@ -51,7 +51,7 @@
                     <th>Total</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="ventas-body">
                 <!-- Aquí se llenarán los datos de las ventas -->
             </tbody>
         </table>
@@ -65,12 +65,13 @@
             scrollY: "400px",
             scrollCollapse: true,
             ajax: {
-                url: 'http://localhost:3000/api/marcas',
+                url: 'http://localhost:3000/api/ventas',
                 dataSrc: ''
             },
             columns: [
-                { data: 'nombre', title: 'Nombre' },
-                { data: 'estado', title: 'Estado' }
+                { data: 'codigo_factura' },
+                { data: 'fecha' },
+                { data: 'total' }
             ],
             language: {
                 search: "Buscar:",

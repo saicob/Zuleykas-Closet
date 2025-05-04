@@ -286,24 +286,30 @@ table tbody tr:hover {
 
 .autocomplete-container {
     position: relative;
-    width: 300px;
+    width: 700px; /* Adjusted width */
     margin: 50px auto;
 }
 
-/* input[type="text"] {
-    width: 100%;
+.autocomplete-container input[type="text"] {
+    flex: 1; /* Allow input to take available space */
     padding: 8px;
     font-size: 16px;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
-} */
+}
+
+.autocomplete-container #ver-carrito {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+}
 
 .suggestions {
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    left: 50px; /* Align with productInput */
     background: white;
     border: 1px solid #ccc;
     border-top: none;
@@ -311,6 +317,7 @@ table tbody tr:hover {
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0 0 4px 4px;
+    width: calc(100% - 50px); /* Match the width of productInput */
 }
 
 .suggestion {
@@ -320,6 +327,23 @@ table tbody tr:hover {
 
 .suggestion:hover {
     background-color: #f0f0f0;
+}
+
+.catalogo-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.producto {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.producto img {
+    width: 100%;
+    height: auto;
 }
 
 /* Ajustar el diseño para pantallas pequeñas */

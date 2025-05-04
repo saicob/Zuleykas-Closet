@@ -5,77 +5,224 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
     <title>Proveedores</title>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+<!-- jQuery y DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
-        </button>
-    </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de Venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <h1>Sistema de administración</h1>
+    <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+        Cerrar Sesión
+    </button>
+</header>
 
+<aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
+    <ul style="list-style: none; padding: 0;">
+        <li><strong>📦 Productos</strong></li>
+        <li><a href="VerProductos.html">Ver Productos</a></li>
+        <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
+        <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+        <li><a href="Actualizar_Marcas.html">Marca</a></li>
+        <li><strong>🤝 Proveedores</strong></li>
+        <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
+        <li><strong>💸 Ventas</strong></li>
+        <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+        <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="Local1.html">Crear Venta Local 1</a></li>
+        <li><a href="Local2.html">Crear Venta Local 2</a></li>
+        <li><strong>👥 Empleados</strong></li>
+        <li><a href="Lista_de_Empleados.html">Empleados</a></li>
+    </ul>
+</aside>
 
    <!-- Contenido central -->
-   <main class="content" style="background-color: #f9becb;">
-    <section id="Proveedores" style="display: none;">
+   <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+    <section id="Marcas" style="display: block;">
         <h2>Proveedores</h2>
-    
+        <button id="mostrar-agregar-proveedor" style="margin-bottom: 10px; padding: 10px; background-color: green; color: white; border: none; cursor: pointer;">
+            Agregar Proveedor
+        </button>
+        <table id="proveedores-table" class="display" style="width: 100%; background-color: white; overflow: auto;">
+            <thead style="background-color: rgb(255, 252, 252);">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="proveedores-body">
+                <!-- Aquí se llenarán los datos de los productos -->
+            </tbody>
+        </table>
     </section>
 
-    <section id="Agregar Proveedor" style="display: block;">
-        <form>
-            <h2>Agregar Proveedor</h2>
-            <div class="form-group">
-                <label for="proveedor">Proveedor</label>
-                <input type="text" id="proveedor" placeholder="Nombre del proveedor">
-            </div>
-            <div class="form-group">
-                <label for="State">Estado</label>
-                <div style="display: flex; gap: 10px;">
-                    <div>
-                        <input type="checkbox" id="Active">
-                        <label for="Active">Activo</label>
-                    </div>
-                    <div>
-                        <input type="checkbox" id="Inactive">
-                        <label for="Inactive">Inactivo</label>
-                    </div>
-                </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                <button type="submit" class="submit-button">Actualizar</button>
-                <button type="button" class="cancel-button">Cancelar</button>
+
+    <section id="Agregar-Proveedor" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+        <div id="drag-handle-agregar" style="cursor: move; background-color: #f0f0f0; padding: 10px; margin-bottom: 10px;">
+            <h2 style="margin: 0;">Agregar Proveedor</h2>
+        </div>
+        <form id="agregar-proveedor-form">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button type="button" id="Cancelar" style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+                    Cancelar
+                </button>
+                <button id="Agregar" style="background-color: green; color: white; padding: 10px; border: none; cursor: pointer;">
+                    Agregar
+                </button>
             </div>
         </form>
     </section>
+
+    <section id="Actualizar-Proveedor" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+        <div id="drag-handle-actualizar" style="cursor: move; background-color: #f0f0f0; padding: 10px; margin-bottom: 10px;">
+            <h2 style="margin: 0;">Actualizar Proveedor</h2>
+        </div>
+        <form id="actualizar-proveedor-form">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button type="button" id="Cancelar" style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+                    Cancelar
+                </button>
+                <button id="Actualizar" style="background-color: green; color: white; padding: 10px; border: none; cursor: pointer;">
+                    Actualizar
+                </button>
+            </div>
+        </form>
+
+    </section>
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
 </main>
 
     <script src="/script.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const agregarProveedorSection = $('#Agregar-Proveedor');
+            const actualizarProveedorSection = $('#Actualizar-Proveedor');
+            const overlay = $('#overlay');
+            const dragHandleAgregar = $('#drag-handle-agregar');
+            const dragHandleActualizar = $('#drag-handle-actualizar');
+
+            // Inicializar DataTable con el ID correcto
+            const table = $('#proveedores-table').DataTable({
+                scrollX: true,
+                scrollY: "400px",
+                scrollCollapse: true,
+                ajax: {
+                    url: 'http://localhost:3000/api/proveedor',
+                    dataSrc: '',
+                    error: function(xhr, error, thrown) {
+                        console.error('Error al cargar los datos:', error, thrown);
+                    }
+                },
+                columns: [
+                    { data: 'nombre' },
+                    { 
+                        data: 'estado',
+                        render: function(data) {
+                            return data ? 'Activo' : 'Inactivo';
+                        }
+                    }
+                ],
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ proveedores",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            });
+
+            // Mostrar sección Agregar Proveedor
+            $('#mostrar-agregar-proveedor').on('click', function() {
+                agregarProveedorSection.show();
+                overlay.show();
+            });
+
+            // Cancelar Agregar
+            $('#Agregar-Proveedor #Cancelar').on('click', function() {
+                $('#agregar-proveedor-form')[0].reset(); // Clear all form inputs
+                agregarProveedorSection.hide();
+                overlay.hide();
+            });
+
+            // Cancelar Actualizar
+            $('#Actualizar-Proveedor #Cancelar').on('click', function() {
+                $('#actualizar-proveedor-form')[0].reset(); // Clear all form inputs
+                actualizarProveedorSection.hide();
+                overlay.hide();
+            });
+
+            // Mostrar sección Actualizar Proveedor al hacer clic en una fila
+            $('#proveedores-table tbody').on('click', 'tr', function() {
+                const data = table.row(this).data();
+                if (data) {
+                    $('#Actualizar-Proveedor #nombre').val(data.nombre);
+                    $('#Actualizar-Proveedor #estado').val(data.estado ? 'Activo' : 'Inactivo');
+                    actualizarProveedorSection.show();
+                    overlay.show();
+                }
+            });
+
+            // Prevenir cierre accidental al hacer clic en overlay
+            overlay.on('click', function(event) {
+                event.stopPropagation();
+            });
+
+            // Función reutilizable para arrastrar modales
+            function makeDraggable(section, handle) {
+                let isDragging = false;
+                let offset = { x: 0, y: 0 };
+        
+                handle.on('mousedown', function(event) {
+                    isDragging = true;
+                    offset.x = event.clientX - section.offset().left;
+                    offset.y = event.clientY - section.offset().top;
+                    $(document).on('mousemove', onMouseMove);
+                });
+        
+                $(document).on('mouseup', function() {
+                    isDragging = false;
+                    $(document).off('mousemove', onMouseMove);
+                });
+        
+                function onMouseMove(event) {
+                    if (isDragging) {
+                        section.css({
+                            top: event.clientY - offset.y + 'px',
+                            left: event.clientX - offset.x + 'px',
+                            transform: 'none'
+                        });
+                    }
+                }
+            }
+        
+
+              // Activar movimiento en ambas secciones
+              makeDraggable(agregarProveedorSection, dragHandleAgregar);
+            makeDraggable(actualizarProveedorSection, dragHandleActualizar);
+        });
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { dbSettings } from '../database/connection.js';
+import { dbConnection } from '../database/connection.js';
 import sql from 'mssql';
 
 export const crearVenta=('/crear-venta', async (req, res) => {

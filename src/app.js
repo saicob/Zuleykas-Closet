@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, '../static')));
 // Servir archivos HTML desde la carpeta "templates"
 app.use(express.static(path.join(__dirname, '../templates')));
 
-app.use(proveedorRoutes);
+app.use('/api/proveedor',proveedorRoutes);
 app.use('/api/marcas', marcaRoutes);
 
 app.use(productsRoutes);

@@ -6,116 +6,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
     <title>Local Tienda 1</title>
-</head>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 
+<!-- jQuery y DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+</head>
 <body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
-        </button>
-    </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de Venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <h1>Sistema de administración</h1>
+    <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+        Cerrar Sesión
+    </button>
+</header>
+
+<aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
+    <ul style="list-style: none; padding: 0;">
+        <li><strong>📦 Productos</strong></li>
+        <li><a href="VerProductos.html">Ver Productos</a></li>
+        <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
+        <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+        <li><a href="Actualizar_Marcas.html">Marca</a></li>
+        <li><strong>🤝 Proveedores</strong></li>
+        <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
+        <li><strong>💸 Ventas</strong></li>
+        <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+        <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="Local1.html">Crear Venta Local 1</a></li>
+        <li><a href="Local2.html">Crear Venta Local 2</a></li>
+        <li><strong>👥 Empleados</strong></li>
+        <li><a href="Lista_de_Empleados.html">Empleados</a></li>
+    </ul>
+</aside>
+
 
     <!-- Contenido central -->
-    <main class="content">
-        <form id="ventaForm">
+    <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+        <section id="catalogo" style="display: block;">
             <h2>Crear Venta Local 1</h2>
-            <div class="form-group">
-                <label for="cliente">Cliente</label>
-                <input type="text" id="clientel1">
-            </div>
+            <!-- barra de busqueda del catalogo -->
             <div class="autocomplete-container">
-                <input type="text" id="productInput" placeholder="Buscar producto..." />
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button id="ver-carrito" style="background: none; border: none; cursor: pointer; font-size: 24px;">
+                        🛒
+                    </button>
+                    <input type="text" id="productInput" placeholder="Buscar producto..." />
+                </div>
                 <div class="suggestions" id="suggestions"></div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
-                <div class="form-group">
-                    <label for="stock">Stock</label>
-                    <input type="number" id="stockl1" value="0" readonly style="width: 80px;">
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad</label>
-                    <input type="number" id="cantidadl1" value="0" style="width: 80px;">
-                </div>
-                <div class="form-group">
-                    <label for="subtotal">Subtotal</label>
-                    <input type="number" id="subtotall1" value="0" readonly style="width: 80px;">
-                </div>
-                <div class="form-group">
-                    <label for="precio">Precio</label>
-                    <input type="number" id="preciol1" value="0" readonly style="width: 80px;">
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button type="submit" id="agregar">Agregar</button>
-                <button type="submit" id="pagar">Pagar</button>
-            </div>
-        </form>
+            <div class="catalogo-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;"></div>
+   
+    </main>
 
-        <table id="tablaTemporal">
+
+        <aside id="carrito-panel" style="
+        position: fixed;
+        right: -500px;
+        top: 0;
+        width: 500px;
+        height: 100%;
+        background-color: white;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+        z-index: 2000;
+        overflow-y: auto;
+        transition: right 0.3s ease;
+        padding: 20px;
+    ">
+        <h2>🛒 Carrito</h2>
+        <table id="carrito-table" style="width: 100%;">
+            <p id="carrito-total" style="text-align: right; font-weight: bold;">Total: $0.00</p>
+
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Cantidad</th>
                     <th>Precio</th>
+                    <th>Cant.</th>
                     <th>Subtotal</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Productos agregados se mostrarán aquí -->
-            </tbody>
+            <tbody></tbody>
         </table>
+        <hr>
+        <button id="finalizar-compra" style="margin-top: 10px; width: 100%;">Finalizar Compra</button>
+    </aside>
     </main>
     <script src="/script.js"></script>
     <script src="/realizarventa.js"></script>
+    <script src="/carrito.js"></script>
     <!-- <select id="select-categorias">
         <option value="">Seleccione una categoría</option>
     </select> -->
     <script src="/autocompletar.js"></script>
     <script>
-        async function cargarProductos() {
-            try {
-                const res = await fetch('http://localhost:3000/api/productos');
-                const categorias = await res.json();
-
-                const select = document.getElementById('productosl1');
-                categorias.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.codigo_categoria;
-                    option.textContent = cat.nombre;
-                    select.appendChild(option);
-                });
-            } catch (err) {
-                console.error('Error cargando productos:', err);
-            }
-        }
-
+         
         async function cargarCategorias() {
             try {
                 const res = await fetch('http://localhost:3000/api/productos');
@@ -156,7 +142,10 @@
             cargarCategorias();
         });
     </script>
+    <script src="/catalogo.js"></script>
 
+
+ 
 </body>
 
 </html>
