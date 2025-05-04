@@ -4,49 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Sistema de administración</title>
+    <title>Zuleyka Closet</title>
 </head>
 <body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
+    <header style="background-color: pink; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+        <h1>Zuleyka Closet <span style="font-size: 0.8em;">*logo*</span></h1>
+        <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+            Cerrar Sesión
         </button>
     </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de Venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
+    <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
+        <ul style="list-style: none; padding: 0;">
+            <li><strong>📦 Productos</strong></li>
+            <li><a href="VerProductos.html">Ver Productos</a></li>
+            <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
+            <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+            <li><a href="Actualizar_Marcas.html">Marca</a></li>
+            <li><strong>🤝 Proveedores</strong></li>
+            <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
+            <li><strong>💸 Ventas</strong></li>
+            <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+            <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+            <li><a href="Local1.html">Crear Venta Local 1</a></li>
+            <li><a href="Local2.html">Crear Venta Local 2</a></li>
+            <li><strong>👥 Empleados</strong></li>
+            <li><a href="Lista_de_Empleados.html">Empleados</a></li>
         </ul>
     </aside>
-
-    <!-- Contenido central -->
-    <main class="content">
-        <h1>ZC</h1>
-        <p>ZULEYKAS CLOSET</p>
-        <div id="rentability-date">
-        </div>
+    <main style="margin-left: 220px; padding: 20px;">
+        <!-- Contenido central -->
+        <h1>Zuleyka Closet</h1>
+        <p>Bienvenido al sistema de administración.</p>
     </main>
-    <script src="/script.js"></script>
 </body>
 </html>
