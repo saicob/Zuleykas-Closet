@@ -44,7 +44,7 @@
 
     <!-- Contenido central -->
     <main class="content">
-        <form>
+        <form id="ventaForm">
             <h2>Crear Venta Local 1</h2>
             <div class="form-group">
                 <label for="cliente">Cliente</label>
@@ -54,12 +54,6 @@
                 <input type="text" id="productInput" placeholder="Buscar producto..." />
                 <div class="suggestions" id="suggestions"></div>
             </div>
-            <!-- <div class="form-group">
-                <label for="productos">Productos</label>
-                <select id="productosl1">
-                    <option value="ninguno">Ninguno</option>
-                </select>
-            </div> -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
                 <div class="form-group">
                     <label for="stock">Stock</label>
@@ -77,23 +71,32 @@
                     <label for="precio">Precio</label>
                     <input type="number" id="preciol1" value="0" readonly style="width: 80px;">
                 </div>
-                <div>
-                    <label for="total">Total</label>
-                    <input type="number" id="totall1" readonly style="width: 80px;">
-                </div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr ; gap: 10px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <button type="submit" id="agregar">Agregar</button>
-                <button type="submit" id="Eliminar">Cancelar</button>
-                <button type="submit" id="pagar">Finalizar</button>
+                <button type="submit" id="pagar">Pagar</button>
             </div>
         </form>
+
+        <table id="tablaTemporal">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Productos agregados se mostrarán aquí -->
+            </tbody>
+        </table>
     </main>
     <script src="/script.js"></script>
     <script src="/realizarventa.js"></script>
-    <select id="select-categorias">
+    <!-- <select id="select-categorias">
         <option value="">Seleccione una categoría</option>
-    </select>
+    </select> -->
     <script src="/autocompletar.js"></script>
     <script>
         async function cargarProductos() {
@@ -111,23 +114,47 @@
             } catch (err) {
                 console.error('Error cargando productos:', err);
             }
-            try {
-                const res = await fetch('http://localhost:3000/api/empleado');
-                const categorias = await res.json();
+        }
 
-                console.log("in")
-                const select = document.getElementById('empleadol1');
-                categorias.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.codigo_empleado;
-                    option.textContent = cat.nombre;
-                    select.appendChild(option);
+        async function cargarCategorias() {
+            try {
+                const res = await fetch('http://localhost:3000/api/productos');
+                const productos = await res.json();
+
+                const input = document.getElementById('productInput');
+                const suggestionsContainer = document.getElementById('suggestions');
+
+                input.addEventListener('input', (event) => {
+                    const query = event.target.value.trim().toLowerCase(); // Asegura que el valor se obtenga correctamente
+                    suggestionsContainer.innerHTML = '';
+
+                    if (query.length > 0) {
+                        const filteredProducts = productos.filter(prod =>
+                            prod.nombre.toLowerCase().includes(query)
+                        );
+
+                        filteredProducts.forEach(prod => {
+                            const div = document.createElement('div');
+                            div.classList.add('suggestion');
+                            div.textContent = prod.nombre;
+                            div.dataset.id = prod.codigo_producto;
+                            div.addEventListener('click', () => {
+                                input.value = prod.nombre;
+                                suggestionsContainer.innerHTML = '';
+                            });
+                            suggestionsContainer.appendChild(div);
+                        });
+                    }
                 });
             } catch (err) {
-                console.error('Error cargando empleados:', err);
+                console.error('Error cargando categorías:', err);
             }
         }
-        window.addEventListener('DOMContentLoaded', cargarCategorias);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarProductos();
+            cargarCategorias();
+        });
     </script>
 
 </body>

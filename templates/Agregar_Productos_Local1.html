@@ -83,6 +83,7 @@
                 </div>
             </form>
         </section>
+<<<<<<< HEAD
         <section style="background-color: white; padding: 20px; border-radius: 10px; width: 50%;">
             <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead>
@@ -106,5 +107,81 @@
             </table>
         </section>
     </main>
+=======
+
+        <section id="Reabastecer_Producto_Local1" style="display: none;">
+            <form>
+            <h2>Reabastecer Producto Local 1</h2>
+            <div class="form-group">
+                <label for="proveedor_local1">Proveedor</label>
+                <select id="proveedor_local1">
+                    <option value="ninguno">Ninguno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nombre-producto_local1">Nombre Producto</label>
+                <!-- <select id="nombre-producto_local1">
+                    <option value="ninguno">Ninguno</option>
+                </select> -->
+                <div class="autocomplete-container">
+                    <input type="text" id="productInput" placeholder="Buscar producto..." />
+                    <div class="suggestions" id="suggestions"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="precio-compra1">Precio Compra</label>
+                <input type="text" id="precio-compra1">
+            </div>
+            <div class="form-group">
+                <label for="cantidad_local1">Cantidad</label>
+                <input type="text" id="cantidad_local1">
+            </div>
+            <div class="form-group">
+                <label for="marca_local1">Marca</label>
+                <select id="marca_local1">
+                    <option value="ninguno">Ninguno</option>
+                    <option value="nueva">Nueva</option>
+                </select>
+            </div>
+            <div class="form-group" id="nueva-marca_local1" style="display: none;">
+                <label for="nueva-marca-input_local1">Agregar Marca</label>
+                <input type="text" id="nueva-marca-input_local1">
+            </div>
+            <div class="form-group">
+                <label for="fecha-llegada_local1">Fecha de llegada</label>
+                <input type="date" id="fecha-llegada_local1">
+            </div>
+            <div class="form-group">
+                <label for="precio-venta1">Precio Venta</label>
+                <input type="text" id="precio-venta1">
+            </div>
+            <div class="form-group">
+                <label for="categoria_local1">Categoría</label>
+                <input type="text" id="categoria_local1" value="No encontrada">
+            </div>
+            <div class="form-group">
+                <label for="imagen_local1">Añadir Imagen</label>
+                <input type="file" id="imagen_local1">
+            </div>
+            <button type="submit">Agregar Producto</button>
+            </form>
+        </section>
+    </main>
+    <script src="/script.js"></script>
+    <script src="/autocompletar.js"></script>
+    <script>
+        document.getElementById('agregar-producto-local1').addEventListener('click', (e) => {
+            e.preventDefault(); // Evita el comportamiento predeterminado del botón
+            document.getElementById('Agregar_Nuevo_Producto_Local1').style.display = 'block';
+            document.getElementById('Reabastecer_Producto_Local1').style.display = 'none';
+        });
+
+        document.getElementById('reabastecer-producto-local1').addEventListener('click', (e) => {
+            e.preventDefault(); // Evita el comportamiento predeterminado del botón
+            document.getElementById('Agregar_Nuevo_Producto_Local1').style.display = 'none';
+            document.getElementById('Reabastecer_Producto_Local1').style.display = 'block';
+        });
+    </script>
+>>>>>>> e13258686d255bc953eb277dfb51e97fd9735ade
 </body>
 </html>
