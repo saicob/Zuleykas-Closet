@@ -24,7 +24,8 @@ app.use(express.static(path.join(__dirname, '../static')));
 app.use(express.static(path.join(__dirname, '../templates')));
 
 app.use(proveedorRoutes);
-app.use(marcaRoutes);
+app.use('/api/marcas', marcaRoutes);
+
 app.use(productsRoutes);
 //app.use(ventaRoutes);
 app.use('/api', empleadoRoutes);

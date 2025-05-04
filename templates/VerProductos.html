@@ -14,14 +14,14 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-    <header style="background-color: pink; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
         <h1>Sistema de administración</h1>
         <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
             Cerrar Sesión
         </button>
     </header>
 
-    <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
+    <aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
         <ul style="list-style: none; padding: 0;">
             <li><strong>📦 Productos</strong></li>
             <li><a href="VerProductos.html">Ver Productos</a></li>
@@ -42,25 +42,25 @@
 
     <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
         <section id="Tabla-Productos" style="display: block;">
-            <h2>Lista de Productos</h2>
-            <table id="productos-table" class="display" style="width: 100%; background-color: white; overflow: auto;">
-                <thead style="background-color: rgb(255, 252, 252);">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Categoria</th>
-                        <th>Proveedor</th>
-                        <th>Fecha de Llegada</th>
-                        <th>Fecha de Vencimiento</th>
-                        <th>Estado</th>
-                        <th>Imagen</th>
+                <h2>Lista de Productos</h2>
+                <table id="productos-table" class="display" style="width: 100%; background-color: white; overflow: auto;">
+                    <thead style="background-color: rgb(255, 252, 252);">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Categoria</th>
+                            <th>Proveedor</th>
+                            <th>Fecha de Llegada</th>
+                            <th>Fecha de Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Imagen</th>
 
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
         </section>
 
         <section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">

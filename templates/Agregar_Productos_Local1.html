@@ -19,12 +19,12 @@
             Cerrar Sesión
         </button>
     </header>
-    <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
+    <aside class="sidebar">
         <ul style="list-style: none; padding: 0;">
             <li><strong>📦 Productos</strong></li>
             <li><a href="VerProductos.html">Ver Productos</a></li>
-            <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-            <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+            <li><a href="Agregar_Productos_Local1.html">Agregar Productos   Local 1</a></li>
+            <li><a href="Agregar_Productos_Local2.html">Agregar Productos   Local 2</a></li>
             <li><a href="Actualizar_Marcas.html">Marca</a></li>
             <li><strong>🤝 Proveedores</strong></li>
             <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
@@ -234,21 +234,6 @@
                 }
             });
 
-            // Autofill inputs when a row is clicked
-            $('#productos-table tbody').on('click', 'tr', function() {
-                const data = table.row(this).data();
-                if (data) {
-                    inputs.nombre.val(data.nombre);
-                    inputs.proveedor.val(data.proveedor || '');
-                    inputs.precioCompra.val(data.precioCompra || '');
-                    inputs.precioVenta.val(data.precio || '');
-                    inputs.cantidad.val(data.stock || '');
-                    inputs.fechaLlegada.val(data.fechaLlegada || '');
-                    inputs.fechaVencimiento.val(data.fechaVencimiento || '');
-                    inputs.categoria.val(data.categoria || '');
-                    inputs.descripcion.val(data.descripcion || '');
-                }
-            });
         });
     </script>
 </body>

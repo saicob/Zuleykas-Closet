@@ -4,62 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Agregar Productos Local 1</title>
+    <title>Informe de Vents</title>
+   <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+  <!-- jQuery y DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
-        </button>
-    </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+      <h1>Sistema de administración</h1>
+      <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+          Cerrar Sesión
+      </button>
+  </header>
+
+  <aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
+    <ul style="list-style: none; padding: 0;">
+        <li><strong>📦 Productos</strong></li>
+        <li><a href="VerProductos.html">Ver Productos</a></li>
+        <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
+        <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
+        <li><a href="Actualizar_Marcas.html">Marca</a></li>
+        <li><strong>🤝 Proveedores</strong></li>
+        <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
+        <li><strong>💸 Ventas</strong></li>
+        <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+        <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="Local1.html">Crear Venta Local 1</a></li>
+        <li><a href="Local2.html">Crear Venta Local 2</a></li>
+        <li><strong>👥 Empleados</strong></li>
+        <li><a href="Lista_de_Empleados.html">Empleados</a></li>
+    </ul>
+</aside>
 
    <!-- Contenido central -->
-   <main class="content">
-    <form>
+   <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+    <section id="informe-ventas">
         <h2>Informe de Ventas</h2>
-        <label for="sales-date">Fecha de venta </label>
-        <div class="form-group">
-            <label for="start-date">Inicio </label>
-            <input type="date" id="start-date">
-        </div>
-        <div class="form-group">
-            <label for="end-date">Fin</label>
-            <input type="date" id="end-date">
-        </div>
-        <div class="form-group">
-            <button type="submit">Mostrar</button>
-            <button type="submit">Mostrar Todo</button>
-        </div>
-    </form>
+        <table id="ventas-table"class="display" style="width: 100%; background-color: white; overflow: auto;">
+            <thead>
+                <tr>
+                    <th>Num Venta</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán los datos de las ventas -->
+            </tbody>
+        </table>
 </main>
 
     <script src="/script.js"></script>
+    <script>
+        // Inicializar DataTable
+        const table = $('#ventas-table').DataTable({
+            scrollX: true,
+            scrollY: "400px",
+            scrollCollapse: true,
+            ajax: {
+                url: 'http://localhost:3000/api/marcas',
+                dataSrc: ''
+            },
+            columns: [
+                { data: 'nombre', title: 'Nombre' },
+                { data: 'estado', title: 'Estado' }
+            ],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ marcas",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            }
+        });
+   </script>
 </body>
 </html>
