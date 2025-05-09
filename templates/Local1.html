@@ -15,37 +15,54 @@
 
 </head>
 <body>
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-    <h1>Sistema de administración</h1>
-    <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
-        Cerrar Sesión
-    </button>
-</header>
-
-<aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
-    <ul style="list-style: none; padding: 0;">
-        <li><strong>📦 Productos</strong></li>
-        <li><a href="VerProductos.html">Ver Productos</a></li>
-        <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-        <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-        <li><a href="Actualizar_Marcas.html">Marca</a></li>
-        <li><strong>🤝 Proveedores</strong></li>
-        <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
-        <li><strong>💸 Ventas</strong></li>
-        <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
-        <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-        <li><a href="Local1.html">Crear Venta Local 1</a></li>
-        <li><a href="Local2.html">Crear Venta Local 2</a></li>
-        <li><strong>👥 Empleados</strong></li>
-        <li><a href="Lista_de_Empleados.html">Empleados</a></li>
-    </ul>
-</aside>
+    <section id="menú">
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <h1>Zuleyka's Closet</h1>
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Ver Productos</a></li>
+                                <li><a href="Actualizar_Marcas.html">Actualizar Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#">Proveedores</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Actualizar_Proveedores.html">Actualizar Proveedores</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Local1.html">Crear Venta Local 1</a></li>
+                                <li><a href="Local2.html">Crear Venta Local 2</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <button class="logout-button">Cerrar Sesión</button>
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Crear Venta</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá visualizar todos los productos registrados en el inventario. Además, tendrá la opción de agregar nuevos productos, actualizarlos y consultar su estado.</p>
+      
+</section> 
 
 
     <!-- Contenido central -->
-    <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+    <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
         <section id="catalogo" style="display: block;">
-            <h2>Crear Venta Local 1</h2>
+            
             <!-- barra de busqueda del catalogo -->
             <div class="autocomplete-container">
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -61,37 +78,23 @@
     </main>
 
 
-        <aside id="carrito-panel" style="
-        position: fixed;
-        right: -500px;
-        top: 0;
-        width: 500px;
-        height: 100%;
-        background-color: white;
-        box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-        z-index: 2000;
-        overflow-y: auto;
-        transition: right 0.3s ease;
-        padding: 20px;
-    ">
-        <h2>🛒 Carrito</h2>
-        <table id="carrito-table" style="width: 100%;">
-            <p id="carrito-total" style="text-align: right; font-weight: bold;">Total: $0.00</p>
-
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Cant.</th>
-                    <th>Subtotal</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <hr>
-        <button id="finalizar-compra" style="margin-top: 10px; width: 100%;">Finalizar Compra</button>
-    </aside>
+        <aside id="carrito-panel">
+            <h2>🛒 Carrito</h2>
+            <table id="carrito-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cant.</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p id="carrito-total">Total: $0.00</p>
+            <button id="finalizar-compra">Finalizar Compra</button>
+        </aside>
     </main>
     <script src="/script.js"></script>
     <script src="/realizarventa.js"></script>

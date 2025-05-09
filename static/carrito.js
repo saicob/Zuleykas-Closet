@@ -45,16 +45,17 @@ function renderizarCarrito() {
             <tr>
                 <td>${producto.nombre}</td>
                 <td>$${producto.precio.toFixed(2)}</td>
-                <td>
-                    <button onclick="cambiarCantidad(${index}, -1)">➖</button>
-                    <input 
-                        type="number" 
-                        value="${producto.cantidad}" 
-                        min="1"
-                        style="width: 50px; text-align: center;"
-                        onchange="actualizarCantidad(${index}, this.value)"
-                    />
-                    <button onclick="cambiarCantidad(${index}, 1)">➕</button>
+                <td style="text-align: center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                        <button onclick="cambiarCantidad(${index}, 1)">➕</button>
+                        <input 
+                            type="number" 
+                            value="${producto.cantidad}" 
+                            min="1"
+                            onchange="actualizarCantidad(${index}, this.value)"
+                        />
+                        <button onclick="cambiarCantidad(${index}, -1)">➖</button>
+                    </div>
                 </td>
                 <td>$${subtotal.toFixed(2)}</td>
                 <td><button onclick="eliminarDelCarrito(${index})">🗑️</button></td>
@@ -122,9 +123,9 @@ function finalizarCompra() {
 function toggleCarrito() {
     const panel = document.getElementById('carrito-panel');
     if (panel.style.right === '0px') {
-        panel.style.right = '-400px';
+        panel.style.right = '-500px'; // Ensure it slides out completely
     } else {
-        panel.style.right = '0px';
+        panel.style.right = '0px'; // Slide in
     }
 }
 
