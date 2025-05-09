@@ -1,7 +1,7 @@
 import sql from 'mssql';
 
 export const dbSettings = {
-    user: 'evans',
+    user: 'evans2',
     password: '1234',
     server: '127.0.0.1',  //pongan el nombre de su servidor o la dirección IP si no funciona el nombre
     database: 'Zuleykas',  //usar EXEC xp_readerrorlog 0, 1, N'Server is listening on'; en MSSQL para ver el ip y el puerto que usa

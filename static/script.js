@@ -1,42 +1,7 @@
 // Barra lateral izquierda, Configuración de Dropdowns
 
 document.addEventListener("DOMContentLoaded", () => {
-    const dropdowns = document.querySelectorAll(".dropdown");
-
-    // Manejo de hover: abrir al pasar el mouse
-    dropdowns.forEach(dropdown => {
-        const menuItem = dropdown.querySelector(".menu-item");
-
-        dropdown.addEventListener("mouseenter", () => {
-            dropdown.classList.add("active");
-        });
-
-        dropdown.addEventListener("mouseleave", () => {
-            if (!dropdown.classList.contains("clicked")) {
-                dropdown.classList.remove("active");
-            }
-        });
-
-        //  Clic para mantener activo el dropdown
-        menuItem.addEventListener("click", (e) => {
-            e.stopPropagation(); // Evita que el clic se propague al body
-            dropdowns.forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove("active", "clicked");
-                }
-            });
-
-            dropdown.classList.toggle("clicked");
-            dropdown.classList.toggle("active");
-        });
-    });
-
-    // Clic fuera del menú para cerrar el dropdown activo
-    document.addEventListener("click", () => {
-        dropdowns.forEach(dropdown => {
-            dropdown.classList.remove("active", "clicked");
-        });
-    });
+    // Remove dropdown hover logic as CSS handles it
 
     // Ocultar y mostrar Agregar Proveedor Local 1
     const proveedorLocal1 = document.getElementById('proveedor_local1');
@@ -114,6 +79,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initially show the Ver_Productos section and hide Actualizar_Producto
     verProductosSection.style.display = 'block';
     actualizarProductoSection.style.display = 'none';
+
+    // Show "Agregar Producto" section when "Registrar prenda" button is clicked
+    const registrarPrendaButton = document.getElementById("registrar-prenda-button");
+    const agregarProductoSection = document.getElementById("Agregar-Producto");
+    const overlay = document.getElementById("overlay");
+
+    if (registrarPrendaButton && agregarProductoSection) {
+        registrarPrendaButton.addEventListener("click", () => {
+            agregarProductoSection.style.display = "block";
+            overlay.style.display = "block"; // Show overlay
+        });
+    }
+
+    // Hide "Agregar Producto" section when "Cancelar" button is clicked
+    const cancelarButton = agregarProductoSection.querySelector("#Cancelar");
+    if (cancelarButton) {
+        cancelarButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            agregarProductoSection.style.display = "none";
+            overlay.style.display = "none"; // Hide overlay
+        });
+    }
 });
 
 // Ocultar y mostrar Agregar Proveedor
