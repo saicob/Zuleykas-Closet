@@ -1,6 +1,9 @@
 /* Fuente elegante */
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -307,6 +310,7 @@ table {
     text-align: left;
     background-color: #fff; /* White background for the table */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the table */
+    font-family: 'Poppins', sans-serif; /* Apply Poppins font */
 }
 
 #Tabla-Productos {
