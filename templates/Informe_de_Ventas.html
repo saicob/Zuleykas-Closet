@@ -13,45 +13,59 @@
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-  <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-      <h1>Sistema de administración</h1>
-      <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
-          Cerrar Sesión
-      </button>
-  </header>
+ <section id="menú"> 
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Actualizar Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Local1.html">Crear Venta Local 1</a></li>
+                                <li><a href="Local2.html">Crear Venta Local 2</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <button class="logout-button">Cerrar Sesión</button>
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Informe de Ventas</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text"> En este apartado podrá visualizar el informe de ventas. Podrá filtrar por fecha y ver el total de ventas realizadas en un periodo específico.</p>
+        </p>
+        </section>   
 
-  <aside class="sidebar" style="padding: 10px; width: 200px; height: 100vh; position: fixed;">
-    <ul style="list-style: none; padding: 0;">
-        <li><strong>📦 Productos</strong></li>
-        <li><a href="VerProductos.html">Ver Productos</a></li>
-        <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-        <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-        <li><a href="Actualizar_Marcas.html">Marca</a></li>
-        <li><strong>🤝 Proveedores</strong></li>
-        <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
-        <li><strong>💸 Ventas</strong></li>
-        <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
-        <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-        <li><a href="Local1.html">Crear Venta Local 1</a></li>
-        <li><a href="Local2.html">Crear Venta Local 2</a></li>
-        <li><strong>👥 Empleados</strong></li>
-        <li><a href="Lista_de_Empleados.html">Empleados</a></li>
-    </ul>
-</aside>
 
    <!-- Contenido central -->
-   <main style="margin-left: 220px; padding: 20px; margin-top: 90px;">
+   <main  style="margin-left: center; padding: 20px; margin-top: calc(5% + 270px);">
     <section id="informe-ventas">
-        <h2>Informe de Ventas</h2>
-        <table id="ventas-table"class="display" style="width: 100%; background-color: white; overflow: auto;">
-            <thead>
+        <table id="ventas-table" class="display" style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
+            <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
                 <tr>
-                    <th>Num Venta</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
+                    <th style="padding: 10px; text-align: left;">Numero de Venta</th>
+                    <th style="padding: 10px; text-align: left;">Fecha</th>
+                    <th style="padding: 10px; text-align: left;">Total</th>
                 </tr>
             </thead>
-            <tbody id="ventas-body">
+            <tbody id="ventas-body"  style="background-color: white; color: #333;">
                 <!-- Aquí se llenarán los datos de las ventas -->
             </tbody>
         </table>
@@ -76,7 +90,7 @@
             language: {
                 search: "Buscar:",
                 lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ marcas",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
                 paginate: {
                     first: "Primero",
                     last: "Último",

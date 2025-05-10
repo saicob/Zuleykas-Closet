@@ -18,22 +18,19 @@
             <div class="rectangle">
                 <header class="top-menu">
                     <div class="logo">
-                        <h1>Zuleyka's Closet</h1>
-                    </div>
+                        <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                   </div>
                     <nav class="menu">
                         <ul>
                             <li class="dropdown">
                                 <a href="#">Productos</a>
                                 <ul class="dropdown-content">
-                                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                                    <li><a href="Actualizar_Marcas.html">Actualizar Marcas</a></li>
+                                    <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                    <li><a href="Marcas.html">Marcas</a></li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
-                                <a href="#">Proveedores</a>
-                                <ul class="dropdown-content">
-                                    <li><a href="Actualizar_Proveedores.html">Actualizar Proveedores</a></li>
-                                </ul>
+                            <li>
+                                <a href="Proveedor.html" class="menu-button">Proveedores</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#">Ventas</a>
@@ -59,9 +56,9 @@
     
     <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
         <section id="Tabla-Productos" style="display: block;">
-            <div class="search-container">
-                <button id="registrar-prenda-button">Registrar prenda</button>
-            </div>
+           
+                <button id="registrar-prenda-button" class="action-button">Registrar Producto</button>
+            
             <table id="productos-table" class="display" style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
                 <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
                     <tr>
@@ -78,12 +75,7 @@
                     <!-- Data will be dynamically loaded via AJAX -->
                 </tbody>
             </table>
-            <div style="margin-top: 10px; text-align: center;">
-                <button style="padding: 5px 10px; border: 1px solid #ddd; background-color: #f9f9f9; cursor: pointer;">&#60;</button>
-                <button style="padding: 5px 10px; border: 1px solid #ddd; background-color: #ddd; cursor: pointer;">1</button>
-                <button style="padding: 5px 10px; border: 1px solid #ddd; background-color: #f9f9f9; cursor: pointer;">2</button>
-                <button style="padding: 5px 10px; border: 1px solid #ddd; background-color: #f9f9f9; cursor: pointer;">&#62;</button>
-            </div>
+        
         </section>
 
         <section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">

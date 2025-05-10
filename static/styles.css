@@ -751,7 +751,9 @@ table tbody tr td img {
         padding: 5px;
     }
 }
-
+/*-----------------------------------*/
+/* Estilo para la tabla de productos */
+/*-----------------------------------*/
 #productos-table {
     width: 100%;
     border-collapse: collapse;
@@ -790,4 +792,208 @@ table tbody tr td img {
     width: 50px;
     height: 50px;
     object-fit: cover; /* Ensure images are not distorted */
+}
+/*----------------------------------*/
+/* Estilos para la tabla de proveedores */
+/*----------------------------------*/
+#proveedores-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 0;
+}
+
+#proveedores-table th {
+    background-color: #f9f9f9;
+    color: #555;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+#proveedores-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+#proveedores-table tbody tr:hover {
+    background-color: #f5f5f5; /* Highlight row on hover */
+    cursor: pointer;
+}
+
+#proveedores-table tbody tr td img {
+    border-radius: 8px; /* Slight rounding for images */
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure images are not distorted */
+}
+/*----------------------------------*/
+/* Estilos para la tabla de marcas */
+/*----------------------------------*/
+
+#marcas-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 0;
+}
+
+#marcas-table th {
+    background-color: #f9f9f9;
+    color: #555;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+#marcas-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+#marcas-table tbody tr:hover {
+    background-color: #f5f5f5; /* Highlight row on hover */
+    cursor: pointer;
+}
+
+#marcas-table tbody tr td img {
+    border-radius: 8px; /* Slight rounding for images */
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure images are not distorted */
+}
+/*----------------------------------*/
+/* Estilos para la tabla de informe de ventas */
+/*-----------------------------------*/
+#ventas-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 0;
+}
+
+#ventas-table th {
+    background-color: #f9f9f9;
+    color: #555;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+#ventas-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+#ventas-table tbody tr:hover {
+    background-color: #f5f5f5; /* Highlight row on hover */
+    cursor: pointer;
+}
+
+#ventas-table tbody tr td img {
+    border-radius: 8px; /* Slight rounding for images */
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure images are not distorted */
+}
+
+/*----------------------------------*/
+
+/*-----------------------------------*/
+
+.menu-button {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 8px 12px;
+    transition: background 0.3s;
+    display: inline-block;
+    border-radius: 8px;
+}
+
+.menu-button:hover {
+    background-color: #f2f2f2;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 0;
+}
+
+.styled-table th {
+    background-color: #f9f9f9;
+    color: #555;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+.styled-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f5f5f5; /* Highlight row on hover */
+    cursor: pointer;
+}
+
+.action-button {
+    background-color: #DD9CBA;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.action-button:hover {
+    background-color: #c47ba7;
+}
+
+img {
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 1) 70%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transition: mask-image 0.3s ease-in-out;
 }
