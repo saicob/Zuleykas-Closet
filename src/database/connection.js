@@ -1,11 +1,11 @@
 import sql from 'mssql';
 
 export const dbSettings = {
-    user: 'evans2',
+    user: 'poseidon',
     password: '1234',
     server: '127.0.0.1',  //pongan el nombre de su servidor o la dirección IP si no funciona el nombre
     database: 'Zuleykas',  //usar EXEC xp_readerrorlog 0, 1, N'Server is listening on'; en MSSQL para ver el ip y el puerto que usa
-    port: 57794, //en mi caso el puerto es 57794, pero puede variar en cada caso 
+    port: 49676, //en mi caso el puerto es 57794,49676 pero puede variar en cada caso 
                 // configurar el puerto en el firewall de windows para que no lo bloquee
                 //configurar en sql server para que acepte conexiones TCP/IP y poner el puerto que ocupa
     options: {
@@ -27,7 +27,7 @@ export const getConnection = async () => {
 };
 
 export const realizarVenta = async (cliente, productos) => {
-    let transaction; // Declarar la variable fuera del bloque try
+    let transaction;
     try {
         const pool = await sql.connect(dbSettings);
 
@@ -37,36 +37,48 @@ export const realizarVenta = async (cliente, productos) => {
 
         // Insertar factura y obtener el ID generado
         const facturaResult = await transaction.request()
-            .input('cliente', sql.VarChar, cliente)
             .query(`
-                INSERT INTO factura (fecha, total, codigo_cliente) 
+                INSERT INTO factura (fecha, total) 
                 OUTPUT INSERTED.codigo_factura 
-                VALUES (CAST(GETDATE() AS date), 0, NULL);
+                VALUES (CAST(GETDATE() AS date), 0);
             `);
         const facturaId = facturaResult.recordset[0].codigo_factura;
 
         let totalFactura = 0;
 
         for (const producto of productos) {
-            const { producto: nombre, cantidad, precio, subtotal } = producto;
+            const { nombre, cantidad, subtotal } = producto;
+
+            if (!nombre) {
+                throw new Error('El nombre del producto es inválido o está vacío.');
+            }
+
+            // Obtener el código del producto
+            const productoResult = await transaction.request()
+                .input('nombre', sql.VarChar, nombre)
+                .query('SELECT codigo_producto FROM producto WHERE nombre = @nombre');
+
+            if (productoResult.recordset.length === 0) {
+                throw new Error(`El producto "${nombre}" no existe en la base de datos.`);
+            }
+
+            const codigoProducto = productoResult.recordset[0].codigo_producto;
 
             // Actualizar stock
             await transaction.request()
-                .input('nombre', sql.VarChar, nombre)
+                .input('codigoProducto', sql.Int, codigoProducto)
                 .input('cantidad', sql.Int, cantidad)
-                .query('UPDATE producto SET stock = stock - @cantidad WHERE nombre = @nombre');
+                .query('UPDATE producto SET stock = stock - @cantidad WHERE codigo_producto = @codigoProducto');
 
             // Insertar en producto_factura
             await transaction.request()
-                .input('nombre', sql.VarChar, nombre) // Declarar @nombre aquí también
                 .input('cantidad', sql.Int, cantidad)
                 .input('subtotal', sql.Decimal(10, 2), subtotal)
+                .input('codigoProducto', sql.Int, codigoProducto)
                 .input('facturaId', sql.Int, facturaId)
                 .query(`
                     INSERT INTO producto_factura (cantidad, subtotal, codigo_producto, codigo_factura)
-                    VALUES (@cantidad, @subtotal, 
-                            (SELECT codigo_producto FROM producto WHERE nombre = @nombre), 
-                            @facturaId);
+                    VALUES (@cantidad, @subtotal, @codigoProducto, @facturaId);
                 `);
 
             totalFactura += subtotal;

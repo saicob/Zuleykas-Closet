@@ -3,6 +3,24 @@ let carrito = [];
 
 // Agrega un producto al carrito (evita duplicados)
 function agregarAlCarrito(producto) {
+    if (!producto.nombre || typeof producto.nombre !== 'string') {
+        console.error('El producto no tiene un nombre válido:', producto);
+        alert('Error: El producto no tiene un nombre válido.');
+        return;
+    }
+
+    if (isNaN(producto.precio) || producto.precio <= 0) {
+        console.error('El producto tiene un precio inválido:', producto);
+        alert('Error: El producto tiene un precio inválido.');
+        return;
+    }
+
+    if (isNaN(producto.stock) || producto.stock < 0) {
+        console.error('El producto tiene un stock inválido:', producto);
+        alert('Error: El producto tiene un stock inválido.');
+        return;
+    }
+
     const index = carrito.findIndex(p => p.nombre === producto.nombre);
     if (index !== -1) {
         if (carrito[index].cantidad < producto.stock) {
@@ -91,6 +109,27 @@ function finalizarCompra() {
     if (carrito.length === 0) {
         alert("El carrito está vacío.");
         return;
+    }
+
+    // Validar los datos del carrito antes de enviarlos
+    for (const producto of carrito) {
+        if (!producto.nombre || typeof producto.nombre !== 'string') {
+            console.error('Producto con nombre inválido:', producto);
+            alert('Error: Uno o más productos tienen un nombre inválido.');
+            return;
+        }
+
+        if (isNaN(producto.precio) || producto.precio <= 0) {
+            console.error('Producto con precio inválido:', producto);
+            alert('Error: Uno o más productos tienen un precio inválido.');
+            return;
+        }
+
+        if (isNaN(producto.cantidad) || producto.cantidad <= 0) {
+            console.error('Producto con cantidad inválida:', producto);
+            alert('Error: Uno o más productos tienen una cantidad inválida.');
+            return;
+        }
     }
 
     const datos = {

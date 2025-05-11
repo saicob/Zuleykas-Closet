@@ -18,11 +18,18 @@ async function cargarCatalogo() {
             // Crear y agregar botón con evento
             const btn = document.createElement('button');
             btn.textContent = 'Agregar al carrito';
-            btn.onclick = () => agregarAlCarrito({
-                nombre: prod.nombre,
-                precio: prod.precio,
-                stock: prod.stock
-            });
+            btn.onclick = () => {
+                if (!prod.nombre) {
+                    console.error('El producto no tiene un nombre válido:', prod);
+                    alert('Error: El producto no tiene un nombre válido.');
+                    return;
+                }
+                agregarAlCarrito({
+                    nombre: prod.nombre,
+                    precio: prod.precio,
+                    stock: prod.stock
+                });
+            };
             div.appendChild(btn);
         
             contenedor.appendChild(div);
