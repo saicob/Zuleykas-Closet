@@ -191,7 +191,17 @@
                 event.stopPropagation();
             });
         });
-        </script>
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const agregarButton = document.querySelector('#Agregar-Marca #Agregar');
+            if (agregarButton) {
+                agregarButton.addEventListener('click', () => {
+                    console.log('Botón "Agregar" para marca presionado.');
+                });
+            }
+        });
+    </script>
         
 </body>
 </html>

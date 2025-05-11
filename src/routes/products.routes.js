@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as pc from "../controllers/products.controllers.js";
 import { getProductsJSON } from '../controllers/products.controllers.js';
+import { createProveedor } from "../controllers/proveedor.controllers.js";
 
 const router = Router();
 
@@ -27,5 +28,8 @@ router.delete('/productos/:id', (req, res) => {
 
 // Ruta para obtener productos en formato JSON
 router.get('/api/productos', getProductsJSON);
+
+// Ruta para agregar un proveedor
+router.post('/api/proveedor', createProveedor);
 
 export default router;

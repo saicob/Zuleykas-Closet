@@ -35,27 +35,29 @@ export const getMarcaByName = async (req, res) => {
 
 // Crear una nueva marca
 export const createMarca = async (req, res) => {
-  try {
     const { nombre, estado } = req.body;
 
-    const pool = await getConnection();
-    const result = await pool.request()
-      .input('nombre', sql.VarChar, nombre)
-      .input('estado', sql.Bit, estado)
-      .query(`
-        INSERT INTO marca (nombre, estado)
-        OUTPUT INSERTED.codigo_marca
-        VALUES (@nombre, @estado)
-      `);
+    if (!nombre || estado === undefined) {
+        console.error('Validación fallida: Nombre o estado faltante.');
+        return res.status(400).json({ success: false, message: 'Nombre y estado son requeridos.' });
+    }
 
-    res.status(201).json({
-      message: 'Marca creada exitosamente',
-      codigo_marca: result.recordset[0].codigo_marca
-    });
-  } catch (error) {
-    console.error('Error al crear marca:', error);
-    res.status(500).json({ error: 'Error del servidor' });
-  }
+    try {
+        console.log('Datos recibidos en el backend:', { nombre, estado });
+
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('nombre', sql.VarChar, nombre)
+            .input('estado', sql.Bit, estado)
+            .query('INSERT INTO marca (nombre, estado) VALUES (@nombre, @estado)');
+
+        console.log('Resultado de la consulta SQL:', result);
+
+        res.json({ success: true, message: 'Marca agregada con éxito.', codigo_marca: result.recordset[0].codigo_marca });
+    } catch (error) {
+        console.error('Error al agregar la marca:', error);
+        res.status(500).json({ success: false, message: 'Error al agregar la marca.', error: error.message });
+    }
 };
 
 // Actualizar una marca existente

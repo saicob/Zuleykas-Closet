@@ -35,29 +35,30 @@ export const getProveedorByName = async (req, res) => {
 
 // Crear un nuevo proveedor
 export const createProveedor = async (req, res) => {
-  try {
     const { nombre, estado } = req.body;
 
-    const pool = await getConnection();
-    const result = await pool.request()
-      .input('nombre', sql.VarChar, nombre)
-      .input('estado', sql.Bit, estado)
-      .query(`
-        INSERT INTO proveedor (nombre, estado)
-        OUTPUT INSERTED.codigo_proveedor
-        VALUES (@nombre, @estado)
-      `);
+    if (!nombre || estado === undefined) {
+        console.error('Validación fallida: Nombre o estado faltante.');
+        return res.status(400).json({ success: false, message: 'Nombre y estado son requeridos.' });
+    }
 
-    res.status(201).json({
-      message: 'Proveedor creado exitosamente',
-      codigo_proveedor: result.recordset[0].codigo_proveedor
-    });
-  } catch (error) {
-    console.error('Error al crear proveedor:', error);
-    res.status(500).json({ error: 'Error del servidor' });
-  }
+    try {
+        console.log('Datos recibidos en el backend:', { nombre, estado });
+
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('nombre', sql.VarChar, nombre)
+            .input('estado', sql.Bit, estado)
+            .query('INSERT INTO proveedor (nombre, estado) VALUES (@nombre, @estado)');
+
+        console.log('Resultado de la consulta SQL:', result);
+
+        res.json({ success: true, message: 'Proveedor agregado con éxito.' });
+    } catch (error) {
+        console.error('Error al agregar el proveedor:', error);
+        res.status(500).json({ success: false, message: 'Error al agregar el proveedor.', error: error.message });
+    }
 };
-
 
 // Actualizar un proveedor existente
 export const updateProveedor = async (req, res) => {
