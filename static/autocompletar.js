@@ -1,69 +1,71 @@
 //este trozo de codigo debe permitir el autocompletado al escribir en el input de productos
 
 const input = document.getElementById('productInput');
-const suggestionsContainer = document.getElementById('suggestions');
-
-input.addEventListener('input', async () => {
-    const query = input.value.trim().toLowerCase();
-
-    if (query.length === 0) {
-        suggestionsContainer.innerHTML = '';
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/productos`);
-        const productos = await response.json();
-
-        const filteredProducts = productos.filter(prod =>
-            prod.nombre.toLowerCase().startsWith(query) // Filtrar por inicio de caracteres
-        );
+if (input) {
+    input.addEventListener('input', (event) => {
+        const query = event.target.value.trim().toLowerCase();
+        const suggestionsContainer = document.getElementById('suggestions');
+        if (!suggestionsContainer) {
+            console.error('El contenedor de sugerencias no se encontró.');
+            return;
+        }
 
         suggestionsContainer.innerHTML = '';
 
-        filteredProducts.forEach(prod => {
-            const div = document.createElement('div');
-            div.classList.add('suggestion');
-            div.textContent = prod.nombre;
-            div.dataset.id = prod.codigo_producto;
-            div.addEventListener('click', () => {
-                input.value = prod.nombre;
-                suggestionsContainer.innerHTML = '';
+        if (query.length > 0) {
+            fetch('http://localhost:3000/api/productos')
+                .then(res => res.json())
+                .then(productos => {
+                    const filteredProducts = productos.filter(prod =>
+                        prod.nombre.toLowerCase().includes(query)
+                    );
 
-                // Autorrellenar campos al seleccionar un producto
-                document.getElementById('stockl1').value = prod.stock;
-                document.getElementById('preciol1').value = prod.precio;
-                document.getElementById('cantidadl1').value = 0; // Reiniciar cantidad
-                document.getElementById('subtotall1').value = 0; // Reiniciar subtotal
-            });
-            suggestionsContainer.appendChild(div);
-        });
-    } catch (err) {
-        console.error('Error al buscar productos:', err);
-    }
-});
+                    filteredProducts.forEach(prod => {
+                        const div = document.createElement('div');
+                        div.classList.add('suggestion');
+                        div.textContent = prod.nombre;
+                        div.dataset.id = prod.codigo_producto;
+                        div.addEventListener('click', () => {
+                            input.value = prod.nombre;
+                            suggestionsContainer.innerHTML = '';
+                        });
+                        suggestionsContainer.appendChild(div);
+                    });
+                })
+                .catch(err => console.error('Error al cargar productos:', err));
+        }
+    });
+} else {
+    console.error('El elemento con id="productInput" no se encontró en el DOM.');
+}
 
 // Actualizar subtotal al cambiar la cantidad
-document.getElementById('cantidadl1').addEventListener('input', () => {
-    const stock = parseInt(document.getElementById('stockl1').value, 10);
-    const precio = parseFloat(document.getElementById('preciol1').value);
-    const cantidad = parseInt(document.getElementById('cantidadl1').value, 10);
+const cantidadInput = document.getElementById('cantidadl1');
+if (cantidadInput) {
+    cantidadInput.addEventListener('input', () => {
+        const stock = parseInt(document.getElementById('stockl1').value, 10);
+        const precio = parseFloat(document.getElementById('preciol1').value);
+        const cantidad = parseInt(document.getElementById('cantidadl1').value, 10);
 
-    if (cantidad > stock) {
-        alert('La cantidad no puede superar el stock disponible.');
-        document.getElementById('cantidadl1').value = stock; // Ajustar cantidad al stock máximo
-    }
-    if(cantidad < 0){
-        alert('La cantidad no puede ser negativa.');
-        document.getElementById('cantidadl1').value = 0; // Ajustar cantidad a 0
-    }
-    const nuevaCantidad = parseInt(document.getElementById('cantidadl1').value, 10);
-    document.getElementById('subtotall1').value = (nuevaCantidad * precio).toFixed(2);
-});
+        if (cantidad > stock) {
+            alert('La cantidad no puede superar el stock disponible.');
+            document.getElementById('cantidadl1').value = stock; // Ajustar cantidad al stock máximo
+        }
+        if(cantidad < 0){
+            alert('La cantidad no puede ser negativa.');
+            document.getElementById('cantidadl1').value = 0; // Ajustar cantidad a 0
+        }
+        const nuevaCantidad = parseInt(document.getElementById('cantidadl1').value, 10);
+        document.getElementById('subtotall1').value = (nuevaCantidad * precio).toFixed(2);
+    });
+} else {
+    console.error('El elemento con id="cantidadl1" no se encontró en el DOM.');
+}
 
 // Cierra sugerencias al hacer clic fuera
 document.addEventListener('click', e => {
-    if (!e.target.closest('.autocomplete-container')) {
+    const suggestionsContainer = document.getElementById('suggestions');
+    if (suggestionsContainer && !e.target.closest('.autocomplete-container')) {
         suggestionsContainer.innerHTML = '';
     }
 });

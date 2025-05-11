@@ -49,9 +49,11 @@ export const createMarca = async (req, res) => {
         const result = await pool.request()
             .input('nombre', sql.VarChar, nombre)
             .input('estado', sql.Bit, estado)
-            .query('INSERT INTO marca (nombre, estado) VALUES (@nombre, @estado)');
+            .query('INSERT INTO marca (nombre, estado) OUTPUT INSERTED.codigo_marca VALUES (@nombre, @estado)');
 
-        console.log('Resultado de la consulta SQL:', result);
+        if (result.recordset.length === 0) {
+            throw new Error('No se pudo insertar la marca.');
+        }
 
         res.json({ success: true, message: 'Marca agregada con éxito.', codigo_marca: result.recordset[0].codigo_marca });
     } catch (error) {
@@ -62,30 +64,34 @@ export const createMarca = async (req, res) => {
 
 // Actualizar una marca existente
 export const updateMarca = async (req, res) => {
-  try {
-    const { codigo_marca } = req.params;
-    const { nombre, estado } = req.body;
+    try {
+        const { codigo_marca } = req.params;
+        const { nombre, estado } = req.body;
 
-    const pool = await getConnection();
-    const result = await pool.request()
-      .input('codigo_marca', sql.Int, codigo_marca)
-      .input('nombre', sql.VarChar, nombre)
-      .input('estado', sql.Bit, estado)
-      .query(`
-        UPDATE marca
-        SET nombre = @nombre, estado = @estado
-        WHERE codigo_marca = @codigo_marca
-      `);
+        if (!nombre || estado === undefined) {
+            return res.status(400).json({ success: false, message: 'Nombre y estado son requeridos.' });
+        }
 
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ message: 'Marca no encontrada' });
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('codigo_marca', sql.Int, codigo_marca)
+            .input('nombre', sql.VarChar, nombre)
+            .input('estado', sql.Bit, estado)
+            .query(`
+                UPDATE marca
+                SET nombre = @nombre, estado = @estado
+                WHERE codigo_marca = @codigo_marca
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ success: false, message: 'Marca no encontrada.' });
+        }
+
+        res.json({ success: true, message: 'Marca actualizada con éxito.' });
+    } catch (error) {
+        console.error('Error al actualizar marca:', error);
+        res.status(500).json({ success: false, message: 'Error del servidor.', error: error.message });
     }
-
-    res.json({ message: 'Marca actualizada exitosamente' });
-  } catch (error) {
-    console.error('Error al actualizar marca:', error);
-    res.status(500).json({ error: 'Error del servidor' });
-  }
 };
 
 // Eliminar una marca

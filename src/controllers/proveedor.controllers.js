@@ -38,20 +38,15 @@ export const createProveedor = async (req, res) => {
     const { nombre, estado } = req.body;
 
     if (!nombre || estado === undefined) {
-        console.error('Validación fallida: Nombre o estado faltante.');
         return res.status(400).json({ success: false, message: 'Nombre y estado son requeridos.' });
     }
 
     try {
-        console.log('Datos recibidos en el backend:', { nombre, estado });
-
         const pool = await getConnection();
-        const result = await pool.request()
+        await pool.request()
             .input('nombre', sql.VarChar, nombre)
             .input('estado', sql.Bit, estado)
             .query('INSERT INTO proveedor (nombre, estado) VALUES (@nombre, @estado)');
-
-        console.log('Resultado de la consulta SQL:', result);
 
         res.json({ success: true, message: 'Proveedor agregado con éxito.' });
     } catch (error) {
@@ -62,30 +57,34 @@ export const createProveedor = async (req, res) => {
 
 // Actualizar un proveedor existente
 export const updateProveedor = async (req, res) => {
-  try {
-    const { codigo_proveedor } = req.params;
-    const { nombre, estado } = req.body;
+    try {
+        const { codigo_proveedor } = req.params;
+        const { nombre, estado } = req.body;
 
-    const pool = await getConnection();
-    const result = await pool.request()
-      .input('codigo_proveedor', sql.Int, codigo_proveedor)
-      .input('nombre', sql.VarChar, nombre)
-      .input('estado', sql.Bit, estado)
-      .query(`
-        UPDATE proveedor
-        SET nombre = @nombre, estado = @estado
-        WHERE codigo_proveedor = @codigo_proveedor
-      `);
+        if (!nombre || estado === undefined) {
+            return res.status(400).json({ success: false, message: 'Nombre y estado son requeridos.' });
+        }
 
-    if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ message: 'Proveedor no encontrado' });
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('codigo_proveedor', sql.Int, codigo_proveedor)
+            .input('nombre', sql.VarChar, nombre)
+            .input('estado', sql.Bit, estado)
+            .query(`
+                UPDATE proveedor
+                SET nombre = @nombre, estado = @estado
+                WHERE codigo_proveedor = @codigo_proveedor
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ success: false, message: 'Proveedor no encontrado.' });
+        }
+
+        res.json({ success: true, message: 'Proveedor actualizado con éxito.' });
+    } catch (error) {
+        console.error('Error al actualizar proveedor:', error);
+        res.status(500).json({ success: false, message: 'Error del servidor.', error: error.message });
     }
-
-    res.json({ message: 'Proveedor actualizado exitosamente' });
-  } catch (error) {
-    console.error('Error al actualizar proveedor:', error);
-    res.status(500).json({ error: 'Error del servidor' });
-  }
 };
 // Eliminar un proveedor
 export const deleteProveedor = async (req, res) => {

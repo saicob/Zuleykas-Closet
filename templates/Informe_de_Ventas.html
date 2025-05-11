@@ -73,32 +73,54 @@
 
     <script src="/script.js"></script>
     <script>
-        // Inicializar DataTable
-        const table = $('#ventas-table').DataTable({
-            scrollX: true,
-            scrollY: "400px",
-            scrollCollapse: true,
-            ajax: {
-                url: 'http://localhost:3000/api/ventas',
-                dataSrc: ''
-            },
-            columns: [
-                { data: 'codigo_factura' },
-                { data: 'fecha' },
-                { data: 'total' }
-            ],
-            language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                paginate: {
-                    first: "Primero",
-                    last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
+        $(document).ready(function() {
+            // Inicializar DataTable
+            const table = $('#ventas-table').DataTable({
+                scrollX: true,
+                scrollY: "400px",
+                scrollCollapse: true,
+                ajax: {
+                    url: 'http://localhost:3000/api/ventas', // Ensure this URL matches your backend route
+                    dataSrc: '' // Adjust based on the API response structure
+                },
+                columns: [
+                    { data: 'codigo_factura', title: 'Número de Venta' },
+                    { 
+                        data: 'fecha',
+                        render: function(data) {
+                            // Format the date to a more readable format
+                            const date = new Date(data);
+                            return date.toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                        }
+                    },
+                    { 
+                        data: 'total',
+                        render: function(data) {
+                            // Format the total as currency
+                            return `$${parseFloat(data).toFixed(2)}`;
+                        }
+                    }
+                ],
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                },
+                error: function(xhr, error, thrown) {
+                    console.error('Error al cargar los datos:', error, thrown);
                 }
-            }
+            });
         });
-   </script>
+    </script>
 </body>
 </html>

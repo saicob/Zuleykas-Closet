@@ -91,58 +91,101 @@
             <button id="finalizar-compra">Finalizar Compra</button>
         </aside>
     </main>
-    <script src="/script.js"></script>
-    <script src="/realizarventa.js"></script>
-    <script src="/carrito.js"></script>
-    <!-- <select id="select-categorias">
-        <option value="">Seleccione una categoría</option>
-    </select> -->
-    <script src="/autocompletar.js"></script>
-    <script>
-         
-        async function cargarCategorias() {
-            try {
-                const res = await fetch('http://localhost:3000/api/productos');
-                const productos = await res.json();
 
-                const input = document.getElementById('productInput');
-                const suggestionsContainer = document.getElementById('suggestions');
+<script src="/carrito.js"></script>
+<script src="/autocompletar.js"></script>
+<script src="/catalogo.js"></script>
 
-                input.addEventListener('input', (event) => {
-                    const query = event.target.value.trim().toLowerCase(); // Asegura que el valor se obtenga correctamente
-                    suggestionsContainer.innerHTML = '';
+<script>
+    async function cargarCategorias() {
+        try {
+            const res = await fetch('http://localhost:3000/api/productos');
+            const productos = await res.json();
 
-                    if (query.length > 0) {
-                        const filteredProducts = productos.filter(prod =>
-                            prod.nombre.toLowerCase().includes(query)
-                        );
+            const input = document.getElementById('productInput');
+            const suggestionsContainer = document.getElementById('suggestions');
 
-                        filteredProducts.forEach(prod => {
-                            const div = document.createElement('div');
-                            div.classList.add('suggestion');
-                            div.textContent = prod.nombre;
-                            div.dataset.id = prod.codigo_producto;
-                            div.addEventListener('click', () => {
-                                input.value = prod.nombre;
-                                suggestionsContainer.innerHTML = '';
-                            });
-                            suggestionsContainer.appendChild(div);
+            input.addEventListener('input', (event) => {
+                const query = event.target.value.trim().toLowerCase();
+                suggestionsContainer.innerHTML = '';
+
+                if (query.length > 0) {
+                    const filteredProducts = productos.filter(prod =>
+                        prod.nombre.toLowerCase().includes(query)
+                    );
+
+                    filteredProducts.forEach(prod => {
+                        const div = document.createElement('div');
+                        div.classList.add('suggestion');
+                        div.textContent = prod.nombre;
+                        div.dataset.id = prod.codigo_producto;
+                        div.addEventListener('click', () => {
+                            input.value = prod.nombre;
+                            suggestionsContainer.innerHTML = '';
                         });
-                    }
-                });
-            } catch (err) {
-                console.error('Error cargando categorías:', err);
+                        suggestionsContainer.appendChild(div);
+                    });
+                }
+            });
+        } catch (err) {
+            console.error('Error cargando categorías:', err);
+        }
+    }
+
+    document.getElementById('finalizar-compra').addEventListener('click', async () => {
+        const carritoFilas = document.querySelectorAll('#carrito-table tbody tr');
+        const productos = [];
+
+        carritoFilas.forEach(fila => {
+            const nombre = fila.querySelector('td:nth-child(1)').textContent.trim();
+            const precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent.trim().replace('$', ''));
+            const cantidad = parseInt(fila.querySelector('input[type="number"]').value.trim());  // Cambiado a input
+            const subtotal = parseFloat(fila.querySelector('td:nth-child(4)').textContent.trim().replace('$', ''));
+
+            if (cantidad <= 0 || isNaN(cantidad)) {
+                alert(`Cantidad inválida para el producto: ${nombre}`);
+                return;
             }
+
+            productos.push({ nombre, precio, cantidad, subtotal });
+        });
+
+        if (productos.length === 0) {
+            alert('El carrito está vacío.');
+            return;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            cargarProductos();
-            cargarCategorias();
-        });
-    </script>
-    <script src="/catalogo.js"></script>
+        try {
+            const res = await fetch('http://localhost:3000/api/ventas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productos })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert('Venta realizada exitosamente. ID de factura: ' + data.facturaId);
+                // Limpiar carrito
+                document.querySelector('#carrito-table tbody').innerHTML = '';
+                document.getElementById('carrito-total').textContent = 'Total: $0.00';
+            } else {
+                alert('Error al realizar la venta: ' + data.message);
+            }
+        } catch (err) {
+            console.error('Error al enviar la venta:', err);
+            alert('Error al realizar la venta. Revisa la consola.');
+        }
+    });
 
 
- 
+    window.addEventListener('DOMContentLoaded', () => {
+
+        cargarCategorias();
+    });
+</script>
+
 </body>
 </html>

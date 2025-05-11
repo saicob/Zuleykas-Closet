@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const agregarMarcaSection = document.getElementById('Agregar-Marca');
+    const overlay = document.getElementById('overlay');
     const agregarForm = document.getElementById('agregar-marca-form');
 
     if (!agregarForm) {
@@ -8,12 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Formulario "Agregar Marca" encontrado.');
 
-    const agregarButton = document.querySelector('#Agregar-Marca #Agregar');
-    if (agregarButton) {
-        agregarButton.addEventListener('click', () => {
-            console.log('Botón "Agregar" para marca presionado.');
-        });
-    }
+    // Mostrar sección Agregar Marca
+    document.getElementById('mostrar-agregar-marca').addEventListener('click', () => {
+        agregarMarcaSection.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+    // Cancelar Agregar
+    document.getElementById('Agregar-Marca').querySelector('#Cancelar').addEventListener('click', () => {
+        agregarForm.reset(); // Limpiar el formulario
+        agregarMarcaSection.style.display = 'none';
+        overlay.style.display = 'none';
+    });
 
     agregarForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -48,18 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const responseData = await response.json();
 
-            if (!responseData.codigo_marca) {
+            if (!responseData.success) {
                 throw new Error(responseData.message || 'Error al agregar la marca.');
             }
 
             alert('Marca agregada con éxito.');
             console.log('Marca agregada con éxito:', responseData);
             agregarForm.reset(); // Limpiar el formulario
-            document.getElementById('Agregar-Marca').style.display = 'none'; // Ocultar el modal
-            document.getElementById('overlay').style.display = 'none'; // Ocultar el overlay
+            agregarMarcaSection.style.display = 'none';
+            overlay.style.display = 'none';
 
             // Recargar la tabla de marcas
-            $('#marcas-table').DataTable().ajax.reload();
+            $('#marcas-table').DataTable().ajax.reload(null, false); // Mantener la página actual
         } catch (err) {
             console.error('Error al agregar la marca:', err);
             alert(`Hubo un error al agregar la marca: ${err.message}`);

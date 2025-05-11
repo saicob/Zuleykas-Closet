@@ -1,58 +1,38 @@
 import sql from 'mssql';
-import dotenv from 'dotenv';
+import { dbSettings } from '../database/connection.js';
 
-dotenv.config();
-
-export const dbSettings = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: 'Zuleykas',
-    port: parseInt(process.env.DB_PORT, 10),
-    options: {
-        encrypt: false,
-        trustServerCertificate: true,
-    }
-};
-
-export const getConnection = async () => {
-    try {
-        const pool = await sql.connect(dbSettings);
-        const result = await pool.request().query('SELECT GETDATE() as fecha');
-        console.log('Fecha de conexión:', result);
-        return pool;
-    } catch (error) {
-        console.error('Error de conexión:', error);
-        throw error;
-    }
-};
-
-export const realizarVenta = async (cliente, productos) => {
+export const realizarVenta = async (productos) => {
     let transaction;
     try {
         const pool = await sql.connect(dbSettings);
         transaction = new sql.Transaction(pool);
         await transaction.begin();
 
-        // Crear la factura
+        // Crear la factura (inicialmente con total = 0)
         const facturaResult = await transaction.request()
             .query(`
                 INSERT INTO factura (fecha, total) 
                 OUTPUT INSERTED.codigo_factura 
-                VALUES (GETDATE(), 0);
+                VALUES (CAST(GETDATE() AS date), 0);
             `);
         const facturaId = facturaResult.recordset[0].codigo_factura;
 
         let totalFactura = 0;
 
-        // Procesar productos
+        // Recorrer los productos y procesarlos
         for (const producto of productos) {
             const { nombre, cantidad, subtotal } = producto;
 
-            if (!nombre || cantidad <= 0 || subtotal <= 0) {
-                throw new Error(`Datos inválidos para el producto: ${nombre}`);
+            if (!nombre) {
+                throw new Error('El nombre del producto es inválido o está vacío.');
             }
 
+            if (!Number.isInteger(cantidad) || cantidad <= 0) {
+                throw new Error(`La cantidad del producto "${nombre}" no es válida: ${cantidad}`);
+            }
+
+
+            // Obtener el código del producto
             const productoResult = await transaction.request()
                 .input('nombre', sql.VarChar, nombre)
                 .query('SELECT codigo_producto FROM producto WHERE nombre = @nombre');
@@ -63,13 +43,13 @@ export const realizarVenta = async (cliente, productos) => {
 
             const codigoProducto = productoResult.recordset[0].codigo_producto;
 
-            // Actualizar stock del producto
+            // Actualizar el stock del producto
             await transaction.request()
                 .input('codigoProducto', sql.Int, codigoProducto)
                 .input('cantidad', sql.Int, cantidad)
                 .query('UPDATE producto SET stock = stock - @cantidad WHERE codigo_producto = @codigoProducto');
 
-            // Insertar detalles de la venta
+            // Insertar en la tabla producto_factura
             await transaction.request()
                 .input('cantidad', sql.Int, cantidad)
                 .input('subtotal', sql.Decimal(10, 2), subtotal)
@@ -89,7 +69,7 @@ export const realizarVenta = async (cliente, productos) => {
             .input('total', sql.Decimal(10, 2), totalFactura)
             .query('UPDATE factura SET total = @total WHERE codigo_factura = @facturaId');
 
-        // Confirmar transacción
+        // Confirmar la transacción
         await transaction.commit();
 
         return { success: true, message: 'Venta realizada con éxito', facturaId };

@@ -29,7 +29,9 @@ function agregarAlCarrito(producto) {
             alert("No puedes agregar más unidades de este producto. Stock insuficiente.");
         }
     } else {
-        carrito.push({ ...producto, cantidad: 1 });
+        const cantidadInicial = Number.isInteger(producto.cantidad) && producto.cantidad > 0 ? producto.cantidad : 1;
+        carrito.push({ ...producto, cantidad: cantidadInicial });
+
     }
     renderizarCarrito();
 }
@@ -85,7 +87,16 @@ function renderizarCarrito() {
 }
 
 function actualizarCantidad(index, nuevaCantidad) {
-    const cantidad = parseInt(nuevaCantidad);
+    
+    const cantidad = parseInt(nuevaCantidad, 10);
+    if (isNaN(cantidad)) {
+        alert("La cantidad ingresada no es un número válido.");
+        renderizarCarrito();
+        return;
+    }
+
+
+
     const stock = carrito[index].stock;
 
     if (isNaN(cantidad) || cantidad <= 0) {
@@ -105,7 +116,10 @@ function actualizarCantidad(index, nuevaCantidad) {
 }
 
 // Envía los datos del carrito al backend (crear compra)
-function finalizarCompra() {
+async function finalizarCompra() {
+
+    console.log("Carrito que se enviará:", JSON.stringify(carrito, null, 2));
+
     if (carrito.length === 0) {
         alert("El carrito está vacío.");
         return;
@@ -125,37 +139,50 @@ function finalizarCompra() {
             return;
         }
 
-        if (isNaN(producto.cantidad) || producto.cantidad <= 0) {
-            console.error('Producto con cantidad inválida:', producto);
+        if (!Number.isInteger(producto.cantidad) || producto.cantidad <= 0) {
+            console.error('Producto con cantidad inválida (tipo o valor):', producto);
             alert('Error: Uno o más productos tienen una cantidad inválida.');
             return;
-        }
+        }   
+
+        
     }
 
     const datos = {
         productos: carrito.map(p => ({
             nombre: p.nombre,
             cantidad: p.cantidad,
-            precio_unitario: p.precio
-        })),
-        fecha: new Date().toISOString()
+            subtotal: parseFloat((p.precio * p.cantidad).toFixed(2)) // Asegúrate de que sea un número válido
+        }))
     };
 
-    $.ajax({
-        url: 'http://localhost:3000/api/compras',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(datos),
-        success: function () {
-            alert('Compra realizada con éxito');
+    try {
+        const response = await fetch('http://localhost:3000/api/ventas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datos),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error del servidor: ${errorText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Venta realizada con éxito. Factura ID: ' + result.facturaId);
             carrito = [];
             renderizarCarrito();
-            $('#carrito-container').hide();
-        },
-        error: function () {
-            alert('Error al registrar la compra');
+        } else {
+            alert('Error al registrar la venta: ' + result.message);
         }
-    });
+    } catch (error) {
+        console.error('Error al realizar la venta:', error);
+        alert('Ocurrió un error al registrar la venta.');
+    }
 }
 
 // Alternar visibilidad del panel del carrito (desplazable)
@@ -175,4 +202,3 @@ document.addEventListener('DOMContentLoaded', () => {
         botonCarrito.addEventListener('click', toggleCarrito);
     }
 });
-

@@ -1,27 +1,12 @@
-import express from 'express';
-import { realizarVenta } from '../database/connection.js';
+import { Router } from 'express';
+import { crearVenta, getVentas } from '../controllers/ventas.controllers.js';
 
-const router = express.Router();
+const router = Router();
 
-router.post('/realizarventa', async (req, res) => {
-    try {
-        const { cliente, productos } = req.body;
+// Crear una nueva venta
+router.post('/', crearVenta);
 
-        if (!productos || productos.length === 0) {
-            return res.status(400).json({ success: false, message: 'No se enviaron productos.' });
-        }
-
-        const result = await realizarVenta(cliente, productos);
-
-        if (result.success) {
-            res.status(200).json(result);
-        } else {
-            res.status(500).json(result);
-        }
-    } catch (error) {
-        console.error('Error en la ruta /realizarventa:', error);
-        res.status(500).json({ success: false, message: 'Error interno del servidor.', error: error.message });
-    }
-});
+// Obtener el historial de ventas
+router.get('/', getVentas);
 
 export default router;

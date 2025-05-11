@@ -18,8 +18,8 @@ router.get('/:nombre', getProveedorByName);
 // Crear una nueva marca
 router.post('/', createProveedor);
 
-// Actualizar una marca por código
-router.put('/:codigo_marca', updateProveedor);
+// Actualizar un proveedor por código
+router.put('/:codigo_proveedor', updateProveedor);
 
 // Eliminar una marca por código
 router.delete('/:codigo_marca', deleteProveedor);

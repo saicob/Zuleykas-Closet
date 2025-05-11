@@ -1,43 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const agregarForm = document.getElementById('agregar-proveedor-form');
+    const agregarProveedorSection = document.getElementById('Agregar-Proveedor');
+    const overlay = document.getElementById('overlay');
 
-    if (!agregarForm) {
-        console.error('El formulario con id="agregar-proveedor-form" no se encontró en el DOM.');
-        return;
-    }
+    // Mostrar sección Agregar Proveedor
+    document.getElementById('mostrar-agregar-proveedor').addEventListener('click', () => {
+        agregarProveedorSection.style.display = 'block';
+        overlay.style.display = 'block';
+    });
 
-    console.log('Formulario "Agregar Proveedor" encontrado.');
+    // Cancelar Agregar
+    document.getElementById('Agregar-Proveedor').querySelector('#Cancelar').addEventListener('click', () => {
+        document.getElementById('agregar-proveedor-form').reset(); // Limpiar el formulario
+        agregarProveedorSection.style.display = 'none';
+        overlay.style.display = 'none';
+    });
 
-    const agregarButton = document.getElementById('Agregar');
-    if (agregarButton) {
-        agregarButton.addEventListener('click', () => {
-            console.log('Botón "Agregar" presionado.');
-        });
-    }
-
-    agregarForm.addEventListener('submit', async (event) => {
+    // Manejar el envío del formulario
+    document.getElementById('agregar-proveedor-form').addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-        console.log('Formulario "Agregar Proveedor" enviado.');
 
-        // Obtener los valores de los campos del formulario
         const nombre = document.getElementById('nombre').value.trim();
         const estado = document.getElementById('estado').value.trim();
 
-        // Validar los campos
         if (!nombre || !estado) {
             alert('Por favor, complete todos los campos correctamente.');
-            console.error('Validación fallida: Campos incompletos.');
             return;
         }
 
         try {
-            console.log('Enviando datos al backend:', { nombre, estado });
             const response = await fetch('http://localhost:3000/api/proveedor', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     nombre,
-                    estado: estado === 'Activo' ? 1 : 0 // Convertir estado a formato booleano
+                    estado: estado === 'Activo' ? 1 : 0 // Convertir estado a booleano
                 }),
             });
 
@@ -53,10 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             alert('Proveedor agregado con éxito.');
-            console.log('Proveedor agregado con éxito:', responseData);
-            agregarForm.reset(); // Limpiar el formulario
-            document.getElementById('Agregar-Proveedor').style.display = 'none'; // Ocultar el modal
-            document.getElementById('overlay').style.display = 'none'; // Ocultar el overlay
+            document.getElementById('agregar-proveedor-form').reset(); // Limpiar el formulario
+            agregarProveedorSection.style.display = 'none';
+            overlay.style.display = 'none';
 
             // Recargar la tabla de proveedores
             $('#proveedores-table').DataTable().ajax.reload();

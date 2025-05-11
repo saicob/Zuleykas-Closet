@@ -127,10 +127,10 @@
 </main>
 
     <script src="/script.js"></script>
-
+    <script src="/agregarproveedor.js"></script>
+    <script src="/actualizarproveedor.js"></script>
     <script>
         $(document).ready(function() {
-            const agregarProveedorSection = $('#Agregar-Proveedor');
             const actualizarProveedorSection = $('#Actualizar-Proveedor');
             const overlay = $('#overlay');
 
@@ -144,10 +144,12 @@
                     }
                 },
                 columns: [
-                    { data: 'nombre' },
+                    { data: 'nombre', title: 'Nombre' },
                     { 
                         data: 'estado',
-            
+                        render: function(data) {
+                            return data === true ? 'Activo' : 'Inactivo'; // Convert boolean to text
+                        }
                     }
                 ],
                 language: {
@@ -166,17 +168,16 @@
                 scrollCollapse: true
             });
 
-            // Mostrar sección Agregar Proveedor
-            $('#mostrar-agregar-proveedor').on('click', function() {
-                agregarProveedorSection.show();
-                overlay.show();
-            });
-
-            // Cancelar Agregar
-            $('#Agregar-Proveedor #Cancelar').on('click', function() {
-                $('#agregar-proveedor-form')[0].reset(); // Clear all form inputs
-                agregarProveedorSection.hide();
-                overlay.hide();
+            // Mostrar sección Actualizar Proveedor al hacer clic en una fila
+            $('#proveedores-table tbody').on('click', 'tr', function() {
+                const data = table.row(this).data();
+                if (data) {
+                    $('#actualizar-proveedor-form #nombre').val(data.nombre);
+                    $('#actualizar-proveedor-form #estado').val(data.estado ? 'Activo' : 'Inactivo');
+                    $('#actualizar-proveedor-form').data('codigo_proveedor', data.codigo_proveedor); // Store the provider ID
+                    actualizarProveedorSection.show();
+                    overlay.show();
+                }
             });
 
             // Cancelar Actualizar
@@ -186,20 +187,51 @@
                 overlay.hide();
             });
 
-            // Mostrar sección Actualizar Proveedor al hacer clic en una fila
-            $('#proveedores-table tbody').on('click', 'tr', function() {
-                const data = table.row(this).data();
-                if (data) {
-                    $('#Actualizar-Proveedor #nombre').val(data.nombre);
-                    $('#Actualizar-Proveedor #estado').val(data.estado === 'Activo' ? 'Activo' : 'Inactivo');
-                    actualizarProveedorSection.show();
-                    overlay.show();
-                }
-            });
+            // Manejar el envío del formulario de actualización
+            $('#actualizar-proveedor-form').on('submit', async function(event) {
+                event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-            // Prevenir cierre accidental al hacer clic en overlay
-            overlay.on('click', function(event) {
-                event.stopPropagation();
+                const codigoProveedor = $(this).data('codigo_proveedor');
+                const nombre = $('#actualizar-proveedor-form #nombre').val().trim();
+                const estado = $('#actualizar-proveedor-form #estado').val().trim();
+
+                if (!nombre || !estado) {
+                    alert('Por favor, complete todos los campos correctamente.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:3000/api/proveedor/${codigoProveedor}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre,
+                            estado: estado === 'Activo' ? 1 : 0 // Convertir estado a booleano
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error del servidor: ${errorText}`);
+                    }
+
+                    const responseData = await response.json();
+
+                    if (!responseData.success) {
+                        throw new Error(responseData.message || 'Error al actualizar el proveedor.');
+                    }
+
+                    alert('Proveedor actualizado con éxito.');
+                    $('#actualizar-proveedor-form')[0].reset(); // Limpiar el formulario
+                    actualizarProveedorSection.hide();
+                    overlay.hide();
+
+                    // Recargar la tabla de proveedores
+                    table.ajax.reload();
+                } catch (err) {
+                    console.error('Error al actualizar el proveedor:', err);
+                    alert(`Hubo un error al actualizar el proveedor: ${err.message}`);
+                }
             });
         });
     </script>
