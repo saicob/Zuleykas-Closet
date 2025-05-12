@@ -18,9 +18,7 @@ router.get('/productos/:nombre',pc.getProductByName)
 
 router.post('/productos', pc.createProduct)
 
-router.put('/productos/:id', (req, res) => {    
-  res.send('PUT productos');
-})
+router.put('/productos/:id', pc.updateProduct);
 
 router.delete('/productos/:id', (req, res) => {
   res.send('DELETE productos');

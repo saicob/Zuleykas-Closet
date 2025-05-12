@@ -14,8 +14,8 @@ app.get('/', (req, res) => {
 // ...otras rutas...
 
 app.listen(3000, () => {
-    console.log('Servidor iniciado en http://localhost:3000');
+    console.log('Servidor iniciado en http://localhost:3000/VerProductos.html');
 });
 
-// app.js o tu archivo de rutas
+
 

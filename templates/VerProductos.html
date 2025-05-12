@@ -67,7 +67,7 @@
                         <th style="padding: 10px; text-align: left;">Tallas</th>
                         <th style="padding: 10px; text-align: left;">Inventario</th>
                         <th style="padding: 10px; text-align: left;">Estado</th>
-                        <th style="padding: 10px; text-align: left;">Cantidad Vendida</th>
+                        <th style="padding: 10px; text-align: left;">Fecha de Caducidad</th>
                     </tr>
                 </thead>
                 
@@ -257,10 +257,20 @@
                     }
                 },
                 { data: 'descripcion' },
-                { data: 'talla' },
+                {
+                    data: 'talla',
+                    render: function(data) {
+                        return data ? data : 'N/A'; // Display "N/A" if no talla is provided
+                    }
+                },
                 { data: 'stock' },
-                { data: 'estado' },
-                { data: 'cantidades_vendidas' }
+                {
+                    data: 'estado',
+                    render: function(data) {
+                        return data ? 'Activo' : 'Inactivo';
+                    }
+                },
+                { data: 'fecha_caducidad' }
             ],
 
                 language: {
