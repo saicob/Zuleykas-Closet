@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Solo ejecuta si existe el botón mostrar-agregar-marca (evita conflicto con VerProductos.html)
+    const mostrarAgregarMarcaBtn = document.getElementById('mostrar-agregar-marca');
+    if (!mostrarAgregarMarcaBtn) return;
+
     const agregarMarcaSection = document.getElementById('Agregar-Marca');
     const overlay = document.getElementById('overlay');
     const agregarForm = document.getElementById('agregar-marca-form');
+    const cancelarBtn = agregarMarcaSection ? agregarMarcaSection.querySelector('#Cancelar') : null;
 
     if (!agregarForm) {
         console.error('El formulario con id="agregar-marca-form" no se encontró en el DOM.');
@@ -11,17 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Formulario "Agregar Marca" encontrado.');
 
     // Mostrar sección Agregar Marca
-    document.getElementById('mostrar-agregar-marca').addEventListener('click', () => {
+    mostrarAgregarMarcaBtn.addEventListener('click', () => {
         agregarMarcaSection.style.display = 'block';
         overlay.style.display = 'block';
     });
 
     // Cancelar Agregar
-    document.getElementById('Agregar-Marca').querySelector('#Cancelar').addEventListener('click', () => {
-        agregarForm.reset(); // Limpiar el formulario
-        agregarMarcaSection.style.display = 'none';
-        overlay.style.display = 'none';
-    });
+    if (cancelarBtn) {
+        cancelarBtn.addEventListener('click', () => {
+            agregarForm.reset(); // Limpiar el formulario
+            agregarMarcaSection.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+    }
 
     agregarForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -66,8 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
             agregarMarcaSection.style.display = 'none';
             overlay.style.display = 'none';
 
-            // Recargar la tabla de marcas
-            $('#marcas-table').DataTable().ajax.reload(null, false); // Mantener la página actual
+            // Recargar la tabla de marcas si existe
+            if (window.$ && $('#marcas-table').length) {
+                $('#marcas-table').DataTable().ajax.reload(null, false);
+            }
         } catch (err) {
             console.error('Error al agregar la marca:', err);
             alert(`Hubo un error al agregar la marca: ${err.message}`);

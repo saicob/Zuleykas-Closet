@@ -60,4 +60,6 @@ async function cargarCatalogo() {
     }
 }
 
+// No hay referencias a Local1, solo lógica de catálogo
+
 window.addEventListener('DOMContentLoaded', cargarCatalogo);

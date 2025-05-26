@@ -4,8 +4,8 @@ import { getConnection } from '../database/connection.js'; // tu config de conex
 
 const router = express.Router();
 
-// Obtener empleados activos del local 1
-router.get('/empleados/local1', async (req, res) => {
+// Obtener empleados activos del primer local (antes: local 1)
+router.get('/empleados/tienda1', async (req, res) => {
     try {
         const pool = await sql.connect(getConnection);
         const result = await pool.request()
@@ -19,8 +19,8 @@ router.get('/empleados/local1', async (req, res) => {
     }
 });
 
-// Obtener productos activos del local 1
-router.get('/productos/local1', async (req, res) => {
+// Obtener productos activos del primer local (antes: local 1)
+router.get('/productos/tienda1', async (req, res) => {
     try {
         const pool = await sql.connect(getConnection);
         const result = await pool.request()

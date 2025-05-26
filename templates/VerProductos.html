@@ -37,8 +37,7 @@
                                 <ul class="dropdown-content">
                                     <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
                                     <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                                    <li><a href="Local1.html">Crear Venta Local 1</a></li>
-                                    <li><a href="Local2.html">Crear Venta Local 2</a></li>
+                                    <li><a href="Crear_venta.html">Crear Venta</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -55,6 +54,7 @@
 
     
     <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
+        <!-- Sección de productos -->
         <section id="Tabla-Productos" style="display: block;">
            
                 <button id="registrar-prenda-button" class="action-button">Registrar Producto</button>
@@ -62,12 +62,14 @@
             <table id="productos-table" class="display" style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
                 <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
                     <tr>
-                        <th style="padding: 10px; text-align: left;">Imagen</th> <!-- ESTA ES LA NUEVA -->
+                        <th style="padding: 10px; text-align: left;">Imagen</th>
                         <th style="padding: 10px; text-align: left;">Descripción</th>
                         <th style="padding: 10px; text-align: left;">Tallas</th>
                         <th style="padding: 10px; text-align: left;">Inventario</th>
-                        <th style="padding: 10px; text-align: left;">Estado</th>
+                        <th style="padding: 10px; text-align: left;">Proveedor</th>
+                        <th style="padding: 10px; text-align: left;">Marca</th>
                         <th style="padding: 10px; text-align: left;">Fecha de Caducidad</th>
+                        <th style="padding: 10px; text-align: left;">Local</th>
                     </tr>
                 </thead>
                 
@@ -78,79 +80,12 @@
         
         </section>
 
+
+
+        <!-- Sección de actualizar producto -->
         <section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
             <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Actualizar producto</h2>
             <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Actualizar un producto existente</p>
-            <form>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre">
-                </div>
-                <div class="form-group">
-                <label for="local">Local</label>
-                <select id="local">
-                    <option value="villa-la-concha">Villa la concha</option>
-                </select>
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin-bottom: 20px;">
-                <div class="form-group" style="text-align: center;">
-                <label for="imagen">Seleccionar Imagen</label>
-                <div style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center;">
-                    <input type="file" id="imagen" accept="image/*" style="display: none;">
-                    <label for="imagen" style="cursor: pointer; color: #999;">Sube una imagen o arrastra</label>
-                </div>
-                </div>
-                <div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="proveedor">Proveedor</label>
-                    <select id="proveedor">
-                    <option value="proveedor1">Proveedor 1</option>
-                    </select>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="tipo-prenda">Tipo de prenda</label>
-                    <select id="tipo-prenda">
-                    <option value="tipo1">Tipo 1</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="marca">Marca</label>
-                    <select id="marca">
-                    <option value="marca1">Marca 1</option>
-                    </select>
-                </div>
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                <div class="form-group">
-                <label for="precio-compra">Precio de compra</label>
-                <input type="text" id="precio-compra">
-                </div>
-                <div class="form-group">
-                <label for="precio-venta">Precio de venta</label>
-                <input type="text" id="precio-venta">
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label for="cantidad">Cantidad</label>
-                <input type="text" id="cantidad">
-            </div>
-            <div class="form-group" style="margin-bottom: 20px; text-align: left;">
-                <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" rows="4" style="resize: none;"></textarea>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                <button type="submit" id="Actualizar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Actualizar</button>
-            </div>
-            </form>
-        </section>
-
-        <section id="Agregar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
-            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Registrar producto</h2>
-            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
             <form>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
@@ -160,40 +95,55 @@
                     <div class="form-group">
                         <label for="local">Local</label>
                         <select id="local">
-                            <option value="villa-la-concha">Villa la concha</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
                         </select>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin-bottom: 20px;">
-                    <div class="form-group" style="text-align: center;">
-                        <label for="imagen">Seleccionar Imagen</label>
-                        <div style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center;">
-                            <input type="file" id="imagen" accept="image/*" style="display: none;">
-                            <label for="imagen" style="cursor: pointer; color: #999;">Sube una imagen o arrastra</label>
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <div class="form-group" style="text-align: center;">
+                            <label for="imagen">Seleccionar Imagen</label>
+                            <div id="drop-area" style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; width:100%; min-width:220px; position: relative;">
+                                <input type="file" name="imagen" id="imagen" accept="image/*" style="display: none;">
+                                <label for="imagen" id="label-imagen" style="cursor: pointer; color: #999; width:100%; display:inline-block;">Sube una imagen o arrastra</label>
+                                
+                                <img id="preview" src="" style="max-width: 100px; display: none; margin-top: 10px;" />
+                                
+                                <button type="button" id="quitarImagen" style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="proveedor">Proveedor</label>
-                            <select id="proveedor">
-                                <option value="proveedor1">Proveedor 1</option>
-                            </select>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div class="form-group">
+                            <label for="proveedor-input">Proveedor</label>
+                            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                <div class="autocomplete-marca-proveedor-container">
+                                    <input type="text" id="proveedor-input" autocomplete="off">
+                                    <div id="proveedor-suggestions" class="suggestions-marca-proveedor"></div>
+                                </div>
+                                <button type="button" id="add-proveedor-btn" title="Agregar proveedor" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+                            </div>
                         </div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label for="tipo-prenda">Tipo de prenda</label>
+                        <div class="form-group">
+                            <label for="tipo-prenda">Categoría</label>
                             <select id="tipo-prenda">
                                 <option value="tipo1">Tipo 1</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="marca">Marca</label>
-                            <select id="marca">
-                                <option value="marca1">Marca 1</option>
-                            </select>
+                            <label for="marca-input">Marca</label>
+                            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                <div class="autocomplete-marca-proveedor-container">
+                                    <input type="text" id="marca-input" autocomplete="off">
+                                    <div id="marca-suggestions" class="suggestions-marca-proveedor"></div>
+                                </div>
+                                <button type="button" id="add-marca-btn" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="precio-compra">Precio de compra</label>
                         <input type="text" id="precio-compra">
@@ -202,10 +152,10 @@
                         <label for="precio-venta">Precio de venta</label>
                         <input type="text" id="precio-venta">
                     </div>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="cantidad">Cantidad</label>
-                    <input type="text" id="cantidad">
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="text" id="cantidad">
+                    </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 20px; text-align: left;">
                     <label for="descripcion">Descripción</label>
@@ -213,24 +163,184 @@
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                     <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Registrar</button>
+                    <button type="submit" id="Actualizar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Actualizar</button>
                 </div>
             </form>
         </section>
 
+
+   <!-- Sección de agregar producto -->
+<section id="Agregar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
+  <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Registrar producto</h2>
+  <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
+
+  <form id="form-agregar-producto" enctype="multipart/form-data" method="POST">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" required>
+      </div>
+      <div class="form-group">
+        <label for="local">Local</label>
+        <select id="local" name="local">
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div>
+        <div class="form-group" style="text-align: center;">
+            <label for="imagen">Seleccionar Imagen</label>
+            <div id="drop-area" style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; width:100%; min-width:220px; position: relative;">
+                <input type="file" name="imagen" id="imagen" accept="image/*" style="display: none;">
+                <label for="imagen" id="label-imagen" style="cursor: pointer; color: #999; width:100%; display:inline-block;">Sube una imagen o arrastra</label>
+                
+                <img id="preview" src="" style="max-width: 100px; display: none; margin-top: 10px;" />
+                
+                <button type="button" id="quitarImagen" style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
+            </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group">
+          <label for="proveedor-input-agregar">Proveedor</label>
+          <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+            <div class="autocomplete-marca-proveedor-container">
+              <input type="text" id="proveedor-input-agregar" name="proveedor" autocomplete="off" style="width:100%;">
+              <div id="proveedor-suggestions-agregar" class="suggestions-marca-proveedor" style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;"></div>
+            </div>
+            <button type="button" id="add-proveedor-btn-agregar" title="Agregar proveedor" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tipo-prenda">Categoría</label>
+          <select id="tipo-prenda" name="categoria">
+            <option value="tipo1">Tipo 1</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="marca-input-agregar">Marca</label>
+          <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+            <div class="autocomplete-marca-proveedor-container">
+              <input type="text" id="marca-input-agregar" name="marca" autocomplete="off" style="width:100%;">
+              <div id="marca-suggestions-agregar" class="suggestions-marca-proveedor" style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;"></div>
+            </div>
+            <button type="button" id="add-marca-btn-agregar" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div class="form-group">
+        <label for="precio-compra">Precio de compra</label>
+        <input type="text" id="precio-compra" name="precio_compra">
+      </div>
+      <div class="form-group">
+        <label for="precio-venta">Precio de venta</label>
+        <input type="text" id="precio-venta" name="precio_venta">
+      </div>
+      <div class="form-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="text" id="cantidad" name="cantidad">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="4" style="resize: none;"></textarea>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+      <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+      <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Registrar</button>
+    </div>
+  </form>
+</section>
+
+
+
+        <!-- Sección para agregar proveedor-->
+
+        <section id="Agregar-Proveedor" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Agregar Proveedor</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo proveedor</p>
+            <form id="agregar-proveedor-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                    <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- Sección para agregar marca-->
+
+        <section id="Agregar-Marca" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Agregar Marca</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar una nueva marca</p>
+            <form id="agregar-marca-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                    <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
+                </div>
+            </form>
+        </section>
+
+
+
         <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
    
     </main>
-
+   
+    <script src="/script.js"></script>
+    <script src="/autocompletar_productoproveedor.js"></script>
+    <script src="/autocompletar_productomarca.js"></script>
+    <script src="/agregar_productomarca.js"></script>
+    <script src="/agregar_productoproveedor.js"></script>
+    <script src="/agregarproducto.js"></script>
+    <script src="/actualizarproducto.js"></script>
+    <script src="/cargarimagenes.js"></script>
     <script>
         $(document).ready(function() {
             const actualizarProductoSection = $('#Actualizar-Producto');
-            const dragHandle = $('#drag-handle');
             const overlay = $('#overlay');
             const form = actualizarProductoSection.find('form');
 
             const inputs = {
                 nombre: $('#nombre'),
+                
                 proveedor: $('#proveedor'),
                 precioCompra: $('#precio-compra'),
                 precioVenta: $('#precio-venta'),
@@ -242,12 +352,15 @@
             };
 
             const table = $('#productos-table').DataTable({
-                scrollX: true, // Enable horizontal scrolling
-                scrollY: "400px", // Enable vertical scrolling with a fixed height
+                scrollX: true,
+                scrollY: "400px",
                 scrollCollapse: true,
                 ajax: {
-                    url: 'http://localhost:3000/api/productos',
-                    dataSrc: ''
+                    url: 'http://localhost:3000/api/products',
+                    dataSrc: '',
+                    error: function(xhr, error, thrown) {
+                        alert('No se pudieron cargar los productos. Verifica que el servidor esté corriendo y que existan productos en la base de datos.');
+                    }
                 },
                 columns: [
                 {
@@ -256,21 +369,24 @@
                         return `<img src="${data}" alt="Imagen" style="width: 50px; height: 50px;">`;
                     }
                 },
+
                 { data: 'descripcion' },
                 {
                     data: 'talla',
                     render: function(data) {
-                        return data ? data : 'N/A'; // Display "N/A" if no talla is provided
+                        return data ? data : 'N/A';
                     }
                 },
                 { data: 'stock' },
-                {
-                    data: 'estado',
+                { data: 'proveedor', defaultContent: 'N/A' },
+                { data: 'marca', defaultContent: 'N/A' },
+                { data: 'fecha_caducidad' },
+                { 
+                    data: 'codigo_tienda', 
                     render: function(data) {
-                        return data ? 'Activo' : 'Inactivo';
+                        return data ? data : 'N/A';
                     }
-                },
-                { data: 'fecha_caducidad' }
+                }
             ],
 
                 language: {
@@ -323,6 +439,38 @@
             $('#registrar-prenda-button').on('click', function() {
                 $('#Agregar-Producto').css('display', 'block');
                 overlay.css('display', 'block');
+            });
+
+            // Mostrar formulario Agregar Proveedor desde botón ➕ en Actualizar Producto
+            $('#add-proveedor-btn').on('click', function() {
+                $('#Agregar-Proveedor').css('display', 'block');
+                $('#overlay').css('display', 'block');
+            });
+
+            // Mostrar formulario Agregar Marca desde botón ➕ en Actualizar Producto
+            $('#add-marca-btn').on('click', function() {
+                $('#Agregar-Marca').css('display', 'block');
+                $('#overlay').css('display', 'block');
+            });
+
+            // Mostrar formulario Agregar Proveedor desde botón ➕ en Agregar Producto
+            $('#add-proveedor-btn-agregar').on('click', function() {
+                $('#Agregar-Proveedor').css('display', 'block');
+                $('#overlay').css('display', 'block');
+            });
+
+            // Mostrar formulario Agregar Marca desde botón ➕ en Agregar Producto
+            $('#add-marca-btn-agregar').on('click', function() {
+                $('#Agregar-Marca').css('display', 'block');
+                $('#overlay').css('display', 'block');
+            });
+
+            // Ocultar formularios Agregar Proveedor/Marca al cancelar (delegado para ambos)
+            $('#Agregar-Proveedor #Cancelar, #Agregar-Marca #Cancelar').on('click', function(event) {
+                event.preventDefault();
+                $(this).closest('form')[0].reset();
+                $(this).closest('section').css('display', 'none');
+                $('#overlay').css('display', 'none');
             });
 
         });

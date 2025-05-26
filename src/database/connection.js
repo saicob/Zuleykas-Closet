@@ -15,11 +15,14 @@ export const dbSettings = {
     }
 };
 
+let pool; // Pool global para reutilizar la conexión
+
 export const getConnection = async () => {
     try {
-        const pool = await sql.connect(dbSettings);
-        const result = await pool.request().query('SELECT GETDATE() as fecha');
-        console.log('Fecha de conexión:', result);
+        if (pool) {
+            return pool;
+        }
+        pool = await sql.connect(dbSettings);
         return pool;
     } catch (error) {
         console.error('Error de conexión:', error);
@@ -27,7 +30,8 @@ export const getConnection = async () => {
     }
 };
 
-export const realizarVenta = async (cliente, productos) => {
+export const realizarVenta = async (productos) => {
+    // El parámetro 'cliente' se elimina porque no se usa en la lógica actual
     let transaction;
     try {
         const pool = await sql.connect(dbSettings);

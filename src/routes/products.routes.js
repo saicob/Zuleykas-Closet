@@ -1,33 +1,31 @@
 import { Router } from "express";
-import * as pc from "../controllers/products.controllers.js";
-import { getProductsJSON } from '../controllers/products.controllers.js';
-import { createProveedor } from "../controllers/proveedor.controllers.js";
+import * as pc from "../controllers/products.controllers.js"; // ✅ nombre correcto del archivo
 
-const router = Router();
+import multer from 'multer';
+import path from 'path';
 
-/*get para obtener
-post para ingresar
-put para actualizar  
-delete para eleminiar*/
+const router = Router(); // ✅ Declaración correcta
 
-//obtiene todos los productos
-router.get('/productos', pc.getProducts)
+// Configuración de almacenamiento para imágenes
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'static/imagenes'); // ✅ Carpeta donde se guardan
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
+  }
+});
 
-//obtiene el producto por el nombre
-router.get('/productos/:nombre',pc.getProductByName)
+const upload = multer({ storage });
 
-router.post('/productos', pc.createProduct)
-
-router.put('/productos/:id', pc.updateProduct);
-
-router.delete('/productos/:id', (req, res) => {
-  res.send('DELETE productos');
-})
-
-// Ruta para obtener productos en formato JSON
-router.get('/api/productos', getProductsJSON);
-
-// Ruta para agregar un proveedor
-router.post('/api/proveedor', createProveedor);
+// 📦 Rutas para productos
+router.get('/products', pc.getProductsJSON);
+router.get('/products/:nombre', pc.getProductByName);
+router.post('/products', upload.single('imagen'), pc.createProduct);
+router.put('/products/:id', pc.updateProduct);
+router.delete('/products/:id', (req, res) => {
+  res.send('DELETE products (aún no implementado)');
+});
 
 export default router;

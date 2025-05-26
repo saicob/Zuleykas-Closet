@@ -21,37 +21,27 @@ body {
     position: absolute;
     left: 50%;
     top: 5%;
-    /* Moved higher */
     transform: translate(-50%, 0);
     width: 70%;
-    /* Reduced width */
     height: 80px;
-    /* Adjusted height */
     background: #ffffff;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 16px;
     display: flex;
-    /* Added flexbox */
     justify-content: center;
-    /* Center menu content */
     align-items: center;
-    /* Center vertically */
     padding: 0 20px;
-    /* Added padding for spacing */
     text-align: center;
     z-index: 10;
-    /* Ensure rectangle is above other content */
 }
 
 /* Estilo del menú superior */
 .top-menu {
     display: flex;
     justify-content: center;
-    /* Centrar el menú */
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
-    /* Espaciado entre elementos */
 }
 
 /* Logo */
@@ -60,7 +50,6 @@ body {
     font-size: 32px;
     color: #dd9cba;
     margin-right: 20px;
-    /* Espaciado entre logo y menú */
 }
 
 /* Menú de navegación */
@@ -69,9 +58,7 @@ body {
     display: flex;
     gap: 20px;
     justify-content: center;
-    /* Center menu items */
     align-items: center;
-    /* Center vertically */
     margin: 0;
     padding: 0;
 }
@@ -93,39 +80,48 @@ body {
     border-radius: 8px;
 }
 
-/* Oculta por defecto */
+/* Dropdown base (oculto con animación suave) */
 .dropdown-content {
-    display: none;
-    /* Hidden by default */
     position: absolute;
     background-color: white;
-    border: none;
-    /* Removed border to eliminate the line */
     border-radius: 8px;
     top: 150%;
-    /* Adjusted to move content slightly lower */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(10px);
     min-width: 220px;
     z-index: 20;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
 }
 
-/* Muestra cuando se hace hover al padre */
+/* Mostrar dropdown al hacer hover */
 .menu ul li:hover .dropdown-content {
-    display: block;
-    /* Show dropdown on hover */
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
 
-/* Asegura que los enlaces solo sean visibles cuando el dropdown está activo */
+/* Mostrar dropdown cuando tiene la clase .show (click) */
+.menu .dropdown-content.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Links dentro del dropdown */
 .dropdown-content li a {
-    display: none;
-    /* Hidden by default */
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
 }
 
-.menu ul li:hover .dropdown-content li a {
-    display: block;
-    /* Show links only when dropdown is hovered */
+.dropdown-content li a:hover {
+    background-color: #f2f2f2;
 }
 
 /* Botón de cerrar sesión */
@@ -1216,5 +1212,82 @@ img {
 .filters-container label {
     font-weight: bold;
     margin-right: 5px;
+}
+
+/* --- Autocompletar para marca y proveedor en formularios de productos --- */
+.autocomplete-marca-proveedor-container {
+    position: relative;
+    width: 100%;
+    margin: 0;
+}
+
+.autocomplete-marca-proveedor-container input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.suggestions-marca-proveedor {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    max-height: 180px;
+    overflow-y: auto;
+    border-radius: 0 0 4px 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.suggestions-marca-proveedor .suggestion {
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.suggestions-marca-proveedor .suggestion:hover {
+    background-color: #f0f0f0;
+}
+
+/* --- Fin autocompletar marca/proveedor --- */
+
+/* Unifica el tamaño de todos los inputs de los formularios */
+form .form-group input[type="text"],
+form .form-group select,
+form .form-group textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* Ajusta el input de autocompletar marca/proveedor para que coincida */
+.autocomplete-marca-proveedor-container input[type="text"] {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+/* Ajusta el botón "+" para que no cambie el tamaño del input */
+.autocomplete-marca-proveedor-container + button {
+    height: 34px;
+    /* Ajusta según la altura del input */
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
 }
 

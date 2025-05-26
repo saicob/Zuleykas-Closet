@@ -6,7 +6,8 @@ $('#Actualizar').on('click', async function(event) {
         precio_compra: $('#precio-compra').val(),
         precio_venta: $('#precio-venta').val(),
         cantidad: $('#cantidad').val(),
-        descripcion: $('#descripcion').val()
+        descripcion: $('#descripcion').val(),
+        codigo_tienda: $('#local').val() // Nuevo: Local
     };
 
     try {
@@ -44,6 +45,7 @@ $('#productos-table tbody').on('click', 'tr', async function() {
                 $('#precio-venta').val(product.precio || '');
                 $('#cantidad').val(product.stock || '');
                 $('#descripcion').val(product.descripcion || '');
+                $('#local').val(product.codigo_tienda || '1'); // <-- Set Local
 
                 // Show the update form
                 $('#Actualizar-Producto').css('display', 'block');

@@ -38,6 +38,7 @@ export const crearVenta = async (req, res) => {
     }
 };
 
+// No hay referencias a Local1, solo asegúrate de que las rutas y nombres sean claros y genéricos
 
 // Obtener el historial de ventas
 export const getVentas = async (req, res) => {

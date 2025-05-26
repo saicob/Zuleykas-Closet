@@ -9,4 +9,6 @@ router.post('/', crearVenta);
 // Obtener el historial de ventas
 router.get('/', getVentas);
 
+// No hay referencias a Local1, solo rutas de ventas
+
 export default router;

@@ -1,18 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Solo ejecuta si existe el botón mostrar-agregar-proveedor (evita conflicto con VerProductos.html)
-    const mostrarAgregarProveedorBtn = document.getElementById('mostrar-agregar-proveedor');
-    if (!mostrarAgregarProveedorBtn) return;
-
     const agregarProveedorSection = document.getElementById('Agregar-Proveedor');
     const overlay = document.getElementById('overlay');
     const agregarForm = document.getElementById('agregar-proveedor-form');
     const cancelarBtn = agregarProveedorSection ? agregarProveedorSection.querySelector('#Cancelar') : null;
 
-    // Mostrar sección Agregar Proveedor
-    mostrarAgregarProveedorBtn.addEventListener('click', () => {
-        agregarProveedorSection.style.display = 'block';
-        overlay.style.display = 'block';
-    });
+    // Solo ejecuta si existe el formulario en la página actual
+    if (!agregarProveedorSection || !agregarForm) return;
 
     // Cancelar Agregar
     if (cancelarBtn) {
@@ -25,9 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     agregarForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-
-        const nombre = document.getElementById('nombre').value.trim();
-        const estado = document.getElementById('estado').value.trim();
+        const nombre = agregarForm.querySelector('[name="nombre"]').value.trim();
+        const estado = agregarForm.querySelector('[name="estado"]').value.trim();
 
         if (!nombre || !estado) {
             alert('Por favor, complete todos los campos correctamente.');
@@ -53,10 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             agregarForm.reset();
             agregarProveedorSection.style.display = 'none';
             overlay.style.display = 'none';
-
-            if (window.$ && $('#proveedores-table').length) {
-                $('#proveedores-table').DataTable().ajax.reload(null, false);
-            }
+            // Si tienes una tabla de proveedores en esta página, recárgala aquí si es necesario
         } catch (err) {
             alert(`Hubo un error al agregar el proveedor: ${err.message}`);
         }

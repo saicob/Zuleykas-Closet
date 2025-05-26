@@ -6,7 +6,8 @@ $('#Agregar').on('click', async function(event) {
         precio: $('#precio-venta').val(),
         stock: $('#cantidad').val(),
         estado: true,
-        fecha_caducidad: $('#fecha-caducidad').val()
+        fecha_caducidad: $('#fecha-caducidad').val(),
+        codigo_tienda: $('#local').val() // Nuevo: Local
     };
 
     try {
