@@ -1,59 +1,50 @@
-import { dbConnection } from '../database/connection.js';
-import sql from 'mssql';
+import { getConnection } from "../database/connection.js"
+import sql from "mssql"
 
-export const crearVenta=('/crear-venta', async (req, res) => {
-    const { id_empleado, id_cliente, productos, total, id_tienda } = req.body;
-
+// Obtener detalles de una factura específica
+export const getFacturaDetalles = async (req, res) => {
     try {
-        const pool = await sql.connect(dbSettings);
+        const { codigo_factura } = req.params
+        const pool = await getConnection()
 
-        const fecha = new Date().toISOString();
-
-        // 1. Insertar la factura
-        const resultFactura = await pool.request()
-            .input('id_empleado', sql.Int, id_empleado)
-            .input('id_cliente', sql.Int, id_cliente)
-            .input('fecha', sql.DateTime, fecha)
-            .input('total', sql.Decimal(10, 2), total)
-            .input('id_tienda', sql.Int, id_tienda)
+        // Obtener información de la factura
+        const facturaResult = await pool
+            .request()
+            .input("codigo_factura", sql.Int, codigo_factura)
             .query(`
-        INSERT INTO factura (id_empleado, id_cliente, fecha, total, id_tienda)
-        OUTPUT INSERTED.id_factura
-        VALUES (@id_empleado, @id_cliente, @fecha, @total, @id_tienda)
-      `);
+                SELECT codigo_factura, fecha, total 
+                FROM factura 
+                WHERE codigo_factura = @codigo_factura
+            `)
 
-        const id_factura = resultFactura.recordset[0].id_factura;
-
-        // 2. Insertar cada producto en producto_factura y actualizar stock
-        for (const prod of productos) {
-            const { codigo_producto, cantidad, precio_unitario } = prod;
-            const subtotal = cantidad * precio_unitario;
-
-            await pool.request()
-                .input('id_factura', sql.Int, id_factura)
-                .input('codigo_producto', sql.Int, codigo_producto)
-                .input('cantidad', sql.Int, cantidad)
-                .input('precio_unitario', sql.Decimal(10, 2), precio_unitario)
-                .input('subtotal', sql.Decimal(10, 2), subtotal)
-                .query(`
-          INSERT INTO producto_factura (id_factura, codigo_producto, cantidad, precio_unitario, subtotal)
-          VALUES (@id_factura, @codigo_producto, @cantidad, @precio_unitario, @subtotal)
-        `);
-
-            await pool.request()
-                .input('codigo_producto', sql.Int, codigo_producto)
-                .input('cantidad', sql.Int, cantidad)
-                .query(`
-          UPDATE producto SET stock = stock - @cantidad WHERE codigo_producto = @codigo_producto
-        `);
+        if (facturaResult.recordset.length === 0) {
+            return res.status(404).json({ error: "Factura no encontrada" })
         }
 
-        res.status(200).json({ message: 'Venta registrada correctamente.' });
+        // Obtener productos de la factura
+        const productosResult = await pool
+            .request()
+            .input("codigo_factura", sql.Int, codigo_factura)
+            .query(`
+                SELECT 
+                    p.nombre,
+                    p.categoria,
+                    m.nombre AS marca,
+                    pf.cantidad,
+                    pf.subtotal / pf.cantidad AS precio_unitario,
+                    pf.subtotal
+                FROM producto_factura pf
+                INNER JOIN producto p ON pf.codigo_producto = p.codigo_producto
+                LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
+                WHERE pf.codigo_factura = @codigo_factura
+            `)
 
-    } catch (err) {
-        console.error('Error al registrar venta:', err);
-        res.status(500).json({ error: 'Error interno al registrar la venta.' });
+        res.json({
+            factura: facturaResult.recordset[0],
+            productos: productosResult.recordset,
+        })
+    } catch (error) {
+        console.error("Error al obtener detalles de factura:", error)
+        res.status(500).json({ error: "Error del servidor" })
     }
-});
-
-
+}

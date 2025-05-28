@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearVenta, getVentas } from '../controllers/ventas.controllers.js';
+import { crearVenta, getVentas, getDetalleVenta } from '../controllers/ventas.controllers.js';
 
 const router = Router();
 
@@ -9,6 +9,7 @@ router.post('/', crearVenta);
 // Obtener el historial de ventas
 router.get('/', getVentas);
 
+//Obtener detalles de una venta 
+router.get('/:id', getDetalleVenta);
 // No hay referencias a Local1, solo rutas de ventas
-
 export default router;

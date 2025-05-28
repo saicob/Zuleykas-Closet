@@ -143,12 +143,11 @@ router.get("/rentabilidad-por-marca", async (req, res) => {
         const result = await pool.request().query(`
       SELECT m.nombre as marca, 
              SUM(pf.subtotal) as ventas_totales,
-             SUM(pp.precio_de_abastecimiento * pf.cantidad) as costo_total,
-             SUM(pf.subtotal) - SUM(ISNULL(pp.precio_de_abastecimiento, 0) * pf.cantidad) as ganancia
+             SUM(p.precio_compra * pf.cantidad) as costo_total,
+             SUM(pf.subtotal) - SUM(p.precio_compra * pf.cantidad) as ganancia
       FROM marca m
       JOIN producto p ON m.codigo_marca = p.codigo_marca
       JOIN producto_factura pf ON p.codigo_producto = pf.codigo_producto
-      LEFT JOIN proveedor_producto pp ON p.codigo_producto = pp.codigo_producto
       GROUP BY m.nombre
       ORDER BY ganancia DESC
     `)

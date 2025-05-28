@@ -26,7 +26,6 @@ async function cargarCatalogo() {
 
         // Actualizar caché
         productosCache = productos
-        window.productosCache = productosCache // <-- Actualiza la referencia global
         ultimaActualizacion = ahora
 
         renderizarProductos(productos)
@@ -36,45 +35,16 @@ async function cargarCatalogo() {
     }
 }
 
-function getLocalSeleccionado() {
-    const select = document.getElementById("local")
-    return select ? select.value : null
-}
-
-function filtrarPorLocal(productos, localSeleccionado) {
-    // Solo filtra si los productos tienen el campo codigo_tienda
-    if (
-        productos.length > 0 &&
-        Object.prototype.hasOwnProperty.call(productos[0], "codigo_tienda") &&
-        localSeleccionado
-    ) {
-        return productos.filter(prod =>
-            String(prod.codigo_tienda) === String(localSeleccionado)
-        )
-    }
-    // Si no hay campo codigo_tienda, retorna todos los productos
-    return productos
-}
-
-function renderizarProductos(productos, forzar = false) {
+function renderizarProductos(productos) {
     const contenedor = document.querySelector(".catalogo-container")
     if (!contenedor) return
 
-    // Filtrar SIEMPRE por tienda seleccionada antes de cualquier otro filtro
-    let productosFiltrados = productos
-    const localSeleccionado = getLocalSeleccionado()
-    productosFiltrados = filtrarPorLocal(productos, localSeleccionado)
-
-    // Limpiar siempre si forzar es true, si no, solo si es necesario
-    if (forzar || contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString()) {
+    // Solo limpiar si es necesario
+    if (contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString()) {
         contenedor.innerHTML = ""
-        if (!forzar) {
-            contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
-        } else {
-            contenedor.dataset.lastUpdate = "filtro"
-        }
+        contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
 
-        productosFiltrados.forEach((prod) => {
+        productos.forEach((prod) => {
             if (!prod.nombre || !prod.precio || prod.stock === undefined) {
                 console.error("Producto incompleto:", prod)
                 return
@@ -83,18 +53,40 @@ function renderizarProductos(productos, forzar = false) {
             const div = document.createElement("div")
             div.classList.add("producto")
 
-            // Crear imagen con manejo de errores mejorado
-            const img = document.createElement("img")
-            img.src = prod.imagen || "/placeholder.svg?height=200&width=200"
-            img.alt = prod.nombre
-            img.loading = "lazy" // Carga perezosa
-            img.style.cssText = "width: 100%; height: 150px; object-fit: cover; border-radius: 8px;"
+            // Crear contenedor para imagen con placeholder estable
+            const imgContainer = document.createElement("div")
+            imgContainer.style.cssText =
+                "width: 100%; height: 150px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;"
 
-            // Manejar errores de imagen sin parpadeo
-            img.onerror = function () {
-                if (this.src !== "/placeholder.svg?height=200&width=200") {
-                    this.src = "/placeholder.svg?height=200&width=200"
+            if (prod.imagen && prod.imagen !== "/placeholder.svg?height=50&width=50") {
+                const img = document.createElement("img")
+                img.src = prod.imagen
+                img.alt = prod.nombre
+                img.loading = "lazy"
+                img.style.cssText = "width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;"
+
+                // Placeholder mientras carga
+                const placeholder = document.createElement("div")
+                placeholder.style.cssText = "color: #999; font-size: 12px; text-align: center; padding: 10px;"
+                placeholder.textContent = "Cargando..."
+
+                img.onload = () => {
+                    placeholder.style.display = "none"
+                    img.style.display = "block"
                 }
+
+                img.onerror = () => {
+                    placeholder.textContent = "Sin imagen"
+                    img.style.display = "none"
+                }
+
+                imgContainer.appendChild(img)
+                imgContainer.appendChild(placeholder)
+            } else {
+                const placeholder = document.createElement("div")
+                placeholder.style.cssText = "color: #999; font-size: 12px; text-align: center; padding: 10px;"
+                placeholder.textContent = "Sin imagen"
+                imgContainer.appendChild(placeholder)
             }
 
             const h3 = document.createElement("h3")
@@ -118,7 +110,7 @@ function renderizarProductos(productos, forzar = false) {
                 }
             }
 
-            div.appendChild(img)
+            div.appendChild(imgContainer)
             div.appendChild(h3)
             div.appendChild(pPrecio)
             div.appendChild(pStock)
@@ -129,24 +121,8 @@ function renderizarProductos(productos, forzar = false) {
     }
 }
 
-// Exponer para uso externo (autocompletar_catalogo.js)
-window.productosCache = productosCache
-window.renderizarProductos = renderizarProductos
-
 // Cargar solo una vez al inicio
-window.addEventListener("DOMContentLoaded", () => {
-    cargarCatalogo()
-    // Escuchar cambios en el select de tienda/local
-    const selectLocal = document.getElementById("local")
-    if (selectLocal) {
-        selectLocal.addEventListener("change", () => {
-            // Al cambiar la tienda, renderiza el catálogo filtrado
-            if (window.productosCache && window.renderizarProductos) {
-                window.renderizarProductos(window.productosCache, true)
-            }
-        })
-    }
-})
+window.addEventListener("DOMContentLoaded", cargarCatalogo)
 
 // Función para refrescar manualmente si es necesario
 window.refrescarCatalogo = () => {
