@@ -35,16 +35,28 @@ async function cargarCatalogo() {
     }
 }
 
-function renderizarProductos(productos) {
+function renderizarProductos(productos, { local = null, query = "" } = {}) {
     const contenedor = document.querySelector(".catalogo-container")
     if (!contenedor) return
 
+    // Filtrar por local si corresponde
+    let filtrados = productos
+    if (local) {
+        filtrados = filtrados.filter((prod) => prod.codigo_tienda == local)
+    }
+    // Filtrar por texto si corresponde
+    if (query && query.length > 0) {
+        filtrados = filtrados.filter((prod) => prod.nombre && prod.nombre.toLowerCase().includes(query.toLowerCase()))
+    }
+
     // Solo limpiar si es necesario
-    if (contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString()) {
+    if (contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString() || contenedor.dataset.lastLocal !== String(local) || contenedor.dataset.lastQuery !== query) {
         contenedor.innerHTML = ""
         contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
+        contenedor.dataset.lastLocal = String(local)
+        contenedor.dataset.lastQuery = query
 
-        productos.forEach((prod) => {
+        filtrados.forEach((prod) => {
             if (!prod.nombre || !prod.precio || prod.stock === undefined) {
                 console.error("Producto incompleto:", prod)
                 return
@@ -98,6 +110,13 @@ function renderizarProductos(productos) {
             const pStock = document.createElement("p")
             pStock.textContent = `En Stock: ${prod.stock}`
 
+            // Mostrar talla si existe
+            let pTalla = null
+            if (prod.talla !== undefined && prod.talla !== null && prod.talla !== "") {
+                pTalla = document.createElement("p")
+                pTalla.textContent = `Talla: ${prod.talla}`
+            }
+
             const btn = document.createElement("button")
             btn.textContent = "Agregar al carrito"
             btn.onclick = () => {
@@ -114,6 +133,7 @@ function renderizarProductos(productos) {
             div.appendChild(h3)
             div.appendChild(pPrecio)
             div.appendChild(pStock)
+            if (pTalla) div.appendChild(pTalla)
             div.appendChild(btn)
 
             contenedor.appendChild(div)
@@ -121,8 +141,23 @@ function renderizarProductos(productos) {
     }
 }
 
+// Función para obtener el valor actual de los filtros y renderizar
+function actualizarCatalogoFiltrado() {
+    const local = document.getElementById("local")?.value || null
+    const query = document.getElementById("productInput")?.value || ""
+    if (productosCache) {
+        renderizarProductos(productosCache, { local, query })
+    }
+}
+
 // Cargar solo una vez al inicio
-window.addEventListener("DOMContentLoaded", cargarCatalogo)
+window.addEventListener("DOMContentLoaded", () => {
+    cargarCatalogo().then(() => {
+        actualizarCatalogoFiltrado()
+    })
+    document.getElementById("local")?.addEventListener("change", actualizarCatalogoFiltrado)
+    document.getElementById("productInput")?.addEventListener("input", actualizarCatalogoFiltrado)
+})
 
 // Función para refrescar manualmente si es necesario
 window.refrescarCatalogo = () => {

@@ -45,9 +45,17 @@ function eliminarDelCarrito(index) {
 
 // Cambia la cantidad de un producto (aumenta o disminuye)
 function cambiarCantidad(index, delta) {
-    carrito[index].cantidad += delta
-    if (carrito[index].cantidad <= 0) {
+    const nuevoValor = carrito[index].cantidad + delta
+    const stock = carrito[index].stock
+
+    if (delta > 0 && nuevoValor > stock) {
+        alert(`No puedes agregar más de ${stock} unidades disponibles.`)
+        return
+    }
+    if (nuevoValor <= 0) {
         carrito.splice(index, 1)
+    } else {
+        carrito[index].cantidad = nuevoValor
     }
     renderizarCarrito()
 }

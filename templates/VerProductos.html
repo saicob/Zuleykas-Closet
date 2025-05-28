@@ -179,6 +179,22 @@
                     </div>
                 </div>
 
+                <!-- Cuarta fila: Talla, Fecha de fabricación y Fecha de caducidad -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="talla">Talla</label>
+                        <input type="text" id="talla" name="talla">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-fabricacion">Fecha de fabricación</label>
+                        <input type="date" id="fecha-fabricacion" name="fecha_fabricacion">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-caducidad">Fecha de caducidad</label>
+                        <input type="date" id="fecha-caducidad" name="fecha_caducidad">
+                    </div>
+                </div>
+
                 <!-- Descripción -->
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="descripcion">Descripción</label>
@@ -379,6 +395,9 @@
     <script src="/agregar_productomarca.js"></script>
     <script src="/agregar_productoproveedor.js"></script>
     <script src="/cargarimagenes.js"></script>
+    <script src="/agregarproducto.js"></script>
+    <script src="/actualizarproducto.js"></script>
+    <script src="/seguncategoria.js"></script>
 
     <script>
         $(document).ready(function () {

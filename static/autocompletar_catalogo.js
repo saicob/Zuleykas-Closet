@@ -23,6 +23,7 @@ if (input) {
     input.addEventListener("input", async (event) => {
         const query = event.target.value.trim().toLowerCase()
         const suggestionsContainer = document.getElementById("suggestions")
+        const local = document.getElementById("local")?.value || null
 
         if (!suggestionsContainer) {
             console.error("El contenedor de sugerencias no se encontró.")
@@ -31,23 +32,27 @@ if (input) {
 
         suggestionsContainer.innerHTML = ""
 
-        // Filtrar productos del catálogo al escribir (solo los que comienzan con el texto)
+        // Filtrar productos del catálogo al escribir (solo los que comienzan con el texto y del local seleccionado)
         if (window.productosCache && window.renderizarProductos) {
+            let filtrados = window.productosCache
+            if (local) {
+                filtrados = filtrados.filter((prod) => prod.codigo_tienda == local)
+            }
             if (query.length === 0) {
-                window.renderizarProductos(window.productosCache, true)
+                window.renderizarProductos(filtrados, { local, query })
             } else {
-                const filtrados = window.productosCache.filter((prod) =>
-                    prod.nombre && prod.nombre.toLowerCase().startsWith(query)
-                )
-                window.renderizarProductos(filtrados, true)
+                filtrados = filtrados.filter((prod) => prod.nombre && prod.nombre.toLowerCase().startsWith(query))
+                window.renderizarProductos(filtrados, { local, query })
             }
         }
 
         if (query.length > 0) {
             const productos = await cargarProductosAutoComplete()
-            const filteredProducts = productos.filter((prod) =>
-                prod.nombre && prod.nombre.toLowerCase().startsWith(query)
-            )
+            let filteredProducts = productos
+            if (local) {
+                filteredProducts = filteredProducts.filter((prod) => prod.codigo_tienda == local)
+            }
+            filteredProducts = filteredProducts.filter((prod) => prod.nombre && prod.nombre.toLowerCase().startsWith(query))
 
             filteredProducts.slice(0, 10).forEach((prod) => {
                 // Limitar a 10 resultados
@@ -58,20 +63,26 @@ if (input) {
                 div.addEventListener("click", () => {
                     input.value = prod.nombre
                     suggestionsContainer.innerHTML = ""
-                    // Al seleccionar una sugerencia, filtrar catálogo
+                    // Al seleccionar una sugerencia, filtrar catálogo por local y nombre
                     if (window.productosCache && window.renderizarProductos) {
-                        const filtrados = window.productosCache.filter((p) =>
-                            p.nombre && p.nombre.toLowerCase().startsWith(prod.nombre.toLowerCase())
-                        )
-                        window.renderizarProductos(filtrados, true)
+                        let filtrados = window.productosCache
+                        if (local) {
+                            filtrados = filtrados.filter((p) => p.codigo_tienda == local)
+                        }
+                        filtrados = filtrados.filter((p) => p.nombre && p.nombre.toLowerCase().startsWith(prod.nombre.toLowerCase()))
+                        window.renderizarProductos(filtrados, { local, query: prod.nombre })
                     }
                 })
                 suggestionsContainer.appendChild(div)
             })
         } else {
-            // Si el input está vacío, mostrar todo el catálogo
+            // Si el input está vacío, mostrar todo el catálogo filtrado por local
             if (window.productosCache && window.renderizarProductos) {
-                window.renderizarProductos(window.productosCache, true)
+                let filtrados = window.productosCache
+                if (local) {
+                    filtrados = filtrados.filter((prod) => prod.codigo_tienda == local)
+                }
+                window.renderizarProductos(filtrados, { local, query: "" })
             }
         }
     })
