@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver Productos</title>
     <link rel="stylesheet" href="/styles.css">
-
+    <title>Ver Productos</title>
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 
@@ -13,467 +13,389 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
-<body>
-    <section id="menú"> 
-            <div class="rectangle">
-                <header class="top-menu">
-                    <div class="logo">
-                        <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
-                   </div>
-                    <nav class="menu">
-                        <ul>
-                            <li class="dropdown">
-                                <a href="#">Productos</a>
-                                <ul class="dropdown-content">
-                                    <li><a href="VerProductos.html">Lista de Productos</a></li>
-                                    <li><a href="Marcas.html">Marcas</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="Proveedor.html" class="menu-button">Proveedores</a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#">Ventas</a>
-                                <ul class="dropdown-content">
-                                    <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
-                                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                                    <li><a href="Crear_venta.html">Crear Venta</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                    <button class="logout-button">Cerrar Sesión</button>
-                </header>
-            </div>
-            <div class="section-title-container">
-                <div class="section-title">Lista de Productos</div>
-            </div>
-            <h1 class="outside-title">Zuleyka's Closet</h1>
-            <p class="description-text">En este apartado podrá visualizar todos los productos registrados en el inventario. Además, tendrá la opción de agregar nuevos productos, actualizarlos y consultar su estado.</p>
-    </section>    
 
-    
+<body>
+    <section id="menú">
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <button class="logout-button">Cerrar Sesión</button>
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Lista de Productos</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá visualizar todos los productos registrados en el inventario.
+            Además, tendrá la opción de agregar nuevos productos, actualizarlos y consultar su estado.</p>
+    </section>
+
+    <!-- Contenido central -->
     <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
-        <!-- Sección de productos -->
-        <section id="Tabla-Productos" style="display: block;">
-           
-                <button id="registrar-prenda-button" class="action-button">Registrar Producto</button>
-            
-            <table id="productos-table" class="display" style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
+        <section id="Ver_Productos" style="display: block;">
+            <button id="mostrar-agregar-producto" class="action-button">
+                Agregar Producto
+            </button>
+            <table id="productos-table" class="display"
+                style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
                 <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
                     <tr>
                         <th style="padding: 10px; text-align: left;">Imagen</th>
+                        <th style="padding: 10px; text-align: left;">Nombre</th>
                         <th style="padding: 10px; text-align: left;">Descripción</th>
-                        <th style="padding: 10px; text-align: left;">Tallas</th>
-                        <th style="padding: 10px; text-align: left;">Inventario</th>
+                        <th style="padding: 10px; text-align: left;">Precio</th>
+                        <th style="padding: 10px; text-align: left;">Stock</th>
+                        <th style="padding: 10px; text-align: left;">Categoría</th>
+                        <th style="padding: 10px; text-align: left;">Talla</th>
                         <th style="padding: 10px; text-align: left;">Proveedor</th>
                         <th style="padding: 10px; text-align: left;">Marca</th>
-                        <th style="padding: 10px; text-align: left;">Fecha de Caducidad</th>
-                        <th style="padding: 10px; text-align: left;">Local</th>
                     </tr>
                 </thead>
-                
                 <tbody id="productos-body" style="background-color: white; color: #333;">
-                    <!-- Data will be dynamically loaded via AJAX -->
+                    <!-- Aquí se llenarán los datos de los productos -->
                 </tbody>
             </table>
-        
         </section>
 
+        <!-- Modal Agregar Producto -->
+        <section id="Agregar-Producto"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 800px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Agregar Producto</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
 
-
-        <!-- Sección de actualizar producto -->
-        <section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
-            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Actualizar producto</h2>
-            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Actualizar un producto existente</p>
-            <form>
+            <form id="form-agregar-producto" enctype="multipart/form-data" method="POST">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
                     </div>
                     <div class="form-group">
                         <label for="local">Local</label>
-                        <select id="local">
+                        <select id="local" name="local">
                             <option value="1">1</option>
                             <option value="2">2</option>
                         </select>
                     </div>
                 </div>
+
                 <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <div class="form-group" style="text-align: center;">
                             <label for="imagen">Seleccionar Imagen</label>
-                            <div id="drop-area" style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; width:100%; min-width:220px; position: relative;">
+                            <div id="drop-area"
+                                style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; width:100%; min-width:220px; position: relative;">
                                 <input type="file" name="imagen" id="imagen" accept="image/*" style="display: none;">
-                                <label for="imagen" id="label-imagen" style="cursor: pointer; color: #999; width:100%; display:inline-block;">Sube una imagen o arrastra</label>
-                                
-                                <img id="preview" src="" style="max-width: 100px; display: none; margin-top: 10px;" />
-                                
-                                <button type="button" id="quitarImagen" style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
+                                <label for="imagen" id="label-imagen"
+                                    style="cursor: pointer; color: #999; width:100%; display:inline-block;">Sube una
+                                    imagen o arrastra</label>
+
+                                <img id="preview" src="/placeholder.svg"
+                                    style="max-width: 100px; display: none; margin-top: 10px;" />
+
+                                <button type="button" id="quitarImagen"
+                                    style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
                             </div>
                         </div>
                     </div>
+
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div class="form-group">
-                            <label for="proveedor-input">Proveedor</label>
+                            <label for="proveedor-input-agregar">Proveedor</label>
                             <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
                                 <div class="autocomplete-marca-proveedor-container">
-                                    <input type="text" id="proveedor-input" autocomplete="off">
-                                    <div id="proveedor-suggestions" class="suggestions-marca-proveedor"></div>
+                                    <input type="text" id="proveedor-input-agregar" name="proveedor" autocomplete="off"
+                                        style="width:100%;">
+                                    <div id="proveedor-suggestions-agregar" class="suggestions-marca-proveedor"
+                                        style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;">
+                                    </div>
                                 </div>
-                                <button type="button" id="add-proveedor-btn" title="Agregar proveedor" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+                                <button type="button" id="add-proveedor-btn-agregar" title="Agregar proveedor"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="tipo-prenda">Categoría</label>
-                            <select id="tipo-prenda">
-                                <option value="tipo1">Tipo 1</option>
+                            <label for="categoria">Categoría *</label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="Ropa">Ropa</option>
+                                <option value="Accesorios">Accesorios</option>
+                                <option value="Cosmetico">Cosmético</option>
+                                <option value="Lencería">Lencería</option>
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="marca-input">Marca</label>
+                            <label for="marca-input-agregar">Marca</label>
                             <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
                                 <div class="autocomplete-marca-proveedor-container">
-                                    <input type="text" id="marca-input" autocomplete="off">
-                                    <div id="marca-suggestions" class="suggestions-marca-proveedor"></div>
+                                    <input type="text" id="marca-input-agregar" name="marca" autocomplete="off"
+                                        style="width:100%;">
+                                    <div id="marca-suggestions-agregar" class="suggestions-marca-proveedor"
+                                        style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;">
+                                    </div>
                                 </div>
-                                <button type="button" id="add-marca-btn" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
+                                <button type="button" id="add-marca-btn-agregar" title="Agregar marca"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="precio-compra">Precio de compra</label>
-                        <input type="text" id="precio-compra">
+                        <input type="number" step="0.01" min="0" id="precio-compra" name="precio_compra">
                     </div>
                     <div class="form-group">
-                        <label for="precio-venta">Precio de venta</label>
-                        <input type="text" id="precio-venta">
+                        <label for="precio-venta">Precio de venta *</label>
+                        <input type="number" step="0.01" min="0.01" id="precio-venta" name="precio_venta" required>
                     </div>
                     <div class="form-group">
-                        <label for="cantidad">Cantidad</label>
-                        <input type="text" id="cantidad">
+                        <label for="cantidad">Stock *</label>
+                        <input type="number" min="0" id="cantidad" name="cantidad" required>
                     </div>
                 </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="talla">Talla</label>
+                        <input type="text" id="talla" name="talla" placeholder="Ej: S, M, L, XL">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-fabricacion">Fecha de fabricación</label>
+                        <input type="date" id="fecha-fabricacion" name="fecha_fabricacion">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha-caducidad">Fecha de caducidad</label>
+                        <input type="date" id="fecha-caducidad" name="fecha_caducidad">
+                    </div>
+                </div>
+
                 <div class="form-group" style="margin-bottom: 20px; text-align: left;">
                     <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" rows="4" style="resize: none;"></textarea>
+                    <textarea id="descripcion" name="descripcion" rows="4" style="resize: none;"
+                        placeholder="Descripción del producto..."></textarea>
                 </div>
+
                 <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="Actualizar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Actualizar</button>
+                    <button type="button" id="Cancelar"
+                        style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                    <button type="submit" id="Agregar"
+                        style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Registrar</button>
                 </div>
             </form>
         </section>
 
-
-   <!-- Sección de agregar producto -->
-<section id="Agregar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
-  <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Registrar producto</h2>
-  <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
-
-  <form id="form-agregar-producto" enctype="multipart/form-data" method="POST">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-      <div class="form-group">
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" name="nombre" required>
-      </div>
-      <div class="form-group">
-        <label for="local">Local</label>
-        <select id="local" name="local">
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-bottom: 20px;">
-      <div>
-        <div class="form-group" style="text-align: center;">
-            <label for="imagen">Seleccionar Imagen</label>
-            <div id="drop-area" style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; width:100%; min-width:220px; position: relative;">
-                <input type="file" name="imagen" id="imagen" accept="image/*" style="display: none;">
-                <label for="imagen" id="label-imagen" style="cursor: pointer; color: #999; width:100%; display:inline-block;">Sube una imagen o arrastra</label>
-                
-                <img id="preview" src="" style="max-width: 100px; display: none; margin-top: 10px;" />
-                
-                <button type="button" id="quitarImagen" style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
-            </div>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div class="form-group">
-          <label for="proveedor-input-agregar">Proveedor</label>
-          <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-            <div class="autocomplete-marca-proveedor-container">
-              <input type="text" id="proveedor-input-agregar" name="proveedor" autocomplete="off" style="width:100%;">
-              <div id="proveedor-suggestions-agregar" class="suggestions-marca-proveedor" style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;"></div>
-            </div>
-            <button type="button" id="add-proveedor-btn-agregar" title="Agregar proveedor" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
-          </div>
+        <div id="overlay"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
         </div>
 
-        <div class="form-group">
-          <label for="tipo-prenda">Categoría</label>
-          <select id="tipo-prenda" name="categoria">
-            <option value="tipo1">Tipo 1</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="marca-input-agregar">Marca</label>
-          <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-            <div class="autocomplete-marca-proveedor-container">
-              <input type="text" id="marca-input-agregar" name="marca" autocomplete="off" style="width:100%;">
-              <div id="marca-suggestions-agregar" class="suggestions-marca-proveedor" style="position:absolute; z-index:10; background:white; border:1px solid #ccc; width:100%;"></div>
-            </div>
-            <button type="button" id="add-marca-btn-agregar" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer;">➕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-      <div class="form-group">
-        <label for="precio-compra">Precio de compra</label>
-        <input type="text" id="precio-compra" name="precio_compra">
-      </div>
-      <div class="form-group">
-        <label for="precio-venta">Precio de venta</label>
-        <input type="text" id="precio-venta" name="precio_venta">
-      </div>
-      <div class="form-group">
-        <label for="cantidad">Cantidad</label>
-        <input type="text" id="cantidad" name="cantidad">
-      </div>
-    </div>
-
-    <div class="form-group" style="margin-bottom: 20px; text-align: left;">
-      <label for="descripcion">Descripción</label>
-      <textarea id="descripcion" name="descripcion" rows="4" style="resize: none;"></textarea>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-      <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-      <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Registrar</button>
-    </div>
-  </form>
-</section>
-
-
-
-        <!-- Sección para agregar proveedor-->
-
-        <section id="Agregar-Proveedor" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
-            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Agregar Proveedor</h2>
-            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo proveedor</p>
-            <form id="agregar-proveedor-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="estado">Estado</label>
-                        <select id="estado" name="estado" required>
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
-                </div>
-            </form>
-        </section>
-
-
-        <!-- Sección para agregar marca-->
-
-        <section id="Agregar-Marca" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 600px;">
-            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Agregar Marca</h2>
+        <!-- Secciones para agregar marca y proveedor -->
+        <section id="Agregar-Marca"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 16px; width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Agregar Marca</h2>
             <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar una nueva marca</p>
             <form id="agregar-marca-form">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" required>
+                        <input type="text" name="nombre" required>
                     </div>
                     <div class="form-group">
                         <label for="estado">Estado</label>
-                        <select id="estado" name="estado" required>
+                        <select name="estado" required>
                             <option value="Activo">Activo</option>
                             <option value="Inactivo">Inactivo</option>
                         </select>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <button type="button" id="Cancelar" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="Agregar" style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
+                    <button type="button" id="Cancelar"
+                        style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                    <button type="submit"
+                        style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
                 </div>
             </form>
         </section>
 
-
-
-        <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-   
+        <section id="Agregar-Proveedor"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 16px; width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Agregar Proveedor</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo proveedor</p>
+            <form id="agregar-proveedor-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select name="estado" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar"
+                        style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                    <button type="submit"
+                        style="background-color: #f8a8b9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; color: white;">Agregar</button>
+                </div>
+            </form>
+        </section>
     </main>
-   
+
     <script src="/script.js"></script>
-    <script src="/autocompletar_productoproveedor.js"></script>
     <script src="/autocompletar_productomarca.js"></script>
+    <script src="/autocompletar_productoproveedor.js"></script>
     <script src="/agregar_productomarca.js"></script>
     <script src="/agregar_productoproveedor.js"></script>
-    <script src="/agregarproducto.js"></script>
-    <script src="/actualizarproducto.js"></script>
     <script src="/cargarimagenes.js"></script>
+
     <script>
-        $(document).ready(function() {
-            const actualizarProductoSection = $('#Actualizar-Producto');
+        $(document).ready(function () {
+            const agregarProductoSection = $('#Agregar-Producto');
             const overlay = $('#overlay');
-            const form = actualizarProductoSection.find('form');
+            let tablaInicializada = false;
 
-            const inputs = {
-                nombre: $('#nombre'),
-                
-                proveedor: $('#proveedor'),
-                precioCompra: $('#precio-compra'),
-                precioVenta: $('#precio-venta'),
-                cantidad: $('#cantidad'),
-                fechaLlegada: $('#fecha-llegada'),
-                fechaVencimiento: $('#fecha-vencimiento'),
-                categoria: $('#categoria'),
-                descripcion: $('#descripcion')
+            // Inicializar DataTable una sola vez
+            function inicializarTabla() {
+                if (tablaInicializada) return;
+
+                const table = $('#productos-table').DataTable({
+                    scrollX: true,
+                    scrollY: "400px",
+                    scrollCollapse: true,
+                    processing: true,
+                    deferRender: true, // Mejora el rendimiento
+                    ajax: {
+                        url: 'http://localhost:3000/api/products',
+                        dataSrc: '',
+                        cache: true, // Habilitar caché
+                        error: function (xhr, error, thrown) {
+                            console.error('Error al cargar productos:', error, thrown);
+                            alert('No se pudieron cargar los productos. Verifica que el servidor esté corriendo.');
+                        }
+                    },
+                    columns: [
+                        {
+                            data: 'imagen',
+                            render: function (data, type, row) {
+                                if (type === 'display') {
+                                    // Usar placeholder por defecto si no hay imagen
+                                    const imgSrc = data || '/placeholder.svg?height=50&width=50';
+                                    return `<img src="${imgSrc}" alt="${row.nombre}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" loading="lazy" onerror="this.src='/placeholder.svg?height=50&width=50'; this.onerror=null;">`;
+                                }
+                                return data;
+                            }
+                        },
+                        { data: 'nombre' },
+                        {
+                            data: 'descripcion',
+                            render: function (data) {
+                                return data && data.length > 50 ? data.substring(0, 50) + '...' : (data || 'Sin descripción');
+                            }
+                        },
+                        {
+                            data: 'precio',
+                            render: function (data) {
+                                return `$${parseFloat(data || 0).toFixed(2)}`;
+                            }
+                        },
+                        { data: 'stock' },
+                        { data: 'categoria' },
+                        {
+                            data: 'talla',
+                            render: function (data) {
+                                return data || 'N/A';
+                            }
+                        },
+                        { data: 'proveedor' },
+                        { data: 'marca' }
+                    ],
+                    language: {
+                        search: "Buscar:",
+                        lengthMenu: "Mostrar _MENU_ registros",
+                        info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
+                        paginate: {
+                            first: "Primero",
+                            last: "Último",
+                            next: "Siguiente",
+                            previous: "Anterior"
+                        },
+                        emptyTable: "No hay productos registrados",
+                        loadingRecords: "Cargando productos...",
+                        processing: "Procesando..."
+                    },
+                    drawCallback: function () {
+                        // Optimizar imágenes después de cada redibujado
+                        $('#productos-table img').each(function () {
+                            if (!this.complete) {
+                                $(this).on('load error', function () {
+                                    // Imagen cargada o falló, no hacer nada más
+                                });
+                            }
+                        });
+                    }
+                });
+
+                tablaInicializada = true;
+                return table;
+            }
+
+            // Inicializar tabla al cargar la página
+            const table = inicializarTabla();
+
+            // Mostrar sección Agregar Producto
+            $('#mostrar-agregar-producto').on('click', function () {
+                agregarProductoSection.show();
+                overlay.show();
+            });
+
+            // Cancelar Agregar
+            $('#Agregar-Producto #Cancelar').on('click', function () {
+                $('#form-agregar-producto')[0].reset();
+                agregarProductoSection.hide();
+                overlay.hide();
+            });
+
+            // Refrescar tabla después de agregar producto
+            window.refrescarTablaProductos = function () {
+                if (tablaInicializada) {
+                    $('#productos-table').DataTable().ajax.reload(null, false);
+                }
             };
-
-            const table = $('#productos-table').DataTable({
-                scrollX: true,
-                scrollY: "400px",
-                scrollCollapse: true,
-                ajax: {
-                    url: 'http://localhost:3000/api/products',
-                    dataSrc: '',
-                    error: function(xhr, error, thrown) {
-                        alert('No se pudieron cargar los productos. Verifica que el servidor esté corriendo y que existan productos en la base de datos.');
-                    }
-                },
-                columns: [
-                {
-                    data: 'imagen',
-                    render: function(data) {
-                        return `<img src="${data}" alt="Imagen" style="width: 50px; height: 50px;">`;
-                    }
-                },
-
-                { data: 'descripcion' },
-                {
-                    data: 'talla',
-                    render: function(data) {
-                        return data ? data : 'N/A';
-                    }
-                },
-                { data: 'stock' },
-                { data: 'proveedor', defaultContent: 'N/A' },
-                { data: 'marca', defaultContent: 'N/A' },
-                { data: 'fecha_caducidad' },
-                { 
-                    data: 'codigo_tienda', 
-                    render: function(data) {
-                        return data ? data : 'N/A';
-                    }
-                }
-            ],
-
-                language: {
-                    search: "Buscar:",
-                    lengthMenu: "Mostrar _MENU_ registros",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
-                    paginate: {
-                        first: "Primero",
-                        last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
-                    }
-                }
-            });
-
-            // Show the Actualizar-Producto section and overlay, and autofill inputs when a row is clicked
-            $('#productos-table tbody').on('click', 'tr', function() {
-                const data = table.row(this).data();
-                if (data) {
-                    inputs.nombre.val(data.nombre);
-                    inputs.proveedor.val(data.proveedor || ''); // Assuming 'proveedor' exists in the data
-                    inputs.precioCompra.val(data.precioCompra || ''); // Assuming 'precioCompra' exists in the data
-                    inputs.precioVenta.val(data.precio || '');
-                    inputs.cantidad.val(data.stock || '');
-                    inputs.fechaLlegada.val(data.fechaLlegada || ''); // Assuming 'fechaLlegada' exists in the data
-                    inputs.fechaVencimiento.val(data.fechaVencimiento || ''); // Assuming 'fechaVencimiento' exists in the data
-                    inputs.categoria.val(data.categoria || ''); // Assuming 'categoria' exists in the data
-                    inputs.descripcion.val(data.descripcion || '');
-                    actualizarProductoSection.css('display', 'block');
-                    overlay.css('display', 'block');
-                }
-            });
-
-            // Hide the Actualizar-Producto section, overlay, and clear the form when "Cancelar" is clicked
-            $('#Cancelar').on('click', function(event) {
-                event.preventDefault(); // Prevent form submission
-                form[0].reset(); // Clear all form inputs
-                actualizarProductoSection.css('display', 'none');
-                overlay.css('display', 'none');
-            });
-
-            // Hide the Agregar-Producto section and overlay when "Cancelar" is clicked
-            $('#Agregar-Producto #Cancelar').on('click', function(event) {
-                event.preventDefault(); // Prevent form submission
-                form[0].reset(); // Clear all form inputs
-                $('#Agregar-Producto').css('display', 'none');
-                overlay.css('display', 'none');
-            });     
-            // Show the Agregar-Producto section and overlay when "Registrar prenda" button is clicked
-            $('#registrar-prenda-button').on('click', function() {
-                $('#Agregar-Producto').css('display', 'block');
-                overlay.css('display', 'block');
-            });
-
-            // Mostrar formulario Agregar Proveedor desde botón ➕ en Actualizar Producto
-            $('#add-proveedor-btn').on('click', function() {
-                $('#Agregar-Proveedor').css('display', 'block');
-                $('#overlay').css('display', 'block');
-            });
-
-            // Mostrar formulario Agregar Marca desde botón ➕ en Actualizar Producto
-            $('#add-marca-btn').on('click', function() {
-                $('#Agregar-Marca').css('display', 'block');
-                $('#overlay').css('display', 'block');
-            });
-
-            // Mostrar formulario Agregar Proveedor desde botón ➕ en Agregar Producto
-            $('#add-proveedor-btn-agregar').on('click', function() {
-                $('#Agregar-Proveedor').css('display', 'block');
-                $('#overlay').css('display', 'block');
-            });
-
-            // Mostrar formulario Agregar Marca desde botón ➕ en Agregar Producto
-            $('#add-marca-btn-agregar').on('click', function() {
-                $('#Agregar-Marca').css('display', 'block');
-                $('#overlay').css('display', 'block');
-            });
-
-            // Ocultar formularios Agregar Proveedor/Marca al cancelar (delegado para ambos)
-            $('#Agregar-Proveedor #Cancelar, #Agregar-Marca #Cancelar').on('click', function(event) {
-                event.preventDefault();
-                $(this).closest('form')[0].reset();
-                $(this).closest('section').css('display', 'none');
-                $('#overlay').css('display', 'none');
-            });
-
         });
     </script>
 </body>
+
 </html>
