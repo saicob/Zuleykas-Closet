@@ -31,9 +31,23 @@ if (input) {
 
         suggestionsContainer.innerHTML = ""
 
+        // Filtrar productos del catálogo al escribir (solo los que comienzan con el texto)
+        if (window.productosCache && window.renderizarProductos) {
+            if (query.length === 0) {
+                window.renderizarProductos(window.productosCache, true)
+            } else {
+                const filtrados = window.productosCache.filter((prod) =>
+                    prod.nombre && prod.nombre.toLowerCase().startsWith(query)
+                )
+                window.renderizarProductos(filtrados, true)
+            }
+        }
+
         if (query.length > 0) {
             const productos = await cargarProductosAutoComplete()
-            const filteredProducts = productos.filter((prod) => prod.nombre.toLowerCase().includes(query))
+            const filteredProducts = productos.filter((prod) =>
+                prod.nombre && prod.nombre.toLowerCase().startsWith(query)
+            )
 
             filteredProducts.slice(0, 10).forEach((prod) => {
                 // Limitar a 10 resultados
@@ -44,9 +58,21 @@ if (input) {
                 div.addEventListener("click", () => {
                     input.value = prod.nombre
                     suggestionsContainer.innerHTML = ""
+                    // Al seleccionar una sugerencia, filtrar catálogo
+                    if (window.productosCache && window.renderizarProductos) {
+                        const filtrados = window.productosCache.filter((p) =>
+                            p.nombre && p.nombre.toLowerCase().startsWith(prod.nombre.toLowerCase())
+                        )
+                        window.renderizarProductos(filtrados, true)
+                    }
                 })
                 suggestionsContainer.appendChild(div)
             })
+        } else {
+            // Si el input está vacío, mostrar todo el catálogo
+            if (window.productosCache && window.renderizarProductos) {
+                window.renderizarProductos(window.productosCache, true)
+            }
         }
     })
 } else {

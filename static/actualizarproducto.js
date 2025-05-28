@@ -11,7 +11,7 @@ $('#Actualizar').on('click', async function(event) {
     };
 
     try {
-        const response = await fetch(`/productos/${data.id}`, {
+        const response = await fetch(`/products/${data.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -34,7 +34,7 @@ $('#productos-table tbody').on('click', 'tr', async function() {
 
     if (data) {
         try {
-            const response = await fetch(`/productos/${data.nombre}`);
+            const response = await fetch(`/products/${data.nombre}`);
             if (response.ok) {
                 const product = await response.json();
 

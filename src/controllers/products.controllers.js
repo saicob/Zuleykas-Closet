@@ -46,7 +46,8 @@ export const getProductsJSON = async (req, res) => {
                 p.codigo_producto,
                 p.nombre, 
                 p.descripcion, 
-                p.precio, 
+                p.precio_compra,
+                p.precio,
                 p.stock,
                 p.categoria,
                 p.talla,
@@ -79,6 +80,7 @@ export const createProduct = async (req, res) => {
         const {
             nombre,
             descripcion,
+            precio_compra,
             precio_venta,
             cantidad,
             categoria,
@@ -203,6 +205,7 @@ export const createProduct = async (req, res) => {
             .request()
             .input("nombre", sql.VarChar, nombre.trim())
             .input("descripcion", sql.Text, descripcion || "")
+            .input("precio_compra", sql.Decimal(10, 2), Number.parseFloat(precio_compra) || 0)
             .input("precio", sql.Decimal(10, 2), Number.parseFloat(precio_venta))
             .input("stock", sql.Int, Number.parseInt(cantidad))
             .input("estado", sql.Bit, true)
@@ -216,12 +219,12 @@ export const createProduct = async (req, res) => {
             .input("talla", sql.NVarChar, talla || null)
             .query(`
                 INSERT INTO producto 
-                    (nombre, descripcion, precio, stock, estado, categoria, codigo_tienda, 
+                    (nombre, descripcion, precio_compra, precio, stock, estado, categoria, codigo_tienda, 
                      codigo_imagen, codigo_proveedor, codigo_marca, fecha_fabricacion, 
                      fecha_caducidad, talla)
                 OUTPUT INSERTED.codigo_producto
                 VALUES 
-                    (@nombre, @descripcion, @precio, @stock, @estado, @categoria, 
+                    (@nombre, @descripcion, @precio_compra, @precio, @stock, @estado, @categoria, 
                      @codigo_tienda, @codigo_imagen, @codigo_proveedor, @codigo_marca, 
                      @fecha_fabricacion, @fecha_caducidad, @talla)
             `)
@@ -259,6 +262,7 @@ export const updateProduct = async (req, res) => {
                 UPDATE producto
                 SET nombre = @nombre,
                     descripcion = @descripcion,
+                    precio_compra = @precio_compra,
                     precio = @precio_venta,
                     stock = @cantidad
                 WHERE codigo_producto = @id

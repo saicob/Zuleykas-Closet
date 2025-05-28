@@ -26,6 +26,7 @@ async function cargarCatalogo() {
 
         // Actualizar caché
         productosCache = productos
+        window.productosCache = productosCache // <-- Actualiza la referencia global
         ultimaActualizacion = ahora
 
         renderizarProductos(productos)
@@ -35,16 +36,45 @@ async function cargarCatalogo() {
     }
 }
 
-function renderizarProductos(productos) {
+function getLocalSeleccionado() {
+    const select = document.getElementById("local")
+    return select ? select.value : null
+}
+
+function filtrarPorLocal(productos, localSeleccionado) {
+    // Solo filtra si los productos tienen el campo codigo_tienda
+    if (
+        productos.length > 0 &&
+        Object.prototype.hasOwnProperty.call(productos[0], "codigo_tienda") &&
+        localSeleccionado
+    ) {
+        return productos.filter(prod =>
+            String(prod.codigo_tienda) === String(localSeleccionado)
+        )
+    }
+    // Si no hay campo codigo_tienda, retorna todos los productos
+    return productos
+}
+
+function renderizarProductos(productos, forzar = false) {
     const contenedor = document.querySelector(".catalogo-container")
     if (!contenedor) return
 
-    // Solo limpiar si es necesario
-    if (contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString()) {
-        contenedor.innerHTML = ""
-        contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
+    // Filtrar SIEMPRE por tienda seleccionada antes de cualquier otro filtro
+    let productosFiltrados = productos
+    const localSeleccionado = getLocalSeleccionado()
+    productosFiltrados = filtrarPorLocal(productos, localSeleccionado)
 
-        productos.forEach((prod) => {
+    // Limpiar siempre si forzar es true, si no, solo si es necesario
+    if (forzar || contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString()) {
+        contenedor.innerHTML = ""
+        if (!forzar) {
+            contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
+        } else {
+            contenedor.dataset.lastUpdate = "filtro"
+        }
+
+        productosFiltrados.forEach((prod) => {
             if (!prod.nombre || !prod.precio || prod.stock === undefined) {
                 console.error("Producto incompleto:", prod)
                 return
@@ -99,8 +129,24 @@ function renderizarProductos(productos) {
     }
 }
 
+// Exponer para uso externo (autocompletar_catalogo.js)
+window.productosCache = productosCache
+window.renderizarProductos = renderizarProductos
+
 // Cargar solo una vez al inicio
-window.addEventListener("DOMContentLoaded", cargarCatalogo)
+window.addEventListener("DOMContentLoaded", () => {
+    cargarCatalogo()
+    // Escuchar cambios en el select de tienda/local
+    const selectLocal = document.getElementById("local")
+    if (selectLocal) {
+        selectLocal.addEventListener("change", () => {
+            // Al cambiar la tienda, renderiza el catálogo filtrado
+            if (window.productosCache && window.renderizarProductos) {
+                window.renderizarProductos(window.productosCache, true)
+            }
+        })
+    }
+})
 
 // Función para refrescar manualmente si es necesario
 window.refrescarCatalogo = () => {

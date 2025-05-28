@@ -63,6 +63,13 @@
             <!-- barra de busqueda del catalogo -->
             <div class="autocomplete-container">
                 <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="form-group">
+                        <label for="local">Local</label>
+                        <select id="local" name="local">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>  
                     <button id="ver-carrito" style="background: none; border: none; cursor: pointer; font-size: 24px;">
                         🛒
                     </button>
@@ -98,97 +105,6 @@
     <script src="/carrito.js"></script>
     <script src="/autocompletar_catalogo.js"></script>
     <script src="/catalogo.js"></script>
-
-    <script>
-        async function cargarCategorias() {
-            try {
-                const res = await fetch('http://localhost:3000/api/products'); // Cambiar de /productos a /products
-                const productos = await res.json();
-
-                const input = document.getElementById('productInput');
-                const suggestionsContainer = document.getElementById('suggestions');
-
-                input.addEventListener('input', (event) => {
-                    const query = event.target.value.trim().toLowerCase();
-                    suggestionsContainer.innerHTML = '';
-
-                    if (query.length > 0) {
-                        const filteredProducts = productos.filter(prod =>
-                            prod.nombre.toLowerCase().includes(query)
-                        );
-
-                        filteredProducts.forEach(prod => {
-                            const div = document.createElement('div');
-                            div.classList.add('suggestion');
-                            div.textContent = prod.nombre;
-                            div.dataset.id = prod.codigo_producto;
-                            div.addEventListener('click', () => {
-                                input.value = prod.nombre;
-                                suggestionsContainer.innerHTML = '';
-                            });
-                            suggestionsContainer.appendChild(div);
-                        });
-                    }
-                });
-            } catch (err) {
-                console.error('Error cargando categorías:', err);
-            }
-        }
-
-        document.getElementById('finalizar-compra').addEventListener('click', async () => {
-            const carritoFilas = document.querySelectorAll('#carrito-table tbody tr');
-            const productos = [];
-
-            carritoFilas.forEach(fila => {
-                const nombre = fila.querySelector('td:nth-child(1)').textContent.trim();
-                const precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent.trim().replace('$', ''));
-                const cantidad = parseInt(fila.querySelector('input[type="number"]').value.trim());  // Cambiado a input
-                const subtotal = parseFloat(fila.querySelector('td:nth-child(4)').textContent.trim().replace('$', ''));
-
-                if (cantidad <= 0 || isNaN(cantidad)) {
-                    alert(`Cantidad inválida para el producto: ${nombre}`);
-                    return;
-                }
-
-                productos.push({ nombre, precio, cantidad, subtotal });
-            });
-
-            if (productos.length === 0) {
-                alert('El carrito está vacío.');
-                return;
-            }
-
-            try {
-                const res = await fetch('http://localhost:3000/api/ventas', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ productos })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    alert('Venta realizada exitosamente. ID de factura: ' + data.facturaId);
-                    // Limpiar carrito
-                    document.querySelector('#carrito-table tbody').innerHTML = '';
-                    document.getElementById('carrito-total').textContent = 'Total: $0.00';
-                } else {
-                    alert('Error al realizar la venta: ' + data.message);
-                }
-            } catch (err) {
-                console.error('Error al enviar la venta:', err);
-                alert('Error al realizar la venta. Revisa la consola.');
-            }
-        });
-
-
-        window.addEventListener('DOMContentLoaded', () => {
-
-            cargarCategorias();
-        });
-    </script>
 
 </body>
 
