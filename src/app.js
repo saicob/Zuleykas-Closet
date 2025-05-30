@@ -6,6 +6,7 @@ import productsRoutes from './routes/products.routes.js';
 import empleadoRoutes from './routes/empleados.routes.js';
 import ventasRoutes from './routes/ventas.routes.js';
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import facturaRoutes from './routes/factura.routes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -33,5 +34,6 @@ app.use('/api', empleadoRoutes);
 app.use('/api', ventasRoutes);
 app.use('/api/ventas', ventasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/factura', facturaRoutes);
 
 export default app;

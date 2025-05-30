@@ -16,14 +16,18 @@ export const getProductByName = async (req, res) => {
             .request()
             .input("nombre", sql.VarChar, nombre)
             .query(`
-                SELECT p.nombre, p.descripcion, p.precio, p.stock, p.talla,
+                SELECT p.nombre, p.descripcion, p.precio, p.precio_compra, p.stock, p.talla,
+                       p.categoria,
                        pr.nombre AS proveedor,
                        m.nombre AS marca,
                        p.fecha_caducidad,
+                       p.fecha_fabricacion,
+                       ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen,
                        p.codigo_tienda
                 FROM producto p
                 LEFT JOIN proveedor pr ON p.codigo_proveedor = pr.codigo_proveedor
                 LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
+                LEFT JOIN imagen i ON p.codigo_imagen = i.codigo_imagen
                 WHERE p.nombre = @nombre
             `)
 
