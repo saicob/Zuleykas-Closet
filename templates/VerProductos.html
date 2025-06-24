@@ -80,11 +80,11 @@
     </section>
 
     <!-- Modal Agregar Producto -->
-<section id="Agregar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 800px; max-height: 90vh; overflow-y: auto;">
-    <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Registrar producto</h2>
+<section id="Agregar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+   <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Registrar producto</h2>
     <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
     
-    <form id="form-agregar-producto" enctype="multipart/form-data" method="POST">
+    <form id="form-agregar-producto" enctype="multipart/form-data" method="POST" style="width: 100%; max-width: 1000px; margin: 0 auto;">
         <!-- Primera fila: Nombre y Local -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div class="form-group">
@@ -130,9 +130,8 @@
                     <label for="categoria">Categoría</label>
                     <select id="categoria" name="categoria">
                         <option value="Ropa">Ropa</option>
-                        <option value="Accesorio">Accesorio</option>
+                        <option value="Accesorio">Joyeria y Accesorio</option>
                         <option value="Cosmetico">Cosmético</option>
-                        <option value="Lencería">Lencería</option>
                     </select>
                 </div>
 
@@ -145,6 +144,80 @@
                         </div>
                         <button type="button" id="add-marca-btn-agregar" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campos dinámicos según categoría -->
+        <div id="campos-ropa" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="material-ropa">Material</label>
+                    <input type="text" id="material-ropa" name="material_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="color-ropa">Color</label>
+                    <input type="text" id="color-ropa" name="color_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="tallas-ropa">Tallas (separadas por coma)</label>
+                    <input type="text" id="tallas-ropa" name="tallas_ropa" placeholder="S,M,L,XL">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div class="form-group">
+                    <label for="composicion-ropa">Composición</label>
+                    <input type="text" id="composicion-ropa" name="composicion_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="ajuste-ropa">Tipo de ajuste</label>
+                    <input type="text" id="ajuste-ropa" name="ajuste_ropa">
+                </div>
+            </div>
+        </div>
+        <div id="campos-cosmetico" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="textura-cosmetico">Textura</label>
+                    <input type="text" id="textura-cosmetico" name="textura_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="tipo-cosmetico">Tipo</label>
+                    <input type="text" id="tipo-cosmetico" name="tipo_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="color-cosmetico">Color</label>
+                    <input type="text" id="color-cosmetico" name="color_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="acabado-cosmetico">Acabado</label>
+                    <input type="text" id="acabado-cosmetico" name="acabado_cosmetico">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div class="form-group">
+                    <label for="fecha-fabricacion-cosmetico">Fecha de fabricación</label>
+                    <input type="date" id="fecha-fabricacion-cosmetico" name="fecha_fabricacion_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="fecha-caducidad-cosmetico">Fecha de caducidad</label>
+                    <input type="date" id="fecha-caducidad-cosmetico" name="fecha_caducidad_cosmetico">
+                </div>
+            </div>
+        </div>
+        <div id="campos-accesorio" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="material-accesorio">Material</label>
+                    <input type="text" id="material-accesorio" name="material_accesorio">
+                </div>
+                <div class="form-group">
+                    <label for="color-accesorio">Color</label>
+                    <input type="text" id="color-accesorio" name="color_accesorio">
+                </div>
+                <div class="form-group">
+                    <label for="tallas-accesorio">Tallas (separadas por coma)</label>
+                    <input type="text" id="tallas-accesorio" name="tallas_accesorio" placeholder="Única, S, M, L">
                 </div>
             </div>
         </div>
@@ -181,11 +254,11 @@
 </section>
 
     <!-- Modal Actualizar Producto -->
-<section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+<section id="Actualizar-Producto" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 1000px; max-height: 90vh; overflow-y: auto;">
     <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">Actualizar producto</h2>
     <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Actualizar un producto existente</p>
     
-    <form id="form-actualizar-producto" enctype="multipart/form-data">
+    <form id="form-actualizar-producto" enctype="multipart/form-data" style="width: 100%; max-width: 1000px; margin: 0 auto;"">
         <!-- Primera fila: Nombre y Local -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div class="form-group">
@@ -231,9 +304,9 @@
                     <select id="categoria-actualizar" name="categoria">
                         <option value="">Selecciona una categoría</option>
                         <option value="Ropa">Ropa</option>
-                        <option value="Accesorio">Accesorio</option>
+                        <option value="Accesorio">Joyeria y Accesorio</option>
                         <option value="Cosmetico">Cosmético</option>
-                        <option value="Lencería">Lencería</option>
+                    
                     </select>
                 </div>
 
@@ -246,6 +319,80 @@
                         </div>
                         <button type="button" id="add-marca-btn-actualizar" title="Agregar marca" style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campos dinámicos según categoría -->
+        <div id="campos-ropa-actualizar" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="material-ropa-actualizar">Material</label>
+                    <input type="text" id="material-ropa-actualizar" name="material_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="color-ropa-actualizar">Color</label>
+                    <input type="text" id="color-ropa-actualizar" name="color_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="tallas-ropa-actualizar">Tallas (separadas por coma)</label>
+                    <input type="text" id="tallas-ropa-actualizar" name="tallas_ropa" placeholder="S,M,L,XL">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div class="form-group">
+                    <label for="composicion-ropa-actualizar">Composición</label>
+                    <input type="text" id="composicion-ropa-actualizar" name="composicion_ropa">
+                </div>
+                <div class="form-group">
+                    <label for="ajuste-ropa-actualizar">Tipo de ajuste</label>
+                    <input type="text" id="ajuste-ropa-actualizar" name="ajuste_ropa">
+                </div>
+            </div>
+        </div>
+        <div id="campos-cosmetico-actualizar" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="textura-cosmetico-actualizar">Textura</label>
+                    <input type="text" id="textura-cosmetico-actualizar" name="textura_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="tipo-cosmetico-actualizar">Tipo</label>
+                    <input type="text" id="tipo-cosmetico-actualizar" name="tipo_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="color-cosmetico-actualizar">Color</label>
+                    <input type="text" id="color-cosmetico-actualizar" name="color_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="acabado-cosmetico-actualizar">Acabado</label>
+                    <input type="text" id="acabado-cosmetico-actualizar" name="acabado_cosmetico">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                <div class="form-group">
+                    <label for="fecha-fabricacion-cosmetico-actualizar">Fecha de fabricación</label>
+                    <input type="date" id="fecha-fabricacion-cosmetico-actualizar" name="fecha_fabricacion_cosmetico">
+                </div>
+                <div class="form-group">
+                    <label for="fecha-caducidad-cosmetico-actualizar">Fecha de caducidad</label>
+                    <input type="date" id="fecha-caducidad-cosmetico-actualizar" name="fecha_caducidad_cosmetico">
+                </div>
+            </div>
+        </div>
+        <div id="campos-accesorio-actualizar" style="display:none; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="material-accesorio-actualizar">Material</label>
+                    <input type="text" id="material-accesorio-actualizar" name="material_accesorio">
+                </div>
+                <div class="form-group">
+                    <label for="color-accesorio-actualizar">Color</label>
+                    <input type="text" id="color-accesorio-actualizar" name="color_accesorio">
+                </div>
+                <div class="form-group">
+                    <label for="tallas-accesorio-actualizar">Tallas (separadas por coma)</label>
+                    <input type="text" id="tallas-accesorio-actualizar" name="tallas_accesorio" placeholder="Única, S, M, L">
                 </div>
             </div>
         </div>
@@ -468,8 +615,6 @@
                         $('#fecha-caducidad-actualizar').val(product.fecha_caducidad ? product.fecha_caducidad.split('T')[0] : '');
                         // Forzar el valor del select de categoría si existe
                         $('#categoria-actualizar').val(product.categoria || '').trigger('change');
-                        // Forzar el valor del input de precio de compra
-                        $('#precio-compra-actualizar').val(product.precio_compra || product.precioCompra || '');
                         // Mostrar imagen actual en el preview
                         if (product.imagen) {
                             $('#preview-actualizar').attr('src', product.imagen).show();
@@ -478,20 +623,25 @@
                             $('#preview-actualizar').attr('src', '/placeholder.svg').show();
                             $('#remove-image-actualizar').hide();
                         }
-                        // Mostrar/ocultar campo talla según categoría
+                        // Rellenar campos dinámicos según categoría
                         if (product.categoria === 'Ropa') {
-                            $('#talla-actualizar').closest('.form-group').show();
-                        } else {
-                            $('#talla-actualizar').closest('.form-group').hide();
+                            $('#material-ropa-actualizar').val(product.material || '');
+                            $('#color-ropa-actualizar').val(product.color || '');
+                            $('#tallas-ropa-actualizar').val(product.tallas || '');
+                            $('#composicion-ropa-actualizar').val(product.composicion || '');
+                            $('#ajuste-ropa-actualizar').val(product.tipo_ajuste || '');
+                        } else if (product.categoria === 'Cosmetico') {
+                            $('#textura-cosmetico-actualizar').val(product.textura || '');
+                            $('#tipo-cosmetico-actualizar').val(product.tipo || '');
+                            $('#color-cosmetico-actualizar').val(product.color || '');
+                            $('#acabado-cosmetico-actualizar').val(product.acabado || '');
+                            $('#fecha-fabricacion-cosmetico-actualizar').val(product.fecha_fabricacion ? product.fecha_fabricacion.split('T')[0] : '');
+                            $('#fecha-caducidad-cosmetico-actualizar').val(product.fecha_caducidad ? product.fecha_caducidad.split('T')[0] : '');
+                        } else if (product.categoria === 'Accesorio') {
+                            $('#material-accesorio-actualizar').val(product.material || '');
+                            $('#color-accesorio-actualizar').val(product.color || '');
+                            $('#tallas-accesorio-actualizar').val(product.tallas || '');
                         }
-                        // Listener para cambio de categoría en actualizar
-                        $('#categoria-actualizar').off('change').on('change', function() {
-                            if ($(this).val() === 'Ropa') {
-                                $('#talla-actualizar').closest('.form-group').show();
-                            } else {
-                                $('#talla-actualizar').closest('.form-group').hide();
-                            }
-                        });
                         currentProductId = data.codigo_producto;
                         actualizarProductoSection.show();
                         overlay.show();
@@ -505,72 +655,167 @@
             }
         });
 
-        // --- ACTUALIZACIÓN: Autocompletar proveedor/marca tras agregar ---
-        function setProveedorEnForm(nombre) {
-            $('#proveedor-input-agregar, #proveedor-input-actualizar').val(nombre).trigger('input');
-        }
-        function setMarcaEnForm(nombre) {
-            $('#marca-input-agregar, #marca-input-actualizar').val(nombre).trigger('input');
-        }
-        // Hook para proveedor
-        $('#agregar-proveedor-form').off('submit').on('submit', async function(event) {
-            event.preventDefault();
-            const nombre = $(this).find('[name="nombre"]').val().trim();
-            const estado = $(this).find('[name="estado"]').val().trim();
-            if (!nombre || !estado) { alert('Por favor, complete todos los campos correctamente.'); return; }
-            try {
-                const response = await fetch('http://localhost:3000/api/proveedor', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, estado: estado === 'Activo' ? 1 : 0 })
-                });
-                const data = await response.json();
-                if (!response.ok || !data.success) throw new Error(data.message || 'Error al agregar el proveedor.');
-                alert('Proveedor agregado con éxito.');
-                $('#Agregar-Proveedor form')[0].reset();
-                $('#Agregar-Proveedor').hide();
-                $('#overlay').hide();
-                setProveedorEnForm(nombre);
-            } catch (err) { alert('Hubo un error al agregar el proveedor: ' + err.message); }
-        });
-        // Hook para marca
-        $('#agregar-marca-form').off('submit').on('submit', async function(event) {
-            event.preventDefault();
-            const nombre = $(this).find('[name="nombre"]').val().trim();
-            const estado = $(this).find('[name="estado"]').val().trim();
-            if (!nombre || !estado) { alert('Por favor, complete todos los campos correctamente.'); return; }
-            try {
-                const response = await fetch('http://localhost:3000/api/marcas', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, estado: estado === 'Activo' ? 1 : 0 })
-                });
-                const data = await response.json();
-                if (!response.ok || !data.success) throw new Error(data.message || 'Error al agregar la marca.');
-                alert('Marca agregada con éxito.');
-                $('#Agregar-Marca form')[0].reset();
-                $('#Agregar-Marca').hide();
-                $('#overlay').hide();
-                setMarcaEnForm(nombre);
-            } catch (err) { alert('Hubo un error al agregar la marca: ' + err.message); }
-        });
-        // --- FIN ACTUALIZACIÓN ---
+        // Mostrar/ocultar campos dinámicos según categoría en AGREGAR
+        $('#categoria').on('change', function() {
+            const cat = $(this).val();
+            $('#campos-ropa').hide();
+            $('#campos-cosmetico').hide();
+            $('#campos-accesorio').hide();
+            if (cat === 'Ropa') $('#campos-ropa').show();
+            else if (cat === 'Cosmetico') $('#campos-cosmetico').show();
+            else if (cat === 'Accesorio') $('#campos-accesorio').show();
+        }).trigger('change');
 
-        // --- ACTUALIZACIÓN: Envío de actualización de producto ---
+        // Mostrar/ocultar campos dinámicos según categoría en ACTUALIZAR
+        $('#categoria-actualizar').on('change', function() {
+            const cat = $(this).val();
+            $('#campos-ropa-actualizar').hide();
+            $('#campos-cosmetico-actualizar').hide();
+            $('#campos-accesorio-actualizar').hide();
+            if (cat === 'Ropa') $('#campos-ropa-actualizar').show();
+            else if (cat === 'Cosmetico') $('#campos-cosmetico-actualizar').show();
+            else if (cat === 'Accesorio') $('#campos-accesorio-actualizar').show();
+        }).trigger('change');
+
+        // Envío de formulario AGREGAR PRODUCTO con campos dinámicos
+        $('#form-agregar-producto').off('submit').on('submit', async function(event) {
+            event.preventDefault();
+            const categoria = $('#categoria').val();
+            const nombre = $('#nombre').val();
+            const marca = $('#marca-input-agregar').val();
+            // Construir descripción dinámica
+            let descripcion = nombre;
+            if (marca) descripcion += ' | Marca: ' + marca;
+            if (categoria === 'Ropa') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-ropa').val() || '') +
+                    ' | Color: ' + ($('#color-ropa').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-ropa').val() || '') +
+                    ' | Composición: ' + ($('#composicion-ropa').val() || '') +
+                    ' | Ajuste: ' + ($('#ajuste-ropa').val() || '');
+            } else if (categoria === 'Cosmetico') {
+                descripcion +=
+                    ' | Textura: ' + ($('#textura-cosmetico').val() || '') +
+                    ' | Tipo: ' + ($('#tipo-cosmetico').val() || '') +
+                    ' | Color: ' + ($('#color-cosmetico').val() || '') +
+                    ' | Acabado: ' + ($('#acabado-cosmetico').val() || '') +
+                    ' | Fabricación: ' + ($('#fecha-fabricacion-cosmetico').val() || '') +
+                    ' | Caducidad: ' + ($('#fecha-caducidad-cosmetico').val() || '');
+            } else if (categoria === 'Accesorio') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-accesorio').val() || '') +
+                    ' | Color: ' + ($('#color-accesorio').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-accesorio').val() || '');
+            }
+            const formData = {
+                nombre,
+                descripcion,
+                precio_compra: $('#precio-compra').val(),
+                precio_venta: $('#precio-venta').val(),
+                cantidad: $('#cantidad').val(),
+                proveedor: $('#proveedor-input-agregar').val(),
+                marca,
+                categoria,
+                local: $('#local').val(),
+                talla: $('#talla').val(),
+                fecha_fabricacion: $('#fecha-fabricacion').val(),
+                fecha_caducidad: $('#fecha-caducidad').val(),
+                // Campos dinámicos
+                material_ropa: categoria === 'Ropa' ? $('#material-ropa').val() : undefined,
+                color_ropa: categoria === 'Ropa' ? $('#color-ropa').val() : undefined,
+                tallas_ropa: categoria === 'Ropa' ? $('#tallas-ropa').val() : undefined,
+                composicion_ropa: categoria === 'Ropa' ? $('#composicion-ropa').val() : undefined,
+                ajuste_ropa: categoria === 'Ropa' ? $('#ajuste-ropa').val() : undefined,
+                textura_cosmetico: categoria === 'Cosmetico' ? $('#textura-cosmetico').val() : undefined,
+                tipo_cosmetico: categoria === 'Cosmetico' ? $('#tipo-cosmetico').val() : undefined,
+                color_cosmetico: categoria === 'Cosmetico' ? $('#color-cosmetico').val() : undefined,
+                acabado_cosmetico: categoria === 'Cosmetico' ? $('#acabado-cosmetico').val() : undefined,
+                fecha_fabricacion_cosmetico: categoria === 'Cosmetico' ? $('#fecha-fabricacion-cosmetico').val() : undefined,
+                fecha_caducidad_cosmetico: categoria === 'Cosmetico' ? $('#fecha-caducidad-cosmetico').val() : undefined,
+                material_accesorio: categoria === 'Accesorio' ? $('#material-accesorio').val() : undefined,
+                color_accesorio: categoria === 'Accesorio' ? $('#color-accesorio').val() : undefined,
+                tallas_accesorio: categoria === 'Accesorio' ? $('#tallas-accesorio').val() : undefined
+            };
+            try {
+                const response = await fetch('http://localhost:3000/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if (response.ok) {
+                    alert('Producto agregado exitosamente');
+                    $('#form-agregar-producto')[0].reset();
+                    agregarProductoSection.hide();
+                    overlay.hide();
+                    table.ajax.reload();
+                } else {
+                    const data = await response.json();
+                    alert('Error al agregar el producto: ' + (data.error || '')); 
+                }
+            } catch (error) {
+                alert('Error al conectar con el servidor');
+            }
+        });
+
+        // Envío de formulario ACTUALIZAR PRODUCTO con campos dinámicos
         $('#form-actualizar-producto').off('submit').on('submit', async function(event) {
             event.preventDefault();
             if (!currentProductId) { alert('Error: No se ha seleccionado un producto para actualizar'); return; }
+            const categoria = $('#categoria-actualizar').val();
+            const nombre = $('#nombre-actualizar').val();
+            const marca = $('#marca-input-actualizar').val();
+            // Construir descripción dinámica
+            let descripcion = nombre;
+            if (marca) descripcion += ' | Marca: ' + marca;
+            if (categoria === 'Ropa') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-ropa-actualizar').val() || '') +
+                    ' | Color: ' + ($('#color-ropa-actualizar').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-ropa-actualizar').val() || '') +
+                    ' | Composición: ' + ($('#composicion-ropa-actualizar').val() || '') +
+                    ' | Ajuste: ' + ($('#ajuste-ropa-actualizar').val() || '');
+            } else if (categoria === 'Cosmetico') {
+                descripcion +=
+                    ' | Textura: ' + ($('#textura-cosmetico-actualizar').val() || '') +
+                    ' | Tipo: ' + ($('#tipo-cosmetico-actualizar').val() || '') +
+                    ' | Color: ' + ($('#color-cosmetico-actualizar').val() || '') +
+                    ' | Acabado: ' + ($('#acabado-cosmetico-actualizar').val() || '') +
+                    ' | Fabricación: ' + ($('#fecha-fabricacion-cosmetico-actualizar').val() || '') +
+                    ' | Caducidad: ' + ($('#fecha-caducidad-cosmetico-actualizar').val() || '');
+            } else if (categoria === 'Accesorio') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-accesorio-actualizar').val() || '') +
+                    ' | Color: ' + ($('#color-accesorio-actualizar').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-accesorio-actualizar').val() || '');
+            }
             const formData = {
-                nombre: $('#nombre-actualizar').val(),
-                descripcion: $('#descripcion-actualizar').val(),
+                nombre,
+                descripcion,
                 precio_compra: $('#precio-compra-actualizar').val(),
                 precio_venta: $('#precio-venta-actualizar').val(),
                 cantidad: $('#cantidad-actualizar').val(),
                 proveedor: $('#proveedor-input-actualizar').val(),
-                marca: $('#marca-input-actualizar').val(),
-                categoria: $('#categoria-actualizar').val(),
+                marca,
+                categoria,
                 local: $('#local-actualizar').val(),
                 talla: $('#talla-actualizar').val(),
                 fecha_fabricacion: $('#fecha-fabricacion-actualizar').val(),
                 fecha_caducidad: $('#fecha-caducidad-actualizar').val(),
+                // Campos dinámicos
+                material_ropa: categoria === 'Ropa' ? $('#material-ropa-actualizar').val() : undefined,
+                color_ropa: categoria === 'Ropa' ? $('#color-ropa-actualizar').val() : undefined,
+                tallas_ropa: categoria === 'Ropa' ? $('#tallas-ropa-actualizar').val() : undefined,
+                composicion_ropa: categoria === 'Ropa' ? $('#composicion-ropa-actualizar').val() : undefined,
+                ajuste_ropa: categoria === 'Ropa' ? $('#ajuste-ropa-actualizar').val() : undefined,
+                textura_cosmetico: categoria === 'Cosmetico' ? $('#textura-cosmetico-actualizar').val() : undefined,
+                tipo_cosmetico: categoria === 'Cosmetico' ? $('#tipo-cosmetico-actualizar').val() : undefined,
+                color_cosmetico: categoria === 'Cosmetico' ? $('#color-cosmetico-actualizar').val() : undefined,
+                acabado_cosmetico: categoria === 'Cosmetico' ? $('#acabado-cosmetico-actualizar').val() : undefined,
+                fecha_fabricacion_cosmetico: categoria === 'Cosmetico' ? $('#fecha-fabricacion-cosmetico-actualizar').val() : undefined,
+                fecha_caducidad_cosmetico: categoria === 'Cosmetico' ? $('#fecha-caducidad-cosmetico-actualizar').val() : undefined,
+                material_accesorio: categoria === 'Accesorio' ? $('#material-accesorio-actualizar').val() : undefined,
+                color_accesorio: categoria === 'Accesorio' ? $('#color-accesorio-actualizar').val() : undefined,
+                tallas_accesorio: categoria === 'Accesorio' ? $('#tallas-accesorio-actualizar').val() : undefined
             };
             try {
                 const response = await fetch(`http://localhost:3000/api/products/${currentProductId}`, {
@@ -588,11 +833,9 @@
                     alert('Error al actualizar el producto');
                 }
             } catch (error) {
-                console.error('Error:', error);
                 alert('Error al conectar con el servidor');
             }
         });
-        // --- FIN ACTUALIZACIÓN ---
 
         // Botones + para agregar proveedor y marca desde formulario de actualización
         $('#add-proveedor-btn-actualizar').on('click', function() {

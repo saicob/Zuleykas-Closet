@@ -23,7 +23,9 @@ export const getProductByName = async (req, res) => {
                        p.fecha_caducidad,
                        p.fecha_fabricacion,
                        ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen,
-                       p.codigo_tienda
+                       p.codigo_tienda,
+                       -- Campos dinámicos
+                       p.material, p.color, p.tallas, p.composicion, p.tipo_ajuste, p.tipo, p.textura, p.acabado
                 FROM producto p
                 LEFT JOIN proveedor pr ON p.codigo_proveedor = pr.codigo_proveedor
                 LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
@@ -80,7 +82,6 @@ export const getProductsJSON = async (req, res) => {
 export const createProduct = async (req, res) => {
     try {
         const pool = await getConnection()
-
         const {
             nombre,
             descripcion,
@@ -91,9 +92,24 @@ export const createProduct = async (req, res) => {
             local,
             proveedor,
             marca,
-            fecha_fabricacion,
-            fecha_caducidad,
             talla,
+            // Campos dinámicos del frontend
+            material_ropa,
+            color_ropa,
+            tallas_ropa,
+            composicion_ropa,
+            ajuste_ropa,
+            textura_cosmetico,
+            tipo_cosmetico,
+            color_cosmetico,
+            acabado_cosmetico,
+            fecha_fabricacion_cosmetico,
+            fecha_caducidad_cosmetico,
+            material_accesorio,
+            color_accesorio,
+            tallas_accesorio,
+            fecha_fabricacion,
+            fecha_caducidad
         } = req.body
 
         // Validaciones básicas
@@ -103,16 +119,31 @@ export const createProduct = async (req, res) => {
             })
         }
 
-        if (isNaN(precio_venta) || Number.parseFloat(precio_venta) <= 0) {
-            return res.status(400).json({
-                error: "El precio debe ser un número mayor a 0",
-            })
-        }
-
-        if (isNaN(cantidad) || Number.parseInt(cantidad) < 0) {
-            return res.status(400).json({
-                error: "El stock debe ser un número mayor o igual a 0",
-            })
+        // Mapeo de campos dinámicos a columnas reales
+        let material = null, color = null, tallas = null, composicion = null, tipo_ajuste = null;
+        let tipo = null, textura = null, acabado = null;
+        let fechaFab = null, fechaCad = null;
+        if (categoria === 'Ropa') {
+            material = material_ropa;
+            color = color_ropa;
+            tallas = tallas_ropa;
+            composicion = composicion_ropa;
+            tipo_ajuste = ajuste_ropa;
+            fechaFab = fecha_fabricacion || null;
+            fechaCad = fecha_caducidad || null;
+        } else if (categoria === 'Cosmetico') {
+            textura = textura_cosmetico;
+            tipo = tipo_cosmetico;
+            color = color_cosmetico;
+            acabado = acabado_cosmetico;
+            fechaFab = fecha_fabricacion_cosmetico || null;
+            fechaCad = fecha_caducidad_cosmetico || null;
+        } else if (categoria === 'Accesorio') {
+            material = material_accesorio;
+            color = color_accesorio;
+            tallas = tallas_accesorio;
+            fechaFab = fecha_fabricacion || null;
+            fechaCad = fecha_caducidad || null;
         }
 
         // 1. Subir la imagen si se envió
@@ -218,19 +249,28 @@ export const createProduct = async (req, res) => {
             .input("codigo_imagen", sql.Int, codigo_imagen)
             .input("codigo_proveedor", sql.Int, codigo_proveedor)
             .input("codigo_marca", sql.Int, codigo_marca)
-            .input("fecha_fabricacion", sql.Date, fecha_fabricacion || null)
-            .input("fecha_caducidad", sql.Date, fecha_caducidad || null)
+            .input("fecha_fabricacion", sql.Date, fechaFab)
+            .input("fecha_caducidad", sql.Date, fechaCad)
             .input("talla", sql.NVarChar, talla || null)
+            // Campos reales
+            .input("material", sql.VarChar, material || null)
+            .input("color", sql.VarChar, color || null)
+            .input("tallas", sql.VarChar, tallas || null)
+            .input("composicion", sql.VarChar, composicion || null)
+            .input("tipo_ajuste", sql.VarChar, tipo_ajuste || null)
+            .input("tipo", sql.VarChar, tipo || null)
+            .input("textura", sql.VarChar, textura || null)
+            .input("acabado", sql.VarChar, acabado || null)
             .query(`
                 INSERT INTO producto 
                     (nombre, descripcion, precio_compra, precio, stock, estado, categoria, codigo_tienda, 
                      codigo_imagen, codigo_proveedor, codigo_marca, fecha_fabricacion, 
-                     fecha_caducidad, talla)
+                     fecha_caducidad, talla, material, color, tallas, composicion, tipo_ajuste, tipo, textura, acabado)
                 OUTPUT INSERTED.codigo_producto
                 VALUES 
                     (@nombre, @descripcion, @precio_compra, @precio, @stock, @estado, @categoria, 
                      @codigo_tienda, @codigo_imagen, @codigo_proveedor, @codigo_marca, 
-                     @fecha_fabricacion, @fecha_caducidad, @talla)
+                     @fecha_fabricacion, @fecha_caducidad, @talla, @material, @color, @tallas, @composicion, @tipo_ajuste, @tipo, @textura, @acabado)
             `)
 
         const codigo_producto = productoResult.recordset[0].codigo_producto
@@ -251,27 +291,85 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const { id } = req.params
-        const { nombre, descripcion, precio_compra, precio_venta, cantidad } = req.body
-
+        const {
+            nombre, descripcion, precio_compra, precio_venta, cantidad, categoria, local, proveedor, marca, talla,
+            material_ropa, color_ropa, tallas_ropa, composicion_ropa, ajuste_ropa,
+            textura_cosmetico, tipo_cosmetico, color_cosmetico, acabado_cosmetico,
+            fecha_fabricacion_cosmetico, fecha_caducidad_cosmetico,
+            material_accesorio, color_accesorio, tallas_accesorio,
+            fecha_fabricacion, fecha_caducidad
+        } = req.body
+        // Mapeo de campos dinámicos a columnas reales
+        let material = null, color = null, tallas = null, composicion = null, tipo_ajuste = null;
+        let tipo = null, textura = null, acabado = null;
+        let fechaFab = null, fechaCad = null;
+        if (categoria === 'Ropa') {
+            material = material_ropa;
+            color = color_ropa;
+            tallas = tallas_ropa;
+            composicion = composicion_ropa;
+            tipo_ajuste = ajuste_ropa;
+            fechaFab = fecha_fabricacion || null;
+            fechaCad = fecha_caducidad || null;
+        } else if (categoria === 'Cosmetico') {
+            textura = textura_cosmetico;
+            tipo = tipo_cosmetico;
+            color = color_cosmetico;
+            acabado = acabado_cosmetico;
+            fechaFab = fecha_fabricacion_cosmetico || null;
+            fechaCad = fecha_caducidad_cosmetico || null;
+        } else if (categoria === 'Accesorio') {
+            material = material_accesorio;
+            color = color_accesorio;
+            tallas = tallas_accesorio;
+            fechaFab = fecha_fabricacion || null;
+            fechaCad = fecha_caducidad || null;
+        }
         const pool = await getConnection()
         await pool
             .request()
             .input("id", sql.Int, id)
             .input("nombre", sql.VarChar, nombre)
             .input("descripcion", sql.Text, descripcion)
-            .input("precio_compra", sql.Decimal, precio_compra)
-            .input("precio_venta", sql.Decimal, precio_venta)
-            .input("cantidad", sql.Int, cantidad)
+            .input("precio_compra", sql.Decimal(10,2), precio_compra)
+            .input("precio", sql.Decimal(10,2), precio_venta)
+            .input("stock", sql.Int, cantidad)
+            .input("categoria", sql.VarChar, categoria)
+            .input("codigo_tienda", sql.Int, local)
+            .input("talla", sql.NVarChar, talla)
+            .input("fecha_fabricacion", sql.Date, fechaFab)
+            .input("fecha_caducidad", sql.Date, fechaCad)
+            // Campos reales
+            .input("material", sql.VarChar, material || null)
+            .input("color", sql.VarChar, color || null)
+            .input("tallas", sql.VarChar, tallas || null)
+            .input("composicion", sql.VarChar, composicion || null)
+            .input("tipo_ajuste", sql.VarChar, tipo_ajuste || null)
+            .input("tipo", sql.VarChar, tipo || null)
+            .input("textura", sql.VarChar, textura || null)
+            .input("acabado", sql.VarChar, acabado || null)
             .query(`
                 UPDATE producto
                 SET nombre = @nombre,
                     descripcion = @descripcion,
                     precio_compra = @precio_compra,
-                    precio = @precio_venta,
-                    stock = @cantidad
+                    precio = @precio,
+                    stock = @stock,
+                    categoria = @categoria,
+                    codigo_tienda = @codigo_tienda,
+                    talla = @talla,
+                    fecha_fabricacion = @fecha_fabricacion,
+                    fecha_caducidad = @fecha_caducidad,
+                    material = @material,
+                    color = @color,
+                    tallas = @tallas,
+                    composicion = @composicion,
+                    tipo_ajuste = @tipo_ajuste,
+                    tipo = @tipo,
+                    textura = @textura,
+                    acabado = @acabado
                 WHERE codigo_producto = @id
             `)
-
         res.status(200).json({ message: "Producto actualizado exitosamente" })
     } catch (error) {
         console.error("Error al actualizar producto:", error)
