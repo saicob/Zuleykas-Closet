@@ -39,6 +39,13 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
     const contenedor = document.querySelector(".catalogo-container")
     if (!contenedor) return
 
+    // Asegurar centrado con flexbox
+    contenedor.style.display = 'flex';
+    contenedor.style.flexWrap = 'wrap';
+    contenedor.style.justifyContent = 'center';
+    contenedor.style.alignItems = 'flex-start';
+    contenedor.style.gap = '32px 24px'; // Espaciado entre productos
+
     // Filtrar por local si corresponde
     let filtrados = productos
     if (local) {
@@ -118,15 +125,9 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
             }
 
             const btn = document.createElement("button")
-            btn.textContent = "Agregar al carrito"
+            btn.textContent = "Ver producto"
             btn.onclick = () => {
-                if (window.agregarAlCarrito) {
-                    window.agregarAlCarrito({
-                        nombre: prod.nombre,
-                        precio: Number.parseFloat(prod.precio),
-                        stock: Number.parseInt(prod.stock),
-                    })
-                }
+                mostrarModalProducto(prod)
             }
 
             div.appendChild(imgContainer)
@@ -139,6 +140,131 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
             contenedor.appendChild(div)
         })
     }
+}
+
+// Modal flotante para ver producto y agregar al carrito
+function mostrarModalProducto(prod) {
+    document.getElementById('modal-producto')?.remove();
+    const modal = document.createElement('div');
+    modal.id = 'modal-producto';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.45); z-index: 9999;
+        display: flex; align-items: center; justify-content: center; animation: modalFadeIn 0.25s;`
+    ;
+    const card = document.createElement('div');
+    card.style.cssText = `background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 36px 32px; min-width: 340px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; text-align: center;`;
+    // Imagen
+    if (!prod.imagen || prod.imagen === '/placeholder.svg?height=50&width=50') {
+        const noImg = document.createElement('div');
+        noImg.textContent = 'Sin imagen';
+        noImg.style.cssText = 'width: 260px; height: 200px; display: flex; align-items: center; justify-content: center; color: #999; background: #f5f5f5; border-radius: 12px; margin: 0 auto 18px; font-size: 20px; font-weight: 500;';
+        card.appendChild(noImg);
+    } else {
+        const img = document.createElement('img');
+        img.src = prod.imagen;
+        img.alt = prod.nombre;
+        img.style.cssText = 'width: 260px; height: 200px; object-fit: cover; border-radius: 12px; background: #f5f5f5; display: block; margin: 0 auto 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.07)';
+        card.appendChild(img);
+    }
+    // Nombre
+    const h3 = document.createElement('h3');
+    h3.textContent = prod.nombre;
+    h3.style.cssText = 'font-size: 2rem; font-family: "Montserrat", Arial, sans-serif; font-weight: 700; margin-bottom: 12px; color: #222; letter-spacing: 0.5px;';
+    card.appendChild(h3);
+    // Descripción (como párrafo, no una sola línea)
+    if (prod.descripcion) {
+        const desc = document.createElement('p');
+        desc.textContent = prod.descripcion;
+        desc.style.cssText = 'font-size: 1.08rem; color: #333; margin-bottom: 18px; max-width: 100%; white-space: normal; overflow-wrap: break-word; text-align: center;';
+        card.appendChild(desc);
+    }
+    // Precio y stock
+    const pPrecio = document.createElement('p');
+    pPrecio.textContent = `Precio: C$ ${Number.parseFloat(prod.precio).toFixed(2)}`;
+    pPrecio.style.cssText = 'font-size: 1.15rem; color: #d16a8a; font-weight: 600; margin-bottom: 2px;';
+    card.appendChild(pPrecio);
+    const pStock = document.createElement('p');
+    pStock.textContent = `En Stock: ${prod.stock}`;
+    pStock.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
+    card.appendChild(pStock);
+    // Talla
+    if (prod.talla !== undefined && prod.talla !== null && prod.talla !== "") {
+        const pTalla = document.createElement("p");
+        pTalla.textContent = `Talla: ${prod.talla}`;
+        pTalla.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
+        card.appendChild(pTalla);
+    }
+    // Input cantidad
+    const cantidadGroup = document.createElement('div');
+    cantidadGroup.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0 10px 0;';
+    const labelCantidad = document.createElement('label');
+    labelCantidad.textContent = 'Cantidad:';
+    labelCantidad.htmlFor = 'cantidad-modal';
+    labelCantidad.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
+    const inputCantidad = document.createElement('input');
+    inputCantidad.type = 'number';
+    inputCantidad.min = 1;
+    inputCantidad.max = prod.stock;
+    inputCantidad.value = 1;
+    inputCantidad.id = 'cantidad-modal';
+    inputCantidad.style.cssText = 'width: 70px; padding: 6px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem; text-align: center;';
+    cantidadGroup.appendChild(labelCantidad);
+    cantidadGroup.appendChild(inputCantidad);
+    card.appendChild(cantidadGroup);
+    // Botones
+    const btns = document.createElement('div');
+    btns.style.cssText = 'display: flex; justify-content: center; gap: 22px; margin-top: 18px;';
+    const btnCancelar = document.createElement('button');
+    btnCancelar.textContent = 'Cancelar';
+    btnCancelar.style.cssText = 'background: #f5f5f5; color: #444; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 500; cursor: pointer; transition: background 0.18s;';
+    btnCancelar.onmouseenter = () => btnCancelar.style.background = '#e0e0e0';
+    btnCancelar.onmouseleave = () => btnCancelar.style.background = '#f5f5f5';
+    btnCancelar.onclick = () => modal.remove();
+    const btnAgregar = document.createElement('button');
+    btnAgregar.textContent = 'Agregar al carrito';
+    btnAgregar.style.cssText = 'background: #f8a8b9; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(248,168,185,0.08); transition: background 0.18s;';
+    btnAgregar.onmouseenter = () => btnAgregar.style.background = '#e07a9b';
+    btnAgregar.onmouseleave = () => btnAgregar.style.background = '#f8a8b9';
+    btnAgregar.onclick = () => {
+        if (window.agregarAlCarrito) {
+            window.agregarAlCarrito({
+                nombre: prod.nombre,
+                precio: Number.parseFloat(prod.precio),
+                stock: Number.parseInt(prod.stock),
+                cantidad: Number.parseInt(inputCantidad.value)
+            });
+        }
+        modal.remove();
+        mostrarToast('¡Producto agregado al carrito!');
+    };
+    btns.appendChild(btnCancelar);
+    btns.appendChild(btnAgregar);
+    card.appendChild(btns);
+    modal.appendChild(card);
+    document.body.appendChild(modal);
+    // Animación CSS
+    if (!document.getElementById('modal-producto-style')) {
+        const style = document.createElement('style');
+        style.id = 'modal-producto-style';
+        style.textContent = `@keyframes modalFadeIn { from { opacity: 0; transform: scale(0.97);} to { opacity: 1; transform: scale(1);} }`;
+        document.head.appendChild(style);
+    }
+}
+
+// Toast notification
+function mostrarToast(mensaje) {
+    let toast = document.getElementById('toast-notif');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notif';
+        toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#f8a8b9;color:#fff;padding:16px 32px;border-radius:12px;font-size:1.1rem;box-shadow:0 2px 12px rgba(0,0,0,0.10);z-index:10000;opacity:0;pointer-events:none;transition:opacity 0.3s;';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = mensaje;
+    toast.style.opacity = '1';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+    }, 1800);
 }
 
 // Función para obtener el valor actual de los filtros y renderizar

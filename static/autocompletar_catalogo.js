@@ -41,7 +41,7 @@ if (input) {
             if (query.length === 0) {
                 window.renderizarProductos(filtrados, { local, query })
             } else {
-                filtrados = filtrados.filter((prod) => prod.nombre && prod.nombre.toLowerCase().startsWith(query))
+                filtrados = filtrados.filter((prod) => prod.nombre && prod.nombre.toLowerCase().includes(query))
                 window.renderizarProductos(filtrados, { local, query })
             }
         }
@@ -52,29 +52,32 @@ if (input) {
             if (local) {
                 filteredProducts = filteredProducts.filter((prod) => prod.codigo_tienda == local)
             }
-            filteredProducts = filteredProducts.filter((prod) => prod.nombre && prod.nombre.toLowerCase().startsWith(query))
+            filteredProducts = filteredProducts.filter((prod) => prod.nombre && prod.nombre.toLowerCase().includes(query))
 
-            filteredProducts.slice(0, 10).forEach((prod) => {
-                // Limitar a 10 resultados
-                const div = document.createElement("div")
-                div.classList.add("suggestion")
-                div.textContent = prod.nombre
-                div.dataset.id = prod.codigo_producto
-                div.addEventListener("click", () => {
-                    input.value = prod.nombre
-                    suggestionsContainer.innerHTML = ""
-                    // Al seleccionar una sugerencia, filtrar catálogo por local y nombre
-                    if (window.productosCache && window.renderizarProductos) {
-                        let filtrados = window.productosCache
-                        if (local) {
-                            filtrados = filtrados.filter((p) => p.codigo_tienda == local)
-                        }
-                        filtrados = filtrados.filter((p) => p.nombre && p.nombre.toLowerCase().startsWith(prod.nombre.toLowerCase()))
-                        window.renderizarProductos(filtrados, { local, query: prod.nombre })
-                    }
+            if (filteredProducts.length === 0) {
+                const noResult = document.createElement("div")
+                noResult.classList.add("suggestion")
+                noResult.style.color = '#888';
+                noResult.style.fontStyle = 'italic';
+                noResult.textContent = "Producto no encontrado"
+                suggestionsContainer.appendChild(noResult)
+            } else {
+                filteredProducts.slice(0, 10).forEach((prod) => {
+                    // Limitar a 10 resultados
+                    const div = document.createElement("div")
+                    div.classList.add("suggestion")
+                    div.textContent = prod.nombre
+                    div.dataset.id = prod.codigo_producto
+                    div.addEventListener("click", () => {
+                        input.value = prod.nombre
+                        suggestionsContainer.innerHTML = ""
+                        // Disparar evento input para filtrar el catálogo normalmente
+                        const event = new Event('input', { bubbles: true });
+                        input.dispatchEvent(event);
+                    })
+                    suggestionsContainer.appendChild(div)
                 })
-                suggestionsContainer.appendChild(div)
-            })
+            }
         } else {
             // Si el input está vacío, mostrar todo el catálogo filtrado por local
             if (window.productosCache && window.renderizarProductos) {
