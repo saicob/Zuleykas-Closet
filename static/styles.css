@@ -486,7 +486,7 @@ table tbody tr td img {
 .suggestions {
     position: absolute;
     top: 100%;
-    left: 50px;
+    left: 95px;
     /* Align with productInput */
     background: white;
     border: 1px solid #ccc;
@@ -495,7 +495,7 @@ table tbody tr td img {
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0 0 4px 4px;
-    width: calc(100% - 50px);
+    width: calc(100% - 95px);
     /* Match the width of productInput */
 }
 

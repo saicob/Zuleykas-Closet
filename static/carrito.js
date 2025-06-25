@@ -23,10 +23,11 @@ function agregarAlCarrito(producto) {
         return
     }
 
-    const index = carrito.findIndex((p) => p.nombre === producto.nombre)
+    // Buscar por nombre + talla + código_producto
+    const index = carrito.findIndex((p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto)
     if (index !== -1) {
         if (carrito[index].cantidad < producto.stock) {
-            carrito[index].cantidad += 1
+            carrito[index].cantidad += producto.cantidad || 1
         } else {
             alert("No puedes agregar más unidades de este producto. Stock insuficiente.")
         }
@@ -77,7 +78,7 @@ function renderizarCarrito() {
 
         const tr = document.createElement("tr")
         tr.innerHTML = `
-           <td>${producto.nombre}</td>
+           <td style="cursor:pointer;color:#d16a8a;font-weight:bold;" title="Ver detalles">${producto.nombre} <span style='font-size:12px;color:#888;'>[${producto.talla}]</span></td>
            <td>$${producto.precio.toFixed(2)}</td>
            <td style="text-align: center;">
                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
@@ -94,12 +95,34 @@ function renderizarCarrito() {
            <td>$${subtotal.toFixed(2)}</td>
            <td><button onclick="eliminarDelCarrito(${index})">🗑️</button></td>
        `
+        // Mostrar detalles al hacer clic en el nombre
+        tr.querySelector('td').onclick = () => mostrarDetalleProductoCarrito(producto)
         tbody.appendChild(tr)
     })
 
     const totalElement = document.querySelector("#carrito-total")
     if (totalElement) {
         totalElement.textContent = `Total: $${total.toFixed(2)}`
+    }
+}
+
+// Mostrar detalles del producto del carrito en un modal reutilizando mostrarModalProducto si existe
+function mostrarDetalleProductoCarrito(producto) {
+    if (typeof window.mostrarModalProducto === 'function') {
+        // Buscar el producto original en productosCache para mostrar todos los detalles
+        if (window.productosCache && Array.isArray(window.productosCache)) {
+            const grupo = window.productosCache.find(p => p.nombre === producto.nombre && p.marca === producto.marca && p.categoria === producto.categoria)
+            if (grupo) {
+                // Buscar la talla específica
+                const prodDetalle = { ...grupo, tallas: grupo.tallas, talla: producto.talla, stock: producto.stock, codigo_producto: producto.codigo_producto }
+                window.mostrarModalProducto(prodDetalle)
+                return
+            }
+        }
+        // Si no se encuentra, mostrar solo los datos del carrito
+        window.mostrarModalProducto(producto)
+    } else {
+        alert('Detalles: ' + JSON.stringify(producto, null, 2))
     }
 }
 
@@ -247,3 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("No se encontró el botón finalizar compra")
     }
 })
+
+window.agregarAlCarrito = agregarAlCarrito
+window.mostrarDetalleProductoCarrito = mostrarDetalleProductoCarrito

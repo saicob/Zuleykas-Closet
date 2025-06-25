@@ -70,8 +70,7 @@ export const getProductsJSON = async (req, res) => {
             WHERE p.estado = 1
             ORDER BY p.codigo_producto DESC
         `)
-
-        console.log("Productos obtenidos:", result.recordset.length)
+        // Devolver el array plano directamente
         res.json(result.recordset)
     } catch (error) {
         console.error("Error al obtener los productos:", error.message, error.stack)
@@ -123,6 +122,7 @@ export const createProduct = async (req, res) => {
         let material = null, color = null, tallas = null, composicion = null, tipo_ajuste = null;
         let tipo = null, textura = null, acabado = null;
         let fechaFab = null, fechaCad = null;
+        let tallasArray = [];
         if (categoria === 'Ropa') {
             material = material_ropa;
             color = color_ropa;
@@ -131,6 +131,10 @@ export const createProduct = async (req, res) => {
             tipo_ajuste = ajuste_ropa;
             fechaFab = fecha_fabricacion || null;
             fechaCad = fecha_caducidad || null;
+            if (tallas_ropa) {
+                // Filtrar tallas únicas
+                tallasArray = [...new Set(tallas_ropa.split(',').map(t => t.trim()).filter(Boolean))];
+            }
         } else if (categoria === 'Cosmetico') {
             textura = textura_cosmetico;
             tipo = tipo_cosmetico;
@@ -144,6 +148,9 @@ export const createProduct = async (req, res) => {
             tallas = tallas_accesorio;
             fechaFab = fecha_fabricacion || null;
             fechaCad = fecha_caducidad || null;
+            if (tallas_accesorio) {
+                tallasArray = tallas_accesorio.split(',').map(t => t.trim()).filter(Boolean);
+            }
         }
 
         // 1. Subir la imagen si se envió
@@ -235,24 +242,105 @@ export const createProduct = async (req, res) => {
             }
         }
 
-        // 4. Insertar producto
+// 4. Insertar producto(s)
+let codigos_productos = [];
+
+if (tallasArray.length > 0) {
+    for (const tallaIndividual of tallasArray) {
+        // Verificar si ya existe el producto con esa talla
+        const existe = await pool.request()
+            .input("nombre", sql.VarChar, nombre.trim())
+            .input("codigo_marca", sql.Int, codigo_marca)
+            .input("talla", sql.NVarChar, tallaIndividual)
+            .input("categoria", sql.VarChar, categoria)
+            .input("codigo_tienda", sql.Int, parseInt(local) || 1)
+            .query(`
+                SELECT codigo_producto FROM producto
+                WHERE nombre = @nombre 
+                  AND codigo_marca = @codigo_marca
+                  AND talla = @talla
+                  AND categoria = @categoria
+                  AND codigo_tienda = @codigo_tienda
+                  AND estado = 1
+            `);
+
+        if (existe.recordset.length === 0) {
+            const productoResult = await pool
+                .request()
+                .input("nombre", sql.VarChar, nombre.trim())
+                .input("descripcion", sql.Text, descripcion || "")
+                .input("precio_compra", sql.Decimal(10, 2), parseFloat(precio_compra) || 0)
+                .input("precio", sql.Decimal(10, 2), parseFloat(precio_venta))
+                .input("stock", sql.Int, parseInt(cantidad))
+                .input("estado", sql.Bit, true)
+                .input("categoria", sql.VarChar, categoria)
+                .input("codigo_tienda", sql.Int, parseInt(local) || 1)
+                .input("codigo_imagen", sql.Int, codigo_imagen || null)
+                .input("codigo_proveedor", sql.Int, codigo_proveedor)
+                .input("codigo_marca", sql.Int, codigo_marca)
+                .input("fecha_fabricacion", sql.Date, fechaFab || null)
+                .input("fecha_caducidad", sql.Date, fechaCad || null)
+                .input("talla", sql.NVarChar, tallaIndividual)
+                // Campos adicionales
+                .input("material", sql.VarChar, material || null)
+                .input("color", sql.VarChar, color || null)
+                .input("tallas", sql.VarChar, tallas || null)
+                .input("composicion", sql.VarChar, composicion || null)
+                .input("tipo_ajuste", sql.VarChar, tipo_ajuste || null)
+                .input("tipo", sql.VarChar, tipo || null)
+                .input("textura", sql.VarChar, textura || null)
+                .input("acabado", sql.VarChar, acabado || null)
+                .query(`
+                    INSERT INTO producto 
+                        (nombre, descripcion, precio_compra, precio, stock, estado, categoria, codigo_tienda, 
+                         codigo_imagen, codigo_proveedor, codigo_marca, fecha_fabricacion, 
+                         fecha_caducidad, talla, material, color, tallas, composicion, tipo_ajuste, tipo, textura, acabado)
+                    OUTPUT INSERTED.codigo_producto
+                    VALUES 
+                        (@nombre, @descripcion, @precio_compra, @precio, @stock, @estado, @categoria, 
+                         @codigo_tienda, @codigo_imagen, @codigo_proveedor, @codigo_marca, 
+                         @fecha_fabricacion, @fecha_caducidad, @talla, @material, @color, @tallas, @composicion, @tipo_ajuste, @tipo, @textura, @acabado)
+                `);
+
+            codigos_productos.push(productoResult.recordset[0].codigo_producto);
+        }
+    }
+} else {
+    // No hay tallas: producto sin variantes
+    const existe = await pool.request()
+        .input("nombre", sql.VarChar, nombre.trim())
+        .input("codigo_marca", sql.Int, codigo_marca)
+        .input("talla", sql.NVarChar, talla || null)
+        .input("categoria", sql.VarChar, categoria)
+        .input("codigo_tienda", sql.Int, parseInt(local) || 1)
+        .query(`
+            SELECT codigo_producto FROM producto
+            WHERE nombre = @nombre 
+              AND codigo_marca = @codigo_marca
+              AND talla = @talla
+              AND categoria = @categoria
+              AND codigo_tienda = @codigo_tienda
+              AND estado = 1
+        `);
+
+    if (existe.recordset.length === 0) {
         const productoResult = await pool
             .request()
             .input("nombre", sql.VarChar, nombre.trim())
             .input("descripcion", sql.Text, descripcion || "")
-            .input("precio_compra", sql.Decimal(10, 2), Number.parseFloat(precio_compra) || 0)
-            .input("precio", sql.Decimal(10, 2), Number.parseFloat(precio_venta))
-            .input("stock", sql.Int, Number.parseInt(cantidad))
+            .input("precio_compra", sql.Decimal(10, 2), parseFloat(precio_compra) || 0)
+            .input("precio", sql.Decimal(10, 2), parseFloat(precio_venta))
+            .input("stock", sql.Int, parseInt(cantidad))
             .input("estado", sql.Bit, true)
             .input("categoria", sql.VarChar, categoria)
-            .input("codigo_tienda", sql.Int, Number.parseInt(local) || 1)
-            .input("codigo_imagen", sql.Int, codigo_imagen)
+            .input("codigo_tienda", sql.Int, parseInt(local) || 1)
+            .input("codigo_imagen", sql.Int, codigo_imagen || null)
             .input("codigo_proveedor", sql.Int, codigo_proveedor)
             .input("codigo_marca", sql.Int, codigo_marca)
-            .input("fecha_fabricacion", sql.Date, fechaFab)
-            .input("fecha_caducidad", sql.Date, fechaCad)
+            .input("fecha_fabricacion", sql.Date, fechaFab || null)
+            .input("fecha_caducidad", sql.Date, fechaCad || null)
             .input("talla", sql.NVarChar, talla || null)
-            // Campos reales
+            // Campos adicionales
             .input("material", sql.VarChar, material || null)
             .input("color", sql.VarChar, color || null)
             .input("tallas", sql.VarChar, tallas || null)
@@ -271,15 +359,19 @@ export const createProduct = async (req, res) => {
                     (@nombre, @descripcion, @precio_compra, @precio, @stock, @estado, @categoria, 
                      @codigo_tienda, @codigo_imagen, @codigo_proveedor, @codigo_marca, 
                      @fecha_fabricacion, @fecha_caducidad, @talla, @material, @color, @tallas, @composicion, @tipo_ajuste, @tipo, @textura, @acabado)
-            `)
+            `);
 
-        const codigo_producto = productoResult.recordset[0].codigo_producto
+        codigos_productos.push(productoResult.recordset[0].codigo_producto);
+    }
+}
 
-        res.status(201).json({
-            message: "Producto agregado exitosamente",
-            codigo_producto,
-            imagen_subida: !!req.file,
-        })
+// Respuesta final
+res.status(201).json({
+    message: "Producto(s) agregado(s) exitosamente",
+    codigos_productos,
+    imagen_subida: !!req.file,
+});
+
     } catch (error) {
         console.error("Error al agregar producto:", error)
         res.status(500).json({

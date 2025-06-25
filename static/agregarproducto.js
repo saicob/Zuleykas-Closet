@@ -1,3 +1,5 @@
+// Código deshabilitado para evitar doble envío de productos. El formulario ahora solo se envía desde cargarimagenes.js, que soporta imágenes.
+/*
 $('#Agregar').on('click', async function(event) {
     event.preventDefault();
     const data = {
@@ -33,3 +35,4 @@ $('#Agregar').on('click', async function(event) {
         console.error('Error:', error);
     }
 });
+*/

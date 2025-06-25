@@ -56,7 +56,6 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
         filtrados = filtrados.filter((prod) => prod.nombre && prod.nombre.toLowerCase().includes(query.toLowerCase()))
     }
 
-    // Solo limpiar si es necesario
     if (contenedor.children.length === 0 || contenedor.dataset.lastUpdate !== ultimaActualizacion.toString() || contenedor.dataset.lastLocal !== String(local) || contenedor.dataset.lastQuery !== query) {
         contenedor.innerHTML = ""
         contenedor.dataset.lastUpdate = ultimaActualizacion.toString()
@@ -64,41 +63,30 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
         contenedor.dataset.lastQuery = query
 
         filtrados.forEach((prod) => {
-            if (!prod.nombre || !prod.precio || prod.stock === undefined) {
+            if (!prod.nombre || !prod.precio || !prod.tallas || !Array.isArray(prod.tallas)) {
                 console.error("Producto incompleto:", prod)
                 return
             }
 
             const div = document.createElement("div")
             div.classList.add("producto")
+            div.style.borderTop = "5px solid #f8a8b9";
 
             // Crear contenedor para imagen con placeholder estable
             const imgContainer = document.createElement("div")
             imgContainer.style.cssText =
                 "width: 100%; height: 150px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;"
-
             if (prod.imagen && prod.imagen !== "/placeholder.svg?height=50&width=50") {
                 const img = document.createElement("img")
                 img.src = prod.imagen
                 img.alt = prod.nombre
                 img.loading = "lazy"
                 img.style.cssText = "width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;"
-
-                // Placeholder mientras carga
                 const placeholder = document.createElement("div")
                 placeholder.style.cssText = "color: #999; font-size: 12px; text-align: center; padding: 10px;"
                 placeholder.textContent = "Cargando..."
-
-                img.onload = () => {
-                    placeholder.style.display = "none"
-                    img.style.display = "block"
-                }
-
-                img.onerror = () => {
-                    placeholder.textContent = "Sin imagen"
-                    img.style.display = "none"
-                }
-
+                img.onload = () => { placeholder.style.display = "none"; img.style.display = "block" }
+                img.onerror = () => { placeholder.textContent = "Sin imagen"; img.style.display = "none" }
                 imgContainer.appendChild(img)
                 imgContainer.appendChild(placeholder)
             } else {
@@ -114,15 +102,10 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
             const pPrecio = document.createElement("p")
             pPrecio.textContent = `Precio: C$ ${Number.parseFloat(prod.precio).toFixed(2)}`
 
-            const pStock = document.createElement("p")
-            pStock.textContent = `En Stock: ${prod.stock}`
-
-            // Mostrar talla si existe
-            let pTalla = null
-            if (prod.talla !== undefined && prod.talla !== null && prod.talla !== "") {
-                pTalla = document.createElement("p")
-                pTalla.textContent = `Talla: ${prod.talla}`
-            }
+            // Mostrar tallas disponibles y stock
+            const tallasDiv = document.createElement("div")
+            tallasDiv.style.cssText = "margin: 6px 0 8px 0; font-size: 14px; color: #555;"
+            tallasDiv.innerHTML = `<b>Tallas:</b> ` + prod.tallas.map(t => `<span style='margin-right:8px;'>${t.talla} <span style='color:#d16a8a'>(Stock: ${t.stock})</span></span>`).join(' ')
 
             const btn = document.createElement("button")
             btn.textContent = "Ver producto"
@@ -133,8 +116,7 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
             div.appendChild(imgContainer)
             div.appendChild(h3)
             div.appendChild(pPrecio)
-            div.appendChild(pStock)
-            if (pTalla) div.appendChild(pTalla)
+            div.appendChild(tallasDiv)
             div.appendChild(btn)
 
             contenedor.appendChild(div)
@@ -152,7 +134,7 @@ function mostrarModalProducto(prod) {
         display: flex; align-items: center; justify-content: center; animation: modalFadeIn 0.25s;`
     ;
     const card = document.createElement('div');
-    card.style.cssText = `background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 36px 32px; min-width: 340px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; text-align: center;`;
+    card.style.cssText = `background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 36px 32px; min-width: 340px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; text-align: center; border-top: 5px solid #f8a8b9;`;
     // Imagen
     if (!prod.imagen || prod.imagen === '/placeholder.svg?height=50&width=50') {
         const noImg = document.createElement('div');
@@ -178,22 +160,38 @@ function mostrarModalProducto(prod) {
         desc.style.cssText = 'font-size: 1.08rem; color: #333; margin-bottom: 18px; max-width: 100%; white-space: normal; overflow-wrap: break-word; text-align: center;';
         card.appendChild(desc);
     }
-    // Precio y stock
+    // Precio
     const pPrecio = document.createElement('p');
     pPrecio.textContent = `Precio: C$ ${Number.parseFloat(prod.precio).toFixed(2)}`;
     pPrecio.style.cssText = 'font-size: 1.15rem; color: #d16a8a; font-weight: 600; margin-bottom: 2px;';
     card.appendChild(pPrecio);
+    // Selector de talla
+    const tallas = prod.tallas || [];
+    let selectedTalla = tallas[0] || { talla: '', stock: 0, codigo_producto: null };
+    const tallaGroup = document.createElement('div');
+    tallaGroup.style.cssText = 'margin: 12px 0 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px;';
+    const labelTalla = document.createElement('label');
+    labelTalla.textContent = 'Talla:';
+    labelTalla.htmlFor = 'talla-modal';
+    labelTalla.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
+    const selectTalla = document.createElement('select');
+    selectTalla.id = 'talla-modal';
+    selectTalla.style.cssText = 'padding: 6px 12px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem;';
+    tallas.forEach((t, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${t.talla} (Stock: ${t.stock})`;
+        selectTalla.appendChild(opt);
+    });
+    tallaGroup.appendChild(labelTalla);
+    tallaGroup.appendChild(selectTalla);
+    card.appendChild(tallaGroup);
+    // Stock actual
     const pStock = document.createElement('p');
-    pStock.textContent = `En Stock: ${prod.stock}`;
+    pStock.id = 'stock-modal';
+    pStock.textContent = `En Stock: ${selectedTalla.stock}`;
     pStock.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
     card.appendChild(pStock);
-    // Talla
-    if (prod.talla !== undefined && prod.talla !== null && prod.talla !== "") {
-        const pTalla = document.createElement("p");
-        pTalla.textContent = `Talla: ${prod.talla}`;
-        pTalla.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
-        card.appendChild(pTalla);
-    }
     // Input cantidad
     const cantidadGroup = document.createElement('div');
     cantidadGroup.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0 10px 0;';
@@ -204,13 +202,20 @@ function mostrarModalProducto(prod) {
     const inputCantidad = document.createElement('input');
     inputCantidad.type = 'number';
     inputCantidad.min = 1;
-    inputCantidad.max = prod.stock;
+    inputCantidad.max = selectedTalla.stock;
     inputCantidad.value = 1;
     inputCantidad.id = 'cantidad-modal';
     inputCantidad.style.cssText = 'width: 70px; padding: 6px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem; text-align: center;';
     cantidadGroup.appendChild(labelCantidad);
     cantidadGroup.appendChild(inputCantidad);
     card.appendChild(cantidadGroup);
+    // Cambiar stock/cantidad al cambiar talla
+    selectTalla.onchange = function() {
+        selectedTalla = tallas[Number(this.value)];
+        pStock.textContent = `En Stock: ${selectedTalla.stock}`;
+        inputCantidad.max = selectedTalla.stock;
+        inputCantidad.value = 1;
+    };
     // Botones
     const btns = document.createElement('div');
     btns.style.cssText = 'display: flex; justify-content: center; gap: 22px; margin-top: 18px;';
@@ -230,7 +235,9 @@ function mostrarModalProducto(prod) {
             window.agregarAlCarrito({
                 nombre: prod.nombre,
                 precio: Number.parseFloat(prod.precio),
-                stock: Number.parseInt(prod.stock),
+                talla: selectedTalla.talla,
+                codigo_producto: selectedTalla.codigo_producto,
+                stock: Number.parseInt(selectedTalla.stock),
                 cantidad: Number.parseInt(inputCantidad.value)
             });
         }
