@@ -478,7 +478,30 @@
             </div>
         </form>
     </section>
-</main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" style="position: fixed; top: 30px; right: 30px; z-index: 2000;"></div>
+    
+    <script>
+    // Toast notification function
+    function showToast(message, type = 'success', duration = 3000) {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.style.cssText = `min-width:220px; max-width:350px; background:${type==='success'?'#4BB543':'#e74c3c'}; color:white; padding:14px 24px; border-radius:8px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); font-size:16px; font-family:inherit; opacity:0.97; display:flex; align-items:center; gap:10px;`;
+        toast.innerHTML = `<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 400);
+        }, duration);
+    }
+    </script>
+    
+    <style>
+    .toast.toast-success { background: #4BB543; }
+    .toast.toast-error { background: #e74c3c; }
+    </style>
 
 <script src="/script.js"></script>
 <script src="/autocompletar_productomarca.js"></script>
@@ -508,11 +531,33 @@
                 responsive: true,
                 ajax: {
                     url: 'http://localhost:3000/api/products',
-                    dataSrc: '',
+                    dataSrc: function(productos) {
+                        // Aplanar productos: cada talla es una fila
+                        const filas = [];
+                        productos.forEach(producto => {
+                            if (Array.isArray(producto.tallas) && producto.tallas.length > 0) {
+                                producto.tallas.forEach(tallaObj => {
+                                    filas.push({
+                                        ...producto,
+                                        talla: tallaObj.talla,
+                                        stock: tallaObj.stock,
+                                        codigo_producto: tallaObj.codigo_producto,
+                                        precio: tallaObj.precio ?? producto.precio,
+                                        precio_compra: tallaObj.precio_compra ?? producto.precio_compra,
+                                        fecha_fabricacion: tallaObj.fecha_fabricacion ?? producto.fecha_fabricacion,
+                                        fecha_caducidad: tallaObj.fecha_caducidad ?? producto.fecha_caducidad
+                                    });
+                                });
+                            } else {
+                                filas.push({ ...producto, talla: '', stock: producto.stock, codigo_producto: producto.codigo_producto });
+                            }
+                        });
+                        return filas;
+                    },
                     cache: true,
                     error: function(xhr, error, thrown) {
                         console.error('Error al cargar productos:', error, thrown);
-                        alert('No se pudieron cargar los productos. Verifica que el servidor esté corriendo.');
+                        showToast('No se pudieron cargar los productos. Verifica que el servidor esté corriendo.', 'error');
                     }
                 },
                 columns: [
@@ -539,7 +584,9 @@
                             return `$${parseFloat(data || 0).toFixed(2)}`;
                         }
                     },
-                    { data: 'stock' },
+                    { 
+                        data: 'stock' 
+                    },
                     { data: 'categoria' },
                     { 
                         data: 'talla',
@@ -548,7 +595,9 @@
                         }
                     },
                     { data: 'proveedor' },
-                    { data: 'marca' }
+                    { data: 'marca' },
+                    // Columna oculta para el identificador único
+                    { data: 'codigo_producto', visible: false, searchable: false }
                 ],
                 language: {
                     search: "Buscar:",
@@ -598,7 +647,8 @@
             const data = table.row(this).data();
             if (data) {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/products/${data.nombre}`);
+                    // Usar el identificador único del producto (codigo_producto)
+                    const response = await fetch(`http://localhost:3000/api/products/${data.codigo_producto}`);
                     if (response.ok) {
                         const product = await response.json();
                         $('#nombre-actualizar').val(product.nombre);
@@ -627,7 +677,8 @@
                         if (product.categoria === 'Ropa') {
                             $('#material-ropa-actualizar').val(product.material || '');
                             $('#color-ropa-actualizar').val(product.color || '');
-                            $('#tallas-ropa-actualizar').val(product.tallas || '');
+                            // Mostrar solo la talla individual de este producto
+                            $('#tallas-ropa-actualizar').val(product.talla || '');
                             $('#composicion-ropa-actualizar').val(product.composicion || '');
                             $('#ajuste-ropa-actualizar').val(product.tipo_ajuste || '');
                         } else if (product.categoria === 'Cosmetico') {
@@ -640,17 +691,17 @@
                         } else if (product.categoria === 'Accesorio') {
                             $('#material-accesorio-actualizar').val(product.material || '');
                             $('#color-accesorio-actualizar').val(product.color || '');
-                            $('#tallas-accesorio-actualizar').val(product.tallas || '');
+                            $('#tallas-accesorio-actualizar').val(product.talla || '');
                         }
                         currentProductId = data.codigo_producto;
                         actualizarProductoSection.show();
                         overlay.show();
                     } else {
-                        alert('Error al obtener los detalles del producto');
+                        showToast('Error al obtener los detalles del producto', 'error');
                     }
                 } catch (error) {
                     console.error('Error al obtener los detalles del producto:', error);
-                    alert('Error al cargar los datos del producto');
+                    showToast('Error al cargar los datos del producto', 'error');
                 }
             }
         });
@@ -677,47 +728,46 @@
             else if (cat === 'Accesorio') $('#campos-accesorio-actualizar').show();
         }).trigger('change');
 
-        // Generar descripción dinámica en tiempo real en AGREGAR
-function actualizarDescripcionAgregar() {
-    const categoria = $('#categoria').val();
-    const nombre = $('#nombre').val();
-    const marca = $('#marca-input-agregar').val();
-    let descripcion = nombre || '';
-    if (marca) descripcion += ' | Marca: ' + marca;
-    if (categoria === 'Ropa') {
-        descripcion +=
-            ' | Material: ' + ($('#material-ropa').val() || '') +
-            ' | Color: ' + ($('#color-ropa').val() || '') +
-            ' | Tallas: ' + ($('#tallas-ropa').val() || '') +
-            ' | Composición: ' + ($('#composicion-ropa').val() || '') +
-            ' | Ajuste: ' + ($('#ajuste-ropa').val() || '');
-    } else if (categoria === 'Cosmetico') {
-        descripcion +=
-            ' | Textura: ' + ($('#textura-cosmetico').val() || '') +
-            ' | Tipo: ' + ($('#tipo-cosmetico').val() || '') +
-            ' | Color: ' + ($('#color-cosmetico').val() || '') +
-            ' | Acabado: ' + ($('#acabado-cosmetico').val() || '') +
-            ' | Fabricación: ' + ($('#fecha-fabricacion-cosmetico').val() || '') +
-            ' | Caducidad: ' + ($('#fecha-caducidad-cosmetico').val() || '');
-    } else if (categoria === 'Accesorio') {
-        descripcion +=
-            ' | Material: ' + ($('#material-accesorio').val() || '') +
-            ' | Color: ' + ($('#color-accesorio').val() || '') +
-            ' | Tallas: ' + ($('#tallas-accesorio').val() || '');
-    }
-    $('#descripcion').val(descripcion);
-}
+        // Generar descripción dinámica en tiempo real al escribir en los campos relevantes
+        function actualizarDescripcionAgregar() {
+            const categoria = $('#categoria').val();
+            const nombre = $('#nombre').val();
+            const marca = $('#marca-input-agregar').val();
+            let descripcion = nombre || '';
+            if (marca) descripcion += ' | Marca: ' + marca;
+            if (categoria === 'Ropa') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-ropa').val() || '') +
+                    ' | Color: ' + ($('#color-ropa').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-ropa').val() || '') +
+                    ' | Composición: ' + ($('#composicion-ropa').val() || '') +
+                    ' | Ajuste: ' + ($('#ajuste-ropa').val() || '');
+            } else if (categoria === 'Cosmetico') {
+                descripcion +=
+                    ' | Textura: ' + ($('#textura-cosmetico').val() || '') +
+                    ' | Tipo: ' + ($('#tipo-cosmetico').val() || '') +
+                    ' | Color: ' + ($('#color-cosmetico').val() || '') +
+                    ' | Acabado: ' + ($('#acabado-cosmetico').val() || '') +
+                    ' | Fabricación: ' + ($('#fecha-fabricacion-cosmetico').val() || '') +
+                    ' | Caducidad: ' + ($('#fecha-caducidad-cosmetico').val() || '');
+            } else if (categoria === 'Accesorio') {
+                descripcion +=
+                    ' | Material: ' + ($('#material-accesorio').val() || '') +
+                    ' | Color: ' + ($('#color-accesorio').val() || '') +
+                    ' | Tallas: ' + ($('#tallas-accesorio').val() || '');
+            }
+            $('#descripcion').val(descripcion);
+        }
 
-// Limpiar campos dinámicos al cambiar de categoría en AGREGAR
-$('#categoria').on('change', function() {
-    const cat = $(this).val();
-    // Limpiar campos dinámicos
-    $('#material-ropa, #color-ropa, #tallas-ropa, #composicion-ropa, #ajuste-ropa').val('');
-    $('#textura-cosmetico, #tipo-cosmetico, #color-cosmetico, #acabado-cosmetico, #fecha-fabricacion-cosmetico, #fecha-caducidad-cosmetico').val('');
-    $('#material-accesorio, #color-accesorio, #tallas-accesorio').val('');
-    actualizarDescripcionAgregar();
-    // ...existing code...
-}).trigger('change');
+        // Limpiar campos dinámicos al cambiar de categoría en AGREGAR
+        $('#categoria').on('change', function() {
+            const cat = $(this).val();
+            // Limpiar campos dinámicos
+            $('#material-ropa, #color-ropa, #tallas-ropa, #composicion-ropa, #ajuste-ropa').val('');
+            $('#textura-cosmetico, #tipo-cosmetico, #color-cosmetico, #acabado-cosmetico, #fecha-fabricacion-cosmetico, #fecha-caducidad-cosmetico').val('');
+            $('#material-accesorio, #color-accesorio, #tallas-accesorio').val('');
+            actualizarDescripcionAgregar();
+        }).trigger('change');
 
         // Actualizar descripción en tiempo real al escribir en los campos relevantes
         $('#nombre, #marca-input-agregar, #material-ropa, #color-ropa, #tallas-ropa, #composicion-ropa, #ajuste-ropa, #textura-cosmetico, #tipo-cosmetico, #color-cosmetico, #acabado-cosmetico, #fecha-fabricacion-cosmetico, #fecha-caducidad-cosmetico, #material-accesorio, #color-accesorio, #tallas-accesorio').on('input change', actualizarDescripcionAgregar);
@@ -767,17 +817,17 @@ $('#categoria').on('change', function() {
                     body: JSON.stringify(formData)
                 });
                 if (response.ok) {
-                    alert('Producto agregado exitosamente');
+                    showToast('Producto agregado exitosamente', 'success');
                     $('#form-agregar-producto')[0].reset();
                     agregarProductoSection.hide();
                     overlay.hide();
                     table.ajax.reload();
                 } else {
                     const data = await response.json();
-                    alert('Error al agregar el producto: ' + (data.error || '')); 
+                    showToast('Error al agregar el producto: ' + (data.error || ''), 'error');
                 }
             } catch (error) {
-                alert('Error al conectar con el servidor');
+                showToast('Error al conectar con el servidor', 'error');
             }
         });
         */
@@ -785,7 +835,7 @@ $('#categoria').on('change', function() {
         // Envío de formulario ACTUALIZAR PRODUCTO con campos dinámicos
         $('#form-actualizar-producto').off('submit').on('submit', async function(event) {
             event.preventDefault();
-            if (!currentProductId) { alert('Error: No se ha seleccionado un producto para actualizar'); return; }
+            if (!currentProductId) { showToast('Error: No se ha seleccionado un producto para actualizar', 'error'); return; }
             const categoria = $('#categoria-actualizar').val();
             const nombre = $('#nombre-actualizar').val();
             const marca = $('#marca-input-actualizar').val();
@@ -813,23 +863,33 @@ $('#categoria').on('change', function() {
                     ' | Color: ' + ($('#color-accesorio-actualizar').val() || '') +
                     ' | Tallas: ' + ($('#tallas-accesorio-actualizar').val() || '');
             }
+            // Convertir campos numéricos a número
+            // Usar solo la talla individual para actualizar
+            let tallaIndividual = '';
+            if (categoria === 'Ropa') {
+                tallaIndividual = $('#tallas-ropa-actualizar').val().trim();
+            } else if (categoria === 'Accesorio') {
+                tallaIndividual = $('#tallas-accesorio-actualizar').val().trim();
+            } else {
+                tallaIndividual = $('#talla-actualizar').val().trim();
+            }
             const formData = {
                 nombre,
                 descripcion,
-                precio_compra: $('#precio-compra-actualizar').val(),
-                precio_venta: $('#precio-venta-actualizar').val(),
-                cantidad: $('#cantidad-actualizar').val(),
+                precio_compra: parseFloat($('#precio-compra-actualizar').val()) || 0,
+                precio_venta: parseFloat($('#precio-venta-actualizar').val()) || 0,
+                cantidad: parseInt($('#cantidad-actualizar').val()) || 0,
                 proveedor: $('#proveedor-input-actualizar').val(),
                 marca,
                 categoria,
-                local: $('#local-actualizar').val(),
-                talla: $('#talla-actualizar').val(),
+                local: parseInt($('#local-actualizar').val()) || 1,
+                talla: tallaIndividual,
                 fecha_fabricacion: $('#fecha-fabricacion-actualizar').val(),
                 fecha_caducidad: $('#fecha-caducidad-actualizar').val(),
                 // Campos dinámicos
                 material_ropa: categoria === 'Ropa' ? $('#material-ropa-actualizar').val() : undefined,
                 color_ropa: categoria === 'Ropa' ? $('#color-ropa-actualizar').val() : undefined,
-                tallas_ropa: categoria === 'Ropa' ? $('#tallas-ropa-actualizar').val() : undefined,
+                tallas_ropa: undefined, // No enviar lista de tallas al actualizar
                 composicion_ropa: categoria === 'Ropa' ? $('#composicion-ropa-actualizar').val() : undefined,
                 ajuste_ropa: categoria === 'Ropa' ? $('#ajuste-ropa-actualizar').val() : undefined,
                 textura_cosmetico: categoria === 'Cosmetico' ? $('#textura-cosmetico-actualizar').val() : undefined,
@@ -840,7 +900,7 @@ $('#categoria').on('change', function() {
                 fecha_caducidad_cosmetico: categoria === 'Cosmetico' ? $('#fecha-caducidad-cosmetico-actualizar').val() : undefined,
                 material_accesorio: categoria === 'Accesorio' ? $('#material-accesorio-actualizar').val() : undefined,
                 color_accesorio: categoria === 'Accesorio' ? $('#color-accesorio-actualizar').val() : undefined,
-                tallas_accesorio: categoria === 'Accesorio' ? $('#tallas-accesorio-actualizar').val() : undefined
+                tallas_accesorio: undefined // No enviar lista de tallas al actualizar
             };
             try {
                 const response = await fetch(`http://localhost:3000/api/products/${currentProductId}`, {
@@ -849,16 +909,16 @@ $('#categoria').on('change', function() {
                     body: JSON.stringify(formData)
                 });
                 if (response.ok) {
-                    alert('Producto actualizado exitosamente');
+                    showToast('Producto actualizado exitosamente', 'success');
                     $('#form-actualizar-producto')[0].reset();
                     actualizarProductoSection.hide();
                     overlay.hide();
                     table.ajax.reload();
                 } else {
-                    alert('Error al actualizar el producto');
+                    showToast('Error al actualizar el producto', 'error');
                 }
             } catch (error) {
-                alert('Error al conectar con el servidor');
+                showToast('Error al conectar con el servidor', 'error');
             }
         });
 

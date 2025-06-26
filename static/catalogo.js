@@ -102,10 +102,31 @@ function renderizarProductos(productos, { local = null, query = "" } = {}) {
             const pPrecio = document.createElement("p")
             pPrecio.textContent = `Precio: C$ ${Number.parseFloat(prod.precio).toFixed(2)}`
 
-            // Mostrar tallas disponibles y stock
-            const tallasDiv = document.createElement("div")
-            tallasDiv.style.cssText = "margin: 6px 0 8px 0; font-size: 14px; color: #555;"
-            tallasDiv.innerHTML = `<b>Tallas:</b> ` + prod.tallas.map(t => `<span style='margin-right:8px;'>${t.talla} <span style='color:#d16a8a'>(Stock: ${t.stock})</span></span>`).join(' ')
+            // Mostrar tallas solo para Ropa o Accesorio
+            let tallasDiv = document.createElement("div");
+            tallasDiv.style.cssText = "margin: 6px 0 8px 0; font-size: 14px; color: #555;";
+            if (["Ropa", "Accesorio"].includes(prod.categoria)) {
+                // Mostrar stock aunque la talla sea null
+                if (prod.tallas.length === 1 && (!prod.tallas[0].talla || prod.tallas[0].talla === 'N/A')) {
+                    tallasDiv.innerHTML = `<b>Stock:</b> <span style='color:#d16a8a'>${prod.tallas[0].stock}</span>`;
+                } else {
+                    // Mostrar tallas en filas (una por línea)
+                    tallasDiv.innerHTML = `<b>Tallas:</b><br>` + prod.tallas.map(t => {
+                        if (!t.talla || t.talla === 'N/A') {
+                            return `<span style='display:block; margin-bottom:2px;'><span style='color:#d16a8a'>(Stock: ${t.stock})</span></span>`;
+                        } else {
+                            return `<span style='display:block; margin-bottom:2px;'><b>${t.talla}</b> <span style='color:#d16a8a'>(Stock: ${t.stock})</span></span>`;
+                        }
+                    }).join('');
+                }
+            } else {
+                // Para otras categorías, muestra solo el stock
+                if (prod.tallas && prod.tallas.length > 0) {
+                    tallasDiv.innerHTML = `<b>Stock:</b> <span style='color:#d16a8a'>${prod.tallas[0].stock}</span>`;
+                } else {
+                    tallasDiv.innerHTML = `<b>Stock:</b> <span style='color:#d16a8a'>0</span>`;
+                }
+            }
 
             const btn = document.createElement("button")
             btn.textContent = "Ver producto"
@@ -136,14 +157,28 @@ function mostrarModalProducto(prod) {
     const card = document.createElement('div');
     card.style.cssText = `background: #fff; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 36px 32px; min-width: 340px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; text-align: center; border-top: 5px solid #f8a8b9;`;
     // Imagen
-    if (!prod.imagen || prod.imagen === '/placeholder.svg?height=50&width=50') {
+    let imagenMostrar = prod.imagen;
+    let tallaObj = null;
+    if (prod.talla && prod.tallas && Array.isArray(prod.tallas)) {
+        tallaObj = prod.tallas.find(t => t.talla === prod.talla);
+        console.log('Talla seleccionada:', tallaObj);
+        if (tallaObj && tallaObj.imagen && tallaObj.imagen !== '' && tallaObj.imagen !== null && tallaObj.imagen !== undefined) {
+            imagenMostrar = tallaObj.imagen;
+        } else if (prod.imagen && prod.imagen !== '' && prod.imagen !== null && prod.imagen !== undefined) {
+            imagenMostrar = prod.imagen;
+        } else {
+            imagenMostrar = null;
+        }
+    }
+    console.log('Imagen que se mostrará:', imagenMostrar);
+    if (!imagenMostrar || imagenMostrar === '/placeholder.svg?height=50&width=50') {
         const noImg = document.createElement('div');
         noImg.textContent = 'Sin imagen';
         noImg.style.cssText = 'width: 260px; height: 200px; display: flex; align-items: center; justify-content: center; color: #999; background: #f5f5f5; border-radius: 12px; margin: 0 auto 18px; font-size: 20px; font-weight: 500;';
         card.appendChild(noImg);
     } else {
         const img = document.createElement('img');
-        img.src = prod.imagen;
+        img.src = imagenMostrar;
         img.alt = prod.nombre;
         img.style.cssText = 'width: 260px; height: 200px; object-fit: cover; border-radius: 12px; background: #f5f5f5; display: block; margin: 0 auto 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.07)';
         card.appendChild(img);
@@ -165,90 +200,161 @@ function mostrarModalProducto(prod) {
     pPrecio.textContent = `Precio: C$ ${Number.parseFloat(prod.precio).toFixed(2)}`;
     pPrecio.style.cssText = 'font-size: 1.15rem; color: #d16a8a; font-weight: 600; margin-bottom: 2px;';
     card.appendChild(pPrecio);
-    // Selector de talla
+    // Selector de talla o solo stock
     const tallas = prod.tallas || [];
     let selectedTalla = tallas[0] || { talla: '', stock: 0, codigo_producto: null };
-    const tallaGroup = document.createElement('div');
-    tallaGroup.style.cssText = 'margin: 12px 0 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px;';
-    const labelTalla = document.createElement('label');
-    labelTalla.textContent = 'Talla:';
-    labelTalla.htmlFor = 'talla-modal';
-    labelTalla.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
-    const selectTalla = document.createElement('select');
-    selectTalla.id = 'talla-modal';
-    selectTalla.style.cssText = 'padding: 6px 12px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem;';
-    tallas.forEach((t, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${t.talla} (Stock: ${t.stock})`;
-        selectTalla.appendChild(opt);
-    });
-    tallaGroup.appendChild(labelTalla);
-    tallaGroup.appendChild(selectTalla);
-    card.appendChild(tallaGroup);
-    // Stock actual
-    const pStock = document.createElement('p');
-    pStock.id = 'stock-modal';
-    pStock.textContent = `En Stock: ${selectedTalla.stock}`;
-    pStock.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
-    card.appendChild(pStock);
-    // Input cantidad
-    const cantidadGroup = document.createElement('div');
-    cantidadGroup.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0 10px 0;';
-    const labelCantidad = document.createElement('label');
-    labelCantidad.textContent = 'Cantidad:';
-    labelCantidad.htmlFor = 'cantidad-modal';
-    labelCantidad.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
-    const inputCantidad = document.createElement('input');
-    inputCantidad.type = 'number';
-    inputCantidad.min = 1;
-    inputCantidad.max = selectedTalla.stock;
-    inputCantidad.value = 1;
-    inputCantidad.id = 'cantidad-modal';
-    inputCantidad.style.cssText = 'width: 70px; padding: 6px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem; text-align: center;';
-    cantidadGroup.appendChild(labelCantidad);
-    cantidadGroup.appendChild(inputCantidad);
-    card.appendChild(cantidadGroup);
-    // Cambiar stock/cantidad al cambiar talla
-    selectTalla.onchange = function() {
-        selectedTalla = tallas[Number(this.value)];
+    if (tallas.length > 1 || (["Ropa", "Accesorio"].includes(prod.categoria) && tallas.length > 1)) {
+        const tallaGroup = document.createElement('div');
+        tallaGroup.style.cssText = 'margin: 12px 0 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px;';
+        const labelTalla = document.createElement('label');
+        labelTalla.textContent = 'Talla:';
+        labelTalla.htmlFor = 'talla-modal';
+        labelTalla.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
+        const selectTalla = document.createElement('select');
+        selectTalla.id = 'talla-modal';
+        selectTalla.style.cssText = 'padding: 6px 12px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem;';
+        tallas.forEach((t, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            // Si la talla es null, vacía o N/A, solo muestra el stock
+            if (!t.talla || t.talla === 'N/A') {
+                opt.textContent = `(Stock: ${t.stock})`;
+            } else {
+                opt.textContent = `${t.talla} (Stock: ${t.stock})`;
+            }
+            selectTalla.appendChild(opt);
+        });
+        tallaGroup.appendChild(labelTalla);
+        tallaGroup.appendChild(selectTalla);
+        card.appendChild(tallaGroup);
+        // Stock actual
+        const pStock = document.createElement('p');
+        pStock.id = 'stock-modal';
         pStock.textContent = `En Stock: ${selectedTalla.stock}`;
+        pStock.style.cssText = 'font-size: 1.05rem; color: #666; margin-bottom: 2px;';
+        card.appendChild(pStock);
+        // Input cantidad
+        const cantidadGroup = document.createElement('div');
+        cantidadGroup.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0 10px 0;';
+        const labelCantidad = document.createElement('label');
+        labelCantidad.textContent = 'Cantidad:';
+        labelCantidad.htmlFor = 'cantidad-modal';
+        labelCantidad.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
+        const inputCantidad = document.createElement('input');
+        inputCantidad.type = 'number';
+        inputCantidad.min = 1;
         inputCantidad.max = selectedTalla.stock;
         inputCantidad.value = 1;
-    };
-    // Botones
-    const btns = document.createElement('div');
-    btns.style.cssText = 'display: flex; justify-content: center; gap: 22px; margin-top: 18px;';
-    const btnCancelar = document.createElement('button');
-    btnCancelar.textContent = 'Cancelar';
-    btnCancelar.style.cssText = 'background: #f5f5f5; color: #444; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 500; cursor: pointer; transition: background 0.18s;';
-    btnCancelar.onmouseenter = () => btnCancelar.style.background = '#e0e0e0';
-    btnCancelar.onmouseleave = () => btnCancelar.style.background = '#f5f5f5';
-    btnCancelar.onclick = () => modal.remove();
-    const btnAgregar = document.createElement('button');
-    btnAgregar.textContent = 'Agregar al carrito';
-    btnAgregar.style.cssText = 'background: #f8a8b9; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(248,168,185,0.08); transition: background 0.18s;';
-    btnAgregar.onmouseenter = () => btnAgregar.style.background = '#e07a9b';
-    btnAgregar.onmouseleave = () => btnAgregar.style.background = '#f8a8b9';
-    btnAgregar.onclick = () => {
-        if (window.agregarAlCarrito) {
-            window.agregarAlCarrito({
-                nombre: prod.nombre,
-                precio: Number.parseFloat(prod.precio),
-                talla: selectedTalla.talla,
-                codigo_producto: selectedTalla.codigo_producto,
-                stock: Number.parseInt(selectedTalla.stock),
-                cantidad: Number.parseInt(inputCantidad.value)
-            });
+        inputCantidad.id = 'cantidad-modal';
+        inputCantidad.style.cssText = 'width: 70px; padding: 6px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem; text-align: center;';
+        cantidadGroup.appendChild(labelCantidad);
+        cantidadGroup.appendChild(inputCantidad);
+        card.appendChild(cantidadGroup);
+        // Cambiar stock/cantidad al cambiar talla
+        selectTalla.onchange = function() {
+            selectedTalla = tallas[Number(this.value)];
+            pStock.textContent = `En Stock: ${selectedTalla.stock}`;
+            inputCantidad.max = selectedTalla.stock;
+            inputCantidad.value = 1;
+        };
+        // Botones
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display: flex; justify-content: center; gap: 22px; margin-top: 18px;';
+        const btnCancelar = document.createElement('button');
+        btnCancelar.textContent = 'Cancelar';
+        btnCancelar.style.cssText = 'background: #f5f5f5; color: #444; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 500; cursor: pointer; transition: background 0.18s;';
+        btnCancelar.onmouseenter = () => btnCancelar.style.background = '#e0e0e0';
+        btnCancelar.onmouseleave = () => btnCancelar.style.background = '#f5f5f5';
+        btnCancelar.onclick = () => modal.remove();
+        const btnAgregar = document.createElement('button');
+        btnAgregar.textContent = 'Agregar al carrito';
+        btnAgregar.style.cssText = 'background: #f8a8b9; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(248,168,185,0.08); transition: background 0.18s;';
+        btnAgregar.onmouseenter = () => btnAgregar.style.background = '#e07a9b';
+        btnAgregar.onmouseleave = () => btnAgregar.style.background = '#f8a8b9';
+        btnAgregar.onclick = () => {
+            if (window.agregarAlCarrito) {
+                window.agregarAlCarrito({
+                    nombre: prod.nombre,
+                    precio: Number.parseFloat(prod.precio),
+                    talla: selectedTalla.talla,
+                    codigo_producto: selectedTalla.codigo_producto,
+                    stock: Number.parseInt(selectedTalla.stock),
+                    cantidad: Number.parseInt(inputCantidad.value)
+                });
+            }
+            modal.remove();
+            mostrarToast('¡Producto agregado al carrito!');
+        };
+        btns.appendChild(btnCancelar);
+        btns.appendChild(btnAgregar);
+        card.appendChild(btns);
+        modal.appendChild(card);
+        document.body.appendChild(modal);
+    } else {
+        // Solo muestra el stock si hay una sola talla o ninguna
+        const pStock = document.createElement('p');
+        pStock.id = 'stock-modal';
+        pStock.textContent = `En Stock: ${selectedTalla.stock}`;
+        pStock.style.cssText = 'font-size: 1.15rem; color: #d16a8a; font-weight: 600; margin: 18px 0;';
+        card.appendChild(pStock);
+        // Input cantidad
+        const cantidadGroup = document.createElement('div');
+        cantidadGroup.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0 10px 0;';
+        const labelCantidad = document.createElement('label');
+        labelCantidad.textContent = 'Cantidad:';
+        labelCantidad.htmlFor = 'cantidad-modal';
+        labelCantidad.style.cssText = 'font-size: 1.1rem; font-weight: 500;';
+        const inputCantidad = document.createElement('input');
+        inputCantidad.type = 'number';
+        inputCantidad.min = 1;
+        inputCantidad.max = selectedTalla.stock;
+        inputCantidad.value = 1;
+        inputCantidad.id = 'cantidad-modal';
+        inputCantidad.style.cssText = 'width: 70px; padding: 6px; border-radius: 8px; border: 1.5px solid #e0bfc7; font-size: 1.1rem; text-align: center;';
+        cantidadGroup.appendChild(labelCantidad);
+        cantidadGroup.appendChild(inputCantidad);
+        card.appendChild(cantidadGroup);
+        // Mostrar talla seleccionada si existe (cuando solo hay una talla o es un producto con talla seleccionada)
+        if (prod.talla && (!prod.tallas || prod.tallas.length <= 1 || (prod.tallas.length > 1 && prod.tallas.every(t => t.talla === prod.talla)))) {
+            const pTalla = document.createElement('p');
+            pTalla.textContent = `Talla: ${prod.talla}`;
+            pTalla.style.cssText = 'font-size: 1.08rem; color: #d16a8a; font-weight: 600; margin-bottom: 2px;';
+            card.appendChild(pTalla);
         }
-        modal.remove();
-        mostrarToast('¡Producto agregado al carrito!');
-    };
-    btns.appendChild(btnCancelar);
-    btns.appendChild(btnAgregar);
-    card.appendChild(btns);
-    modal.appendChild(card);
-    document.body.appendChild(modal);
+        // Botones
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display: flex; justify-content: center; gap: 22px; margin-top: 18px;';
+        const btnCancelar = document.createElement('button');
+        btnCancelar.textContent = 'Cancelar';
+        btnCancelar.style.cssText = 'background: #f5f5f5; color: #444; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 500; cursor: pointer; transition: background 0.18s;';
+        btnCancelar.onmouseenter = () => btnCancelar.style.background = '#e0e0e0';
+        btnCancelar.onmouseleave = () => btnCancelar.style.background = '#f5f5f5';
+        btnCancelar.onclick = () => modal.remove();
+        const btnAgregar = document.createElement('button');
+        btnAgregar.textContent = 'Agregar al carrito';
+        btnAgregar.style.cssText = 'background: #f8a8b9; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 1.08rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(248,168,185,0.08); transition: background 0.18s;';
+        btnAgregar.onmouseenter = () => btnAgregar.style.background = '#e07a9b';
+        btnAgregar.onmouseleave = () => btnAgregar.style.background = '#f8a8b9';
+        btnAgregar.onclick = () => {
+            if (window.agregarAlCarrito) {
+                window.agregarAlCarrito({
+                    nombre: prod.nombre,
+                    precio: Number.parseFloat(prod.precio),
+                    talla: selectedTalla.talla,
+                    codigo_producto: selectedTalla.codigo_producto,
+                    stock: Number.parseInt(selectedTalla.stock),
+                    cantidad: Number.parseInt(inputCantidad.value)
+                });
+            }
+            modal.remove();
+            mostrarToast('¡Producto agregado al carrito!');
+        };
+        btns.appendChild(btnCancelar);
+        btns.appendChild(btnAgregar);
+        card.appendChild(btns);
+        modal.appendChild(card);
+        document.body.appendChild(modal);
+    }
     // Animación CSS
     if (!document.getElementById('modal-producto-style')) {
         const style = document.createElement('style');

@@ -111,16 +111,28 @@ function mostrarDetalleProductoCarrito(producto) {
     if (typeof window.mostrarModalProducto === 'function') {
         // Buscar el producto original en productosCache para mostrar todos los detalles
         if (window.productosCache && Array.isArray(window.productosCache)) {
-            const grupo = window.productosCache.find(p => p.nombre === producto.nombre && p.marca === producto.marca && p.categoria === producto.categoria)
+            // Buscar el grupo por nombre, marca y categoría
+            const grupo = window.productosCache.find(p => p.nombre === producto.nombre && p.marca === producto.marca && p.categoria === producto.categoria);
             if (grupo) {
                 // Buscar la talla específica
-                const prodDetalle = { ...grupo, tallas: grupo.tallas, talla: producto.talla, stock: producto.stock, codigo_producto: producto.codigo_producto }
-                window.mostrarModalProducto(prodDetalle)
-                return
+                let tallaObj = null;
+                if (producto.talla && grupo.tallas && Array.isArray(grupo.tallas)) {
+                    tallaObj = grupo.tallas.find(t => t.talla === producto.talla);
+                }
+                // Construir objeto para el modal
+                const prodModal = {
+                    ...grupo,
+                    talla: producto.talla,
+                    stock: tallaObj ? tallaObj.stock : producto.stock,
+                    imagen: (tallaObj && tallaObj.imagen) ? tallaObj.imagen : (grupo.imagen || producto.imagen),
+                    tallas: grupo.tallas
+                };
+                window.mostrarModalProducto(prodModal);
+                return;
             }
         }
         // Si no se encuentra, mostrar solo los datos del carrito
-        window.mostrarModalProducto(producto)
+        window.mostrarModalProducto(producto);
     } else {
         alert('Detalles: ' + JSON.stringify(producto, null, 2))
     }

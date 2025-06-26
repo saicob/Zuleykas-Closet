@@ -46,7 +46,8 @@ export const getProductByName = async (req, res) => {
 
 export const getProductsJSON = async (req, res) => {
     try {
-        const pool = await getConnection()
+        const pool = await getConnection();
+        // Traer todos los productos activos
         const result = await pool.request().query(`
             SELECT 
                 p.codigo_producto,
@@ -60,23 +61,58 @@ export const getProductsJSON = async (req, res) => {
                 p.fecha_fabricacion,
                 p.fecha_caducidad,
                 ISNULL(pr.nombre, 'Sin proveedor') AS proveedor,
-                ISNULL(m.nombre, 'Sin marca') AS marca,
-                ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen,
+                ISNULL(m.nombre, 'Sin marca') AS marca_nombre,
+                ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen_url,
                 p.codigo_tienda
             FROM producto p
             LEFT JOIN proveedor pr ON p.codigo_proveedor = pr.codigo_proveedor
             LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
             LEFT JOIN imagen i ON p.codigo_imagen = i.codigo_imagen
             WHERE p.estado = 1
-            ORDER BY p.codigo_producto DESC
-        `)
-        // Devolver el array plano directamente
-        res.json(result.recordset)
+            ORDER BY p.nombre, marca_nombre, p.categoria, p.codigo_tienda, imagen_url, p.talla
+        `);
+        // Agrupar productos por nombre, marca, categoría, tienda, imagen, y precio
+        const productosMap = {};
+        for (const prod of result.recordset) {
+            // Clave única por producto base (sin talla, pero con precio)
+            const key = [prod.nombre, prod.marca_nombre, prod.categoria, prod.codigo_tienda, prod.imagen_url, prod.precio].join('|');
+            if (!productosMap[key]) {
+                productosMap[key] = {
+                    codigo_producto: prod.codigo_producto, // el más reciente (de la primera talla)
+                    nombre: prod.nombre,
+                    descripcion: prod.descripcion,
+                    precio_compra: prod.precio_compra,
+                    precio: prod.precio,
+                    categoria: prod.categoria,
+                    proveedor: prod.proveedor,
+                    marca: prod.marca_nombre,
+                    imagen: prod.imagen_url,
+                    codigo_tienda: prod.codigo_tienda,
+                    fecha_fabricacion: prod.fecha_fabricacion,
+                    fecha_caducidad: prod.fecha_caducidad,
+                    tallas: [],
+                };
+            }
+            // Agregar la talla de este producto (incluyendo todos los datos variables por talla)
+            productosMap[key].tallas.push({
+                talla: prod.talla || '',
+                stock: prod.stock,
+                codigo_producto: prod.codigo_producto,
+                precio: prod.precio, // importante si hay variantes con diferente precio
+                precio_compra: prod.precio_compra,
+                fecha_fabricacion: prod.fecha_fabricacion,
+                fecha_caducidad: prod.fecha_caducidad,
+                imagen: prod.imagen_url // <-- Agregar imagen específica de la talla
+            });
+        }
+        // Convertir a array
+        const productos = Object.values(productosMap);
+        res.json(productos);
     } catch (error) {
-        console.error("Error al obtener los productos:", error.message, error.stack)
-        res.status(500).json({ error: "Error al obtener los productos: " + error.message })
+        console.error("Error al obtener los productos:", error.message, error.stack);
+        res.status(500).json({ error: "Error al obtener los productos: " + error.message });
     }
-}
+};
 
 export const createProduct = async (req, res) => {
     try {
@@ -468,3 +504,37 @@ export const updateProduct = async (req, res) => {
         res.status(500).json({ error: "Error del servidor" })
     }
 }
+
+export const getProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const pool = await getConnection();
+        const result = await pool
+            .request()
+            .input("id", sql.Int, id)
+            .query(`
+                SELECT p.codigo_producto, p.nombre, p.descripcion, p.precio, p.precio_compra, p.stock, p.talla,
+                       p.categoria,
+                       pr.nombre AS proveedor,
+                       m.nombre AS marca,
+                       p.fecha_caducidad,
+                       p.fecha_fabricacion,
+                       ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen,
+                       p.codigo_tienda,
+                       p.material, p.color, p.tallas, p.composicion, p.tipo_ajuste, p.tipo, p.textura, p.acabado
+                FROM producto p
+                LEFT JOIN proveedor pr ON p.codigo_proveedor = pr.codigo_proveedor
+                LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
+                LEFT JOIN imagen i ON p.codigo_imagen = i.codigo_imagen
+                WHERE p.codigo_producto = @id
+            `);
+        if (result.recordset.length > 0) {
+            res.json(result.recordset[0]);
+        } else {
+            res.status(404).json({ error: "Producto no encontrado" });
+        }
+    } catch (error) {
+        console.error("Error al obtener el producto por ID:", error);
+        res.status(500).json({ error: "Error del servidor" });
+    }
+};
