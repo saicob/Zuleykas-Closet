@@ -96,7 +96,7 @@ function renderizarCarrito() {
            <td><button onclick="eliminarDelCarrito(${index})">🗑️</button></td>
        `
         // Mostrar detalles al hacer clic en el nombre
-        tr.querySelector('td').onclick = () => mostrarDetalleProductoCarrito(producto)
+        tr.querySelector('td').onclick = () => window.mostrarDetalleProductoSoloVista(producto)
         tbody.appendChild(tr)
     })
 
@@ -285,3 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.agregarAlCarrito = agregarAlCarrito
 window.mostrarDetalleProductoCarrito = mostrarDetalleProductoCarrito
+
+// Asegura que la función esté disponible globalmente
+window.mostrarDetalleProductoSoloVista = mostrarDetalleProductoSoloVista;

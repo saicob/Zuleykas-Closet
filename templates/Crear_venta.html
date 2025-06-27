@@ -104,6 +104,26 @@
     <script src="/carrito.js"></script>
     <script src="/autocompletar_catalogo.js"></script>
     <script src="/catalogo.js"></script>
+    <script src="/detalle_producto_modal.js"></script>
+
+    <!-- Modal solo vista para detalle de producto en carrito -->
+    <div id="detalle-producto-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:12px; padding:32px; max-width:350px; margin:auto; text-align:center; position:relative;">
+            <div id="detalle-producto-imagen"
+                style="width:220px; height:220px; background:#f5f5f5; margin:auto; display:flex; align-items:center; justify-content:center; border-radius:12px;">
+                <span style="color:#aaa;">Sin imagen</span>
+            </div>
+            <h2 id="detalle-producto-nombre" style="margin-top:20px;"></h2>
+            <p id="detalle-producto-precio" style="color:#d17b98; font-weight:bold;"></p>
+            <p id="detalle-producto-stock" style="color:#d17b98;"></p>
+            <p id="detalle-producto-talla" style="color:#d17b98;"></p>
+            <p id="detalle-producto-descripcion" style="color:#888; margin-top:10px;"></p>
+            <button onclick="cerrarDetalleProducto()"
+                style="margin-top:20px; background:#eee; border:none; border-radius:8px; padding:8px 24px; font-size:16px; cursor:pointer;">Cerrar</button>
+        </div>
+    </div>
 
 </body>
 

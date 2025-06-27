@@ -279,7 +279,8 @@ function mostrarModalProducto(prod) {
                     talla: selectedTalla.talla,
                     codigo_producto: selectedTalla.codigo_producto,
                     stock: Number.parseInt(selectedTalla.stock),
-                    cantidad: Number.parseInt(inputCantidad.value)
+                    cantidad: Number.parseInt(inputCantidad.value),
+                    descripcion: prod.descripcion // <-- Se agrega la descripción
                 });
             }
             modal.remove();
@@ -343,7 +344,8 @@ function mostrarModalProducto(prod) {
                     talla: selectedTalla.talla,
                     codigo_producto: selectedTalla.codigo_producto,
                     stock: Number.parseInt(selectedTalla.stock),
-                    cantidad: Number.parseInt(inputCantidad.value)
+                    cantidad: Number.parseInt(inputCantidad.value),
+                    descripcion: prod.descripcion // <-- Se agrega la descripción
                 });
             }
             modal.remove();
