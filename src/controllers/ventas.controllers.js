@@ -7,7 +7,7 @@ export const crearVenta = async (req, res) => {
     console.log("=== RECIBIENDO PETICIÓN DE VENTA ===")
     console.log("Body recibido:", req.body)
 
-    const { productos } = req.body
+    const { productos, delivery, descuento_global, costo_delivery } = req.body
 
     if (!productos || !Array.isArray(productos) || productos.length === 0) {
         console.error("No se proporcionaron productos válidos")
@@ -48,7 +48,7 @@ export const crearVenta = async (req, res) => {
 
     try {
         console.log("Llamando a realizarVenta...")
-        const result = await realizarVenta(productos)
+        const result = await realizarVenta(productos, delivery, costo_delivery)
         console.log("Resultado de realizarVenta:", result)
 
         if (result.success) {
@@ -83,57 +83,58 @@ export const getVentas = async (req, res) => {
         console.error("Error al obtener el historial de ventas:", error)
         // Log detallado para depuración
         if (error.precedingErrors) {
-            error.precedingErrors.forEach(e => console.error("SQL preceding error:", e))
+            error.precedingErrors.forEach((e) => console.error("SQL preceding error:", e))
         }
         res.status(500).json({
             success: false,
             message: "Error al obtener el historial de ventas.",
             error: error.message,
             sql: error.sql || null,
-            stack: error.stack
+            stack: error.stack,
         })
     }
 }
 
-
-// Obtener detalles de una venta 
+// Obtener detalles de una venta
 export const getDetalleVenta = async (req, res) => {
     try {
-        let codigo_factura = req.params.id;
-        console.log('Valor recibido para codigo_factura:', codigo_factura, 'Tipo:', typeof codigo_factura);
+        let codigo_factura = req.params.id
+        console.log("Valor recibido para codigo_factura:", codigo_factura, "Tipo:", typeof codigo_factura)
         // Validar que sea un número entero
         if (!codigo_factura || isNaN(codigo_factura)) {
-            return res.status(400).json({ mensaje: 'El código de factura debe ser un número válido.' });
+            return res.status(400).json({ mensaje: "El código de factura debe ser un número válido." })
         }
-        codigo_factura = parseInt(codigo_factura, 10);
-        const pool = await getConnection();
+        codigo_factura = Number.parseInt(codigo_factura, 10)
+        const pool = await getConnection()
 
         // Obtener datos de la factura
-        const facturaResult = await pool.request()
-            .input('codigo_factura', sql.Int, codigo_factura)
-            .query('SELECT * FROM factura WHERE codigo_factura = @codigo_factura');
+        const facturaResult = await pool
+            .request()
+            .input("codigo_factura", sql.Int, codigo_factura)
+            .query("SELECT * FROM factura WHERE codigo_factura = @codigo_factura")
 
         // Obtener productos de la factura
-        const productosResult = await pool.request()
-            .input('codigo_factura', sql.Int, codigo_factura)
+        const productosResult = await pool
+            .request()
+            .input("codigo_factura", sql.Int, codigo_factura)
             .query(`
                 SELECT pf.*, p.nombre, p.categoria, m.nombre AS marca
                 FROM producto_factura pf
                 INNER JOIN producto p ON pf.codigo_producto = p.codigo_producto
                 LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
                 WHERE pf.codigo_factura = @codigo_factura
-            `);
+            `)
 
         if (facturaResult.recordset.length === 0) {
-            return res.status(404).json({ mensaje: 'Factura no encontrada' });
+            return res.status(404).json({ mensaje: "Factura no encontrada" })
         }
 
         res.json({
             factura: facturaResult.recordset[0],
-            productos: productosResult.recordset
-        });
+            productos: productosResult.recordset,
+        })
     } catch (error) {
-        console.error('Error al obtener detalles de la venta:', error.message);
-        res.status(500).json({ mensaje: 'Error interno del servidor' });
+        console.error("Error al obtener detalles de la venta:", error.message)
+        res.status(500).json({ mensaje: "Error interno del servidor" })
     }
 }

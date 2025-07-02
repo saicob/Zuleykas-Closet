@@ -1,6 +1,12 @@
 // Arreglo global para almacenar los productos en el carrito
 let carrito = []
 
+// Función para mostrar detalles del producto (declarada antes de su uso)
+function mostrarDetalleProductoSoloVista(producto) {
+    console.log("Mostrando detalles del producto:", producto)
+    // Implementación de la función aquí
+}
+
 // Agrega un producto al carrito (evita duplicados)
 function agregarAlCarrito(producto) {
     console.log("Agregando producto al carrito:", producto)
@@ -24,7 +30,9 @@ function agregarAlCarrito(producto) {
     }
 
     // Buscar por nombre + talla + código_producto
-    const index = carrito.findIndex((p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto)
+    const index = carrito.findIndex(
+        (p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto,
+    )
     if (index !== -1) {
         if (carrito[index].cantidad < producto.stock) {
             carrito[index].cantidad += producto.cantidad || 1
@@ -96,7 +104,7 @@ function renderizarCarrito() {
            <td><button onclick="eliminarDelCarrito(${index})">🗑️</button></td>
        `
         // Mostrar detalles al hacer clic en el nombre
-        tr.querySelector('td').onclick = () => window.mostrarDetalleProductoSoloVista(producto)
+        tr.querySelector("td").onclick = () => window.mostrarDetalleProductoSoloVista(producto)
         tbody.appendChild(tr)
     })
 
@@ -108,33 +116,35 @@ function renderizarCarrito() {
 
 // Mostrar detalles del producto del carrito en un modal reutilizando mostrarModalProducto si existe
 function mostrarDetalleProductoCarrito(producto) {
-    if (typeof window.mostrarModalProducto === 'function') {
+    if (typeof window.mostrarModalProducto === "function") {
         // Buscar el producto original en productosCache para mostrar todos los detalles
         if (window.productosCache && Array.isArray(window.productosCache)) {
             // Buscar el grupo por nombre, marca y categoría
-            const grupo = window.productosCache.find(p => p.nombre === producto.nombre && p.marca === producto.marca && p.categoria === producto.categoria);
+            const grupo = window.productosCache.find(
+                (p) => p.nombre === producto.nombre && p.marca === producto.marca && p.categoria === producto.categoria,
+            )
             if (grupo) {
                 // Buscar la talla específica
-                let tallaObj = null;
+                let tallaObj = null
                 if (producto.talla && grupo.tallas && Array.isArray(grupo.tallas)) {
-                    tallaObj = grupo.tallas.find(t => t.talla === producto.talla);
+                    tallaObj = grupo.tallas.find((t) => t.talla === producto.talla)
                 }
                 // Construir objeto para el modal
                 const prodModal = {
                     ...grupo,
                     talla: producto.talla,
                     stock: tallaObj ? tallaObj.stock : producto.stock,
-                    imagen: (tallaObj && tallaObj.imagen) ? tallaObj.imagen : (grupo.imagen || producto.imagen),
-                    tallas: grupo.tallas
-                };
-                window.mostrarModalProducto(prodModal);
-                return;
+                    imagen: tallaObj && tallaObj.imagen ? tallaObj.imagen : grupo.imagen || producto.imagen,
+                    tallas: grupo.tallas,
+                }
+                window.mostrarModalProducto(prodModal)
+                return
             }
         }
         // Si no se encuentra, mostrar solo los datos del carrito
-        window.mostrarModalProducto(producto);
+        window.mostrarModalProducto(producto)
     } else {
-        alert('Detalles: ' + JSON.stringify(producto, null, 2))
+        alert("Detalles: " + JSON.stringify(producto, null, 2))
     }
 }
 
@@ -164,50 +174,473 @@ function actualizarCantidad(index, nuevaCantidad) {
     renderizarCarrito()
 }
 
-// Envía los datos del carrito al backend (crear compra)
+// Mostrar resumen de pedido en lugar de finalizar directamente
 async function finalizarCompra() {
-    console.log("=== INICIANDO FINALIZAR COMPRA ===")
-    console.log("Carrito actual:", carrito)
+    console.log("=== ABRIENDO RESUMEN DE PEDIDO ===")
 
     if (carrito.length === 0) {
         alert("El carrito está vacío.")
         return
     }
 
-    // Validar los datos del carrito antes de enviarlos
-    for (const producto of carrito) {
-        if (!producto.nombre || typeof producto.nombre !== "string") {
-            console.error("Producto con nombre inválido:", producto)
-            alert("Error: Uno o más productos tienen un nombre inválido.")
-            return
-        }
-
-        if (isNaN(producto.precio) || producto.precio <= 0) {
-            console.error("Producto con precio inválido:", producto)
-            alert("Error: Uno o más productos tienen un precio inválido.")
-            return
-        }
-
-        if (!Number.isInteger(producto.cantidad) || producto.cantidad <= 0) {
-            console.error("Producto con cantidad inválida:", producto)
-            alert("Error: Uno o más productos tienen una cantidad inválida.")
-            return
-        }
+    // Cerrar el panel del carrito
+    const panel = document.getElementById("carrito-panel")
+    if (panel) {
+        panel.style.right = "-500px"
     }
 
+    // Mostrar el modal de resumen de pedido
+    mostrarResumenPedido()
+}
+
+// Nueva función para mostrar el resumen de pedido
+function mostrarResumenPedido() {
+    // Crear el modal si no existe
+    let modal = document.getElementById("resumen-pedido-modal")
+    if (!modal) {
+        modal = crearModalResumenPedido()
+        document.body.appendChild(modal)
+    }
+
+    // Actualizar el contenido del resumen
+    actualizarResumenPedido()
+
+    // Mostrar el modal
+    modal.style.display = "flex"
+}
+
+// Crear la estructura HTML del modal de resumen
+function crearModalResumenPedido() {
+    const modal = document.createElement("div")
+    modal.id = "resumen-pedido-modal"
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+        background: rgba(0,0,0,0.5); z-index: 3000; display: none;
+        align-items: center; justify-content: center; padding: 20px;
+    `
+
+    modal.innerHTML = `
+        <div id="resumen-pedido-content" style="
+            background: #fff; border-radius: 20px; width: 100%; max-width: 1200px; 
+            max-height: 90vh; overflow-y: auto; position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        ">
+            <!-- Header con pasos -->
+            <div style="
+                background: #f8f9fa; padding: 20px 40px; border-radius: 20px 20px 0 0;
+                border-bottom: 1px solid #e9ecef; text-align: center;
+            ">
+                <div style="color: #6c757d; font-size: 16px; margin-bottom: 10px;">
+                    Carrito • Dirección • Pago
+                </div>
+                <h1 style="
+                    font-family: 'Great Vibes', cursive; font-size: 36px; 
+                    color: #dd9cba; margin: 0;
+                ">Zuleyka's Closet</h1>
+            </div>
+
+            <!-- Contenido principal -->
+            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 40px; padding: 40px;">
+                
+                <!-- Lado izquierdo: Lista de productos -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+                        <h2 style="font-size: 32px; font-weight: bold; margin: 0;">CARRITO</h2>
+                        <span id="carrito-count" style="
+                            background: #dd9cba; color: white; border-radius: 50%;
+                            width: 40px; height: 40px; display: flex; align-items: center;
+                            justify-content: center; font-weight: bold; font-size: 18px;
+                        ">0</span>
+                    </div>
+                    
+                    <div style="color: #6c757d; margin-bottom: 20px;">
+                        <span style="color: #ffa500;">😊</span> sou nueve
+                    </div>
+                    
+                    <div style="color: #333; font-weight: 600; margin-bottom: 30px; font-size: 18px;">
+                        Warehouse 1
+                    </div>
+                    
+                    <div id="productos-resumen-lista">
+                        <!-- Aquí se llenarán los productos -->
+                    </div>
+                    
+                    <div style="
+                        border-top: 2px solid #e9ecef; padding-top: 20px; margin-top: 30px;
+                        display: flex; justify-content: space-between; align-items: center;
+                    ">
+                        <span style="font-size: 20px; font-weight: bold;">Subtotal:</span>
+                        <span id="subtotal-carrito" style="font-size: 20px; font-weight: bold;">$0.00</span>
+                    </div>
+                    
+                    <button onclick="procesarPedidoFinal()" style="
+                        background: #dd9cba; color: white; border: none; border-radius: 25px;
+                        padding: 15px 40px; font-size: 18px; font-weight: bold; cursor: pointer;
+                        margin-top: 30px; transition: background 0.3s;
+                    " onmouseover="this.style.background='#c47ba7'" 
+                       onmouseout="this.style.background='#dd9cba'">
+                        Finalizar Compra
+                    </button>
+                </div>
+
+                <!-- Lado derecho: Resumen del pedido -->
+                <div style="
+                    background: #f8f9fa; border-radius: 15px; padding: 30px;
+                    border: 1px solid #e9ecef; height: fit-content;
+                ">
+                    <h3 style="font-size: 24px; font-weight: bold; margin: 0 0 30px 0;">
+                        Resumen del Pedido
+                    </h3>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Subtotal</span>
+                            <span id="resumen-subtotal">$0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Descuento</span>
+                            <span id="resumen-descuento">$0.00</span>
+                        </div>
+                        <div style="
+                            display: flex; justify-content: space-between; font-weight: bold;
+                            font-size: 18px; border-top: 1px solid #dee2e6; padding-top: 10px;
+                        ">
+                            <span>Total</span>
+                            <span id="resumen-total">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Opciones de descuento -->
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <input type="checkbox" id="descuento-10" onchange="aplicarDescuentoGlobal(10, this.checked)">
+                            <span>10% descuento</span>
+                        </label>
+                        
+                        <input type="text" id="descuento-personalizado" placeholder="10% descuento" style="
+                            width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
+                            margin-bottom: 15px; font-size: 16px;
+                        ">
+                        
+                        <input type="text" id="direccion-cliente" placeholder="123 Calle Falsa" style="
+                            width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
+                            margin-bottom: 15px; font-size: 16px;
+                        ">
+                    </div>
+                    
+                    <!-- Opción de delivery -->
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <input type="checkbox" id="delivery-option" onchange="toggleDelivery(this.checked)">
+                            <span style="font-weight: 600;">Delivery</span>
+                        </label>
+                        
+                        <div id="delivery-fields" style="display: none;">
+                            <input type="text" id="delivery-direccion" placeholder="123 Calle Falsa" style="
+                                width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
+                                margin-bottom: 10px; font-size: 16px;
+                            ">
+                            <input type="text" id="delivery-cliente" placeholder="Nombre del cliente" style="
+                                width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
+                                margin-bottom: 10px; font-size: 16px;
+                            ">
+                            <input type="number" id="delivery-costo" placeholder="Costo de delivery" step="0.01" style="
+                                width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
+                                margin-bottom: 10px; font-size: 16px;
+                            " onchange="actualizarTotalConDelivery()">
+                        </div>
+                    </div>
+                    
+                    <button onclick="procesarPedidoFinal()" style="
+                        background: #dd9cba; color: white; border: none; border-radius: 25px;
+                        padding: 15px 0; width: 100%; font-size: 18px; font-weight: bold; 
+                        cursor: pointer; transition: background 0.3s;
+                    " onmouseover="this.style.background='#c47ba7'" 
+                       onmouseout="this.style.background='#dd9cba'">
+                        Finalizar Compra
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Botón cerrar -->
+            <button onclick="cerrarResumenPedido()" style="
+                position: absolute; top: 20px; right: 20px; background: none; border: none;
+                font-size: 24px; cursor: pointer; color: #6c757d; width: 40px; height: 40px;
+                border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            " onmouseover="this.style.background='#f8f9fa'" 
+               onmouseout="this.style.background='none'">
+                ✕
+            </button>
+        </div>
+    `
+
+    return modal
+}
+
+// Variables globales para el resumen
+let descuentoGlobal = 0
+let costoDelivery = 0
+let descuentosIndividuales = {}
+
+// Actualizar el contenido del resumen de pedido
+function actualizarResumenPedido() {
+    const listaProductos = document.getElementById("productos-resumen-lista")
+    const carritoCount = document.getElementById("carrito-count")
+
+    if (!listaProductos || !carritoCount) return
+
+    // Actualizar contador
+    carritoCount.textContent = carrito.length
+
+    // Limpiar lista
+    listaProductos.innerHTML = ""
+
+    // Agregar cada producto
+    carrito.forEach((producto, index) => {
+        const productoDiv = document.createElement("div")
+        productoDiv.style.cssText = `
+            display: grid; grid-template-columns: 80px 1fr auto auto;
+            gap: 15px; align-items: center; padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        `
+
+        const descuentoIndividual = descuentosIndividuales[index] || 0
+        const precioConDescuento = producto.precio * (1 - descuentoIndividual / 100)
+
+        productoDiv.innerHTML = `
+            <div style="
+                width: 80px; height: 80px; background: #f8f9fa; border-radius: 8px;
+                display: flex; align-items: center; justify-content: center; overflow: hidden;
+            ">
+                ${producto.imagen && producto.imagen !== "/placeholder.svg?height=50&width=50"
+                ? `<img src="${producto.imagen}" alt="${producto.nombre}" style="width: 100%; height: 100%; object-fit: cover;">`
+                : '<span style="color: #6c757d; font-size: 12px;">Sin imagen</span>'
+            }
+            </div>
+            
+            <div>
+                <div style="font-weight: 600; font-size: 18px; margin-bottom: 5px;">
+                    ${producto.nombre}
+                </div>
+                <div style="color: #6c757d;">
+                    In stock: ${producto.stock}
+                </div>
+                ${producto.talla ? `<div style="color: #6c757d; font-size: 14px;">Talla: ${producto.talla}</div>` : ""}
+                <div style="margin-top: 8px;">
+                    <input type="number" value="${descuentoIndividual}" min="0" max="100" 
+                           placeholder="% desc." onchange="aplicarDescuentoIndividual(${index}, this.value)"
+                           style="width: 80px; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                    <span style="font-size: 12px; color: #6c757d; margin-left: 5px;">% descuento</span>
+                </div>
+                ${descuentoIndividual > 0
+                ? `
+                    <div style="font-size: 14px; color: #28a745; margin-top: 4px;">
+                        Precio original: $${producto.precio.toFixed(2)} → $${precioConDescuento.toFixed(2)}
+                    </div>
+                `
+                : ""
+            }
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button onclick="cambiarCantidadResumen(${index}, -1)" style="
+                    background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
+                    width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+                    cursor: pointer; font-size: 18px; color: #6c757d;
+                ">−</button>
+                
+                <span style="
+                    min-width: 40px; text-align: center; font-weight: 600; font-size: 18px;
+                ">${producto.cantidad}</span>
+                
+                <button onclick="cambiarCantidadResumen(${index}, 1)" style="
+                    background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
+                    width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+                    cursor: pointer; font-size: 18px; color: #6c757d;
+                ">+</button>
+            </div>
+            
+            <button onclick="eliminarProductoResumen(${index})" style="
+                background: none; border: none; cursor: pointer; font-size: 20px;
+                color: #dc3545; padding: 5px;
+            ">🗑️</button>
+        `
+
+        listaProductos.appendChild(productoDiv)
+    })
+
+    // Actualizar totales
+    actualizarTotalesResumen()
+}
+
+// Cambiar cantidad en el resumen
+function cambiarCantidadResumen(index, delta) {
+    if (carrito[index]) {
+        const nuevoValor = carrito[index].cantidad + delta
+        const stock = carrito[index].stock
+
+        if (delta > 0 && nuevoValor > stock) {
+            alert(`No puedes agregar más de ${stock} unidades disponibles.`)
+            return
+        }
+
+        if (nuevoValor <= 0) {
+            eliminarProductoResumen(index)
+        } else {
+            carrito[index].cantidad = nuevoValor
+            actualizarResumenPedido()
+        }
+    }
+}
+
+// Eliminar producto del resumen
+function eliminarProductoResumen(index) {
+    carrito.splice(index, 1)
+    // Reajustar índices de descuentos individuales
+    const nuevosDescuentos = {}
+    Object.keys(descuentosIndividuales).forEach((key) => {
+        const keyNum = Number.parseInt(key)
+        if (keyNum < index) {
+            nuevosDescuentos[keyNum] = descuentosIndividuales[keyNum]
+        } else if (keyNum > index) {
+            nuevosDescuentos[keyNum - 1] = descuentosIndividuales[keyNum]
+        }
+    })
+    descuentosIndividuales = nuevosDescuentos
+
+    if (carrito.length === 0) {
+        cerrarResumenPedido()
+    } else {
+        actualizarResumenPedido()
+    }
+}
+
+// Aplicar descuento individual a un producto
+function aplicarDescuentoIndividual(index, porcentaje) {
+    const descuento = Math.max(0, Math.min(100, Number.parseFloat(porcentaje) || 0))
+    descuentosIndividuales[index] = descuento
+    actualizarTotalesResumen()
+}
+
+// Aplicar descuento global
+function aplicarDescuentoGlobal(porcentaje, aplicar) {
+    descuentoGlobal = aplicar ? porcentaje : 0
+    actualizarTotalesResumen()
+}
+
+// Toggle delivery
+function toggleDelivery(mostrar) {
+    const deliveryFields = document.getElementById("delivery-fields")
+    if (deliveryFields) {
+        deliveryFields.style.display = mostrar ? "block" : "none"
+        if (!mostrar) {
+            costoDelivery = 0
+            actualizarTotalesResumen()
+        }
+    }
+}
+
+// Actualizar total con delivery
+function actualizarTotalConDelivery() {
+    const costoInput = document.getElementById("delivery-costo")
+    costoDelivery = Number.parseFloat(costoInput.value) || 0
+    actualizarTotalesResumen()
+}
+
+// Actualizar todos los totales del resumen
+function actualizarTotalesResumen() {
+    let subtotal = 0
+    let totalDescuentos = 0
+
+    carrito.forEach((producto, index) => {
+        const descuentoIndividual = descuentosIndividuales[index] || 0
+        const precioConDescuentoIndividual = producto.precio * (1 - descuentoIndividual / 100)
+        const subtotalProducto = precioConDescuentoIndividual * producto.cantidad
+
+        subtotal += subtotalProducto
+        totalDescuentos += producto.precio * producto.cantidad - subtotalProducto
+    })
+
+    // Aplicar descuento global sobre el subtotal ya con descuentos individuales
+    const descuentoGlobalMonto = subtotal * (descuentoGlobal / 100)
+    totalDescuentos += descuentoGlobalMonto
+
+    const total = subtotal - descuentoGlobalMonto + costoDelivery
+
+    // Actualizar elementos del DOM
+    const elementos = {
+        "subtotal-carrito": `$${(subtotal + descuentoGlobalMonto).toFixed(2)}`,
+        "resumen-subtotal": `$${(subtotal + descuentoGlobalMonto).toFixed(2)}`,
+        "resumen-descuento": `$${totalDescuentos.toFixed(2)}`,
+        "resumen-total": `$${total.toFixed(2)}`,
+    }
+
+    Object.entries(elementos).forEach(([id, valor]) => {
+        const elemento = document.getElementById(id)
+        if (elemento) elemento.textContent = valor
+    })
+}
+
+// Cerrar resumen de pedido
+function cerrarResumenPedido() {
+    const modal = document.getElementById("resumen-pedido-modal")
+    if (modal) {
+        modal.style.display = "none"
+    }
+}
+
+// Procesar pedido final
+async function procesarPedidoFinal() {
+    console.log("=== PROCESANDO PEDIDO FINAL ===")
+
+    if (carrito.length === 0) {
+        alert("El carrito está vacío.")
+        return
+    }
+
+    // Validar datos de delivery si está seleccionado
+    const deliveryOption = document.getElementById("delivery-option")
+    let datosDelivery = null
+
+    if (deliveryOption && deliveryOption.checked) {
+        const direccion = document.getElementById("delivery-direccion").value.trim()
+        const cliente = document.getElementById("delivery-cliente").value.trim()
+        const costo = Number.parseFloat(document.getElementById("delivery-costo").value) || 0
+
+        if (!direccion || !cliente) {
+            alert("Por favor, complete la dirección y nombre del cliente para el delivery.")
+            return
+        }
+
+        datosDelivery = { direccion, cliente, costo }
+    }
+
+    // Preparar datos de productos con descuentos aplicados
+    const productosConDescuentos = carrito.map((producto, index) => {
+        const descuentoIndividual = descuentosIndividuales[index] || 0
+        const precioConDescuento = producto.precio * (1 - descuentoIndividual / 100)
+        const precioFinalConDescuentoGlobal = precioConDescuento * (1 - descuentoGlobal / 100)
+
+        return {
+            nombre: producto.nombre,
+            cantidad: producto.cantidad,
+            subtotal: Number.parseFloat((precioFinalConDescuentoGlobal * producto.cantidad).toFixed(2)),
+            precio_original: producto.precio,
+            descuento_individual: descuentoIndividual,
+            descuento_global: descuentoGlobal,
+        }
+    })
+
     const datos = {
-        productos: carrito.map((p) => ({
-            nombre: p.nombre,
-            cantidad: p.cantidad,
-            subtotal: Number.parseFloat((p.precio * p.cantidad).toFixed(2)),
-        })),
+        productos: productosConDescuentos,
+        delivery: datosDelivery,
+        descuento_global: descuentoGlobal,
+        costo_delivery: costoDelivery,
     }
 
     console.log("Datos a enviar:", JSON.stringify(datos, null, 2))
 
     try {
-        console.log("Enviando petición a /api/ventas...")
-
         const response = await fetch("/api/ventas", {
             method: "POST",
             headers: {
@@ -216,27 +649,23 @@ async function finalizarCompra() {
             body: JSON.stringify(datos),
         })
 
-        console.log("Respuesta recibida:", response.status, response.statusText)
-
         if (!response.ok) {
             const errorText = await response.text()
-            console.error("Error del servidor:", errorText)
             throw new Error(`Error del servidor (${response.status}): ${errorText}`)
         }
 
         const result = await response.json()
-        console.log("Resultado:", result)
 
         if (result.success) {
             alert("¡Venta realizada con éxito! Factura ID: " + result.facturaId)
-            carrito = []
-            renderizarCarrito()
 
-            // Cerrar el panel del carrito
-            const panel = document.getElementById("carrito-panel")
-            if (panel) {
-                panel.style.right = "-500px"
-            }
+            // Limpiar carrito y cerrar modal
+            carrito = []
+            descuentosIndividuales = {}
+            descuentoGlobal = 0
+            costoDelivery = 0
+            cerrarResumenPedido()
+            renderizarCarrito()
         } else {
             alert("Error al registrar la venta: " + result.message)
         }
@@ -287,4 +716,14 @@ window.agregarAlCarrito = agregarAlCarrito
 window.mostrarDetalleProductoCarrito = mostrarDetalleProductoCarrito
 
 // Asegura que la función esté disponible globalmente
-window.mostrarDetalleProductoSoloVista = mostrarDetalleProductoSoloVista;
+window.mostrarDetalleProductoSoloVista = mostrarDetalleProductoSoloVista
+
+// Hacer las funciones disponibles globalmente
+window.cambiarCantidadResumen = cambiarCantidadResumen
+window.eliminarProductoResumen = eliminarProductoResumen
+window.aplicarDescuentoIndividual = aplicarDescuentoIndividual
+window.aplicarDescuentoGlobal = aplicarDescuentoGlobal
+window.toggleDelivery = toggleDelivery
+window.actualizarTotalConDelivery = actualizarTotalConDelivery
+window.cerrarResumenPedido = cerrarResumenPedido
+window.procesarPedidoFinal = procesarPedidoFinal

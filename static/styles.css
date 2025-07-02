@@ -538,7 +538,8 @@ table tbody tr td img {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.producto img, .producto > div[style*='height: 150px'] {
+.producto img,
+.producto>div[style*="height: 150px"] {
     width: 100%;
     max-width: 100%;
     height: 150px !important;
@@ -1401,4 +1402,111 @@ form .form-group textarea {
     border: 1px solid #ccc !important;
     max-height: 150px !important;
     overflow-y: auto !important;
+}
+
+/* Estilos para el modal de resumen de pedido */
+#resumen-pedido-modal {
+    font-family: "Poppins", sans-serif;
+}
+
+#resumen-pedido-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsividad para el modal de resumen */
+@media (max-width: 768px) {
+    #resumen-pedido-content {
+        margin: 10px;
+        max-height: 95vh;
+    }
+
+    #resumen-pedido-content>div:nth-child(2) {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+        padding: 20px !important;
+    }
+
+    #resumen-pedido-content h1 {
+        font-size: 28px !important;
+    }
+
+    #resumen-pedido-content h2 {
+        font-size: 24px !important;
+    }
+
+    /* Ajustar grid de productos en móvil */
+    #productos-resumen-lista>div {
+        grid-template-columns: 60px 1fr auto !important;
+        gap: 10px !important;
+        padding: 15px 0 !important;
+    }
+
+    /* Ocultar imagen en móvil para ahorrar espacio */
+    #productos-resumen-lista>div>div:first-child {
+        display: none !important;
+    }
+
+    /* Ajustar controles de cantidad */
+    #productos-resumen-lista button {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #resumen-pedido-content {
+        border-radius: 10px;
+        margin: 5px;
+    }
+
+    #resumen-pedido-content>div:first-child {
+        padding: 15px 20px !important;
+    }
+
+    #resumen-pedido-content>div:nth-child(2) {
+        padding: 15px !important;
+    }
+}
+
+/* Mejorar inputs en el resumen */
+#resumen-pedido-modal input[type="text"],
+#resumen-pedido-modal input[type="number"] {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#resumen-pedido-modal input[type="text"]:focus,
+#resumen-pedido-modal input[type="number"]:focus {
+    outline: none;
+    border-color: #dd9cba;
+    box-shadow: 0 0 0 3px rgba(221, 156, 186, 0.1);
+}
+
+/* Estilo para checkboxes */
+#resumen-pedido-modal input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #dd9cba;
+}
+
+/* Hover effects para botones */
+#resumen-pedido-modal button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#resumen-pedido-modal button:active {
+    transform: translateY(0);
 }
