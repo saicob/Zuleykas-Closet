@@ -73,12 +73,12 @@
 
         #Cerrar-Detalles {
             background: #f8a8b9;
-            
+
             border: none;
             border-radius: 8px;
             padding: 10px 28px;
             font-size: 1.08rem;
-            
+
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(248, 168, 185, 0.08);
             transition: background 0.18s;
@@ -183,15 +183,16 @@
             <div style="margin-bottom: 20px;">
                 <h3 style="color: #dd9cba; margin-bottom: 10px;">Productos Vendidos</h3>
                 <div style="overflow-x: auto;">
-                    <table id="productos-factura-table"
+                    <table id="productos-factura-table" class="display"
                         style="width: 100%; min-width: 600px; border-collapse: collapse; background-color: white; border: 1px solid #ddd;">
                         <thead style="background-color: #f9f9f9;">
                             <tr>
                                 <th style="padding: 8px; border: 1px solid #ddd;">Producto</th>
-                                <th style="padding: 8px; border: 1px solid #ddd;">Categoría</th>
-                                <th style="padding: 8px; border: 1px solid #ddd;">Marca</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Descripción</th>
                                 <th style="padding: 8px; border: 1px solid #ddd;">Cantidad</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Categoría</th>
                                 <th style="padding: 8px; border: 1px solid #ddd;">Precio Unit.</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Descuento</th>
                                 <th style="padding: 8px; border: 1px solid #ddd;">Subtotal</th>
                             </tr>
                         </thead>
@@ -287,18 +288,57 @@
                             const productosBody = $('#productos-factura-body');
                             productosBody.empty();
 
-                            detalles.productos.forEach(producto => {
-                                const row = `
-                                    <tr>
-                                        <td style="padding: 8px; border: 1px solid #ddd;">${producto.nombre}</td>
-                                        <td style="padding: 8px; border: 1px solid #ddd;">${producto.categoria}</td>
-                                        <td style="padding: 8px; border: 1px solid #ddd;">${producto.marca || 'Sin marca'}</td>
-                                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${producto.cantidad}</td>
-                                        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${parseFloat(producto.precio_unitario).toFixed(2)}</td>
-                                        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${parseFloat(producto.subtotal).toFixed(2)}</td>
-                                    </tr>
-                                `;
-                                productosBody.append(row);
+                            // Destruir DataTable anterior si existe
+                            if ($.fn.DataTable.isDataTable('#productos-factura-table')) {
+                                $('#productos-factura-table').DataTable().destroy();
+                            }
+
+                            $('#productos-factura-table').DataTable({
+                                data: detalles.productos,
+                                searching: false,
+                                paging: false,
+                                info: false,
+                                ordering: false,
+                                columns: [
+                                    { data: 'nombre', title: 'Producto' },
+                                    { data: 'descripcion', title: 'Descripción', defaultContent: '-', render: function(data){ return data || '-'; } },
+                                    { data: 'cantidad', title: 'Cantidad', className: 'dt-center' },
+                                    { data: 'categoria', title: 'Categoría' },
+                                    { data: 'precio_unitario', title: 'Precio Unit.', render: function(data){ return `$${parseFloat(data).toFixed(2)}`; }, className: 'dt-right' },
+                                    { data: 'descuento', title: 'Descuento', render: function(data){ return data ? `${data}%` : '0%'; }, className: 'dt-center' },
+                                    { data: null, title: 'Subtotal', render: function(row){
+                                        let subtotal = parseFloat(row.subtotal);
+                                        let desc = parseFloat(row.descuento) || 0;
+                                        if(desc > 0){
+                                            subtotal = subtotal - (subtotal * desc / 100);
+                                        }
+                                        return `$${subtotal.toFixed(2)}`;
+                                    }, className: 'dt-right' }
+                                ],
+                                language: {
+                                    emptyTable: 'No hay productos en la factura',
+                                    zeroRecords: 'No hay productos en la factura',
+                                    infoEmpty: '',
+                                    info: '',
+                                },
+                                createdRow: function(row, data, dataIndex) {
+                                    $(row).find('td').css({
+                                        'padding': '8px',
+                                        'border': '1px solid #e0bfc7',
+                                        'background': '#fff',
+                                        'color': '#333',
+                                        'font-size': '0.98rem'
+                                    });
+                                },
+                                headerCallback: function(thead, data, start, end, display) {
+                                    $(thead).find('th').css({
+                                        'background': '#f8e8ee',
+                                        'color': '#a07a8c',
+                                        'font-weight': '700',
+                                        'font-size': '1.01rem',
+                                        'border': '1px solid #e0bfc7'
+                                    });
+                                }
                             });
 
                             // Mostrar el modal

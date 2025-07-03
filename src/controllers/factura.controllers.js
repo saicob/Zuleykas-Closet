@@ -28,14 +28,18 @@ export const getFacturaDetalles = async (req, res) => {
             .query(`
                 SELECT 
                     p.nombre,
+                    p.descripcion,
                     p.categoria,
                     m.nombre AS marca,
                     pf.cantidad,
+                    pf.descuento,
                     pf.subtotal / pf.cantidad AS precio_unitario,
-                    pf.subtotal
+                    pf.subtotal,
+                    ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen_url
                 FROM producto_factura pf
                 INNER JOIN producto p ON pf.codigo_producto = p.codigo_producto
                 LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
+                LEFT JOIN imagen i ON p.codigo_imagen = i.codigo_imagen
                 WHERE pf.codigo_factura = @codigo_factura
             `)
 

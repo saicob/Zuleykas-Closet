@@ -22,7 +22,7 @@ export const realizarVenta = async (productos, delivery = null, costoDelivery = 
 
         // Procesar productos
         for (const producto of productos) {
-            const { nombre, cantidad, subtotal } = producto
+            const { nombre, cantidad, subtotal, descuento = 0 } = producto
 
             if (!nombre) {
                 throw new Error("El nombre del producto es inválido o está vacío.")
@@ -58,9 +58,10 @@ export const realizarVenta = async (productos, delivery = null, costoDelivery = 
                 .input("subtotal", sql.Decimal(10, 2), subtotal)
                 .input("codigoProducto", sql.Int, codigoProducto)
                 .input("facturaId", sql.Int, facturaId)
+                .input("descuento", sql.Int, descuento)
                 .query(`
-                    INSERT INTO producto_factura (cantidad, subtotal, codigo_producto, codigo_factura)
-                    VALUES (@cantidad, @subtotal, @codigoProducto, @facturaId);
+                    INSERT INTO producto_factura (cantidad, subtotal, codigo_producto, codigo_factura, descuento)
+                    VALUES (@cantidad, @subtotal, @codigoProducto, @facturaId, @descuento);
                 `)
         }
 

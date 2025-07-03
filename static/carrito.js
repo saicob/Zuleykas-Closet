@@ -10,29 +10,38 @@ function mostrarDetalleProductoSoloVista(producto) {
 // Agrega un producto al carrito (evita duplicados)
 function agregarAlCarrito(producto) {
     console.log("Agregando producto al carrito:", producto)
-
-    if (!producto.nombre || typeof producto.nombre !== "string") {
-        console.error("El producto no tiene un nombre válido:", producto)
-        alert("Error: El producto no tiene un nombre válido.")
-        return
-    }
-
-    if (isNaN(producto.precio) || producto.precio <= 0) {
-        console.error("El producto tiene un precio inválido:", producto)
-        alert("Error: El producto tiene un precio inválido.")
-        return
-    }
-
-    if (isNaN(producto.stock) || producto.stock < 0) {
-        console.error("El producto tiene un stock inválido:", producto)
-        alert("Error: El producto tiene un stock inválido.")
-        return
-    }
-
     // Buscar por nombre + talla + código_producto
     const index = carrito.findIndex(
-        (p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto,
+        (p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto
     )
+    // --- Imagen robusta: igual que en catálogo/modal ---
+    let imagenMostrar = null;
+    if (producto.talla && producto.tallas && Array.isArray(producto.tallas)) {
+        const tallaObj = producto.tallas.find(t => t.talla === producto.talla);
+        if (tallaObj && tallaObj.imagen && typeof tallaObj.imagen === 'string' && tallaObj.imagen.trim() !== '' && tallaObj.imagen !== '/placeholder.svg?height=50&width=50') {
+            imagenMostrar = tallaObj.imagen;
+        }
+    }
+    if (!imagenMostrar && producto.tallas && Array.isArray(producto.tallas) && producto.tallas.length > 0) {
+        for (const t of producto.tallas) {
+            if (t.imagen && typeof t.imagen === 'string' && t.imagen.trim() !== '' && t.imagen !== '/placeholder.svg?height=50&width=50') {
+                imagenMostrar = t.imagen;
+                break;
+            }
+        }
+    }
+    if (!imagenMostrar && producto.imagen && typeof producto.imagen === 'string' && producto.imagen.trim() !== '' && producto.imagen !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.imagen;
+    if (!imagenMostrar && producto.imagen_url && typeof producto.imagen_url === 'string' && producto.imagen_url.trim() !== '' && producto.imagen_url !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.imagen_url;
+    if (!imagenMostrar && producto.url_imagen && typeof producto.url_imagen === 'string' && producto.url_imagen.trim() !== '' && producto.url_imagen !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.url_imagen;
+    if (!imagenMostrar && producto.imagenes && Array.isArray(producto.imagenes) && producto.imagenes.length > 0) {
+        for (const img of producto.imagenes) {
+            if (typeof img === 'string' && img.trim() !== '' && img !== '/placeholder.svg?height=50&width=50') {
+                imagenMostrar = img;
+                break;
+            }
+        }
+    }
+    // ...existing code...
     if (index !== -1) {
         if (carrito[index].cantidad < producto.stock) {
             carrito[index].cantidad += producto.cantidad || 1
@@ -41,7 +50,8 @@ function agregarAlCarrito(producto) {
         }
     } else {
         const cantidadInicial = Number.isInteger(producto.cantidad) && producto.cantidad > 0 ? producto.cantidad : 1
-        carrito.push({ ...producto, cantidad: cantidadInicial })
+        // --- Asegura que la imagen esté presente en el objeto del carrito ---
+        carrito.push({ ...producto, cantidad: cantidadInicial, imagen: imagenMostrar })
     }
     renderizarCarrito()
 }
@@ -112,6 +122,14 @@ function renderizarCarrito() {
     if (totalElement) {
         totalElement.textContent = `Total: $${total.toFixed(2)}`
     }
+
+    // Actualizar visualmente el input de cantidad si el carrito está visible
+    carrito.forEach((producto, index) => {
+        const input = document.querySelector(`#carrito-table tbody tr:nth-child(${index + 1}) input[type='number']`);
+        if (input && input.value != producto.cantidad) {
+            input.value = producto.cantidad;
+        }
+    });
 }
 
 // Mostrar detalles del producto del carrito en un modal reutilizando mostrarModalProducto si existe
@@ -230,9 +248,7 @@ function crearModalResumenPedido() {
                 background: #f8f9fa; padding: 20px 40px; border-radius: 20px 20px 0 0;
                 border-bottom: 1px solid #e9ecef; text-align: center;
             ">
-                <div style="color: #6c757d; font-size: 16px; margin-bottom: 10px;">
-                    Carrito • Dirección • Pago
-                </div>
+              
                 <h1 style="
                     font-family: 'Great Vibes', cursive; font-size: 36px; 
                     color: #dd9cba; margin: 0;
@@ -253,14 +269,6 @@ function crearModalResumenPedido() {
                         ">0</span>
                     </div>
                     
-                    <div style="color: #6c757d; margin-bottom: 20px;">
-                        <span style="color: #ffa500;">😊</span> sou nueve
-                    </div>
-                    
-                    <div style="color: #333; font-weight: 600; margin-bottom: 30px; font-size: 18px;">
-                        Warehouse 1
-                    </div>
-                    
                     <div id="productos-resumen-lista">
                         <!-- Aquí se llenarán los productos -->
                     </div>
@@ -273,14 +281,7 @@ function crearModalResumenPedido() {
                         <span id="subtotal-carrito" style="font-size: 20px; font-weight: bold;">$0.00</span>
                     </div>
                     
-                    <button onclick="procesarPedidoFinal()" style="
-                        background: #dd9cba; color: white; border: none; border-radius: 25px;
-                        padding: 15px 40px; font-size: 18px; font-weight: bold; cursor: pointer;
-                        margin-top: 30px; transition: background 0.3s;
-                    " onmouseover="this.style.background='#c47ba7'" 
-                       onmouseout="this.style.background='#dd9cba'">
-                        Finalizar Compra
-                    </button>
+                  
                 </div>
 
                 <!-- Lado derecho: Resumen del pedido -->
@@ -310,23 +311,7 @@ function crearModalResumenPedido() {
                         </div>
                     </div>
                     
-                    <!-- Opciones de descuento -->
-                    <div style="margin-bottom: 25px;">
-                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                            <input type="checkbox" id="descuento-10" onchange="aplicarDescuentoGlobal(10, this.checked)">
-                            <span>10% descuento</span>
-                        </label>
-                        
-                        <input type="text" id="descuento-personalizado" placeholder="10% descuento" style="
-                            width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
-                            margin-bottom: 15px; font-size: 16px;
-                        ">
-                        
-                        <input type="text" id="direccion-cliente" placeholder="123 Calle Falsa" style="
-                            width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px;
-                            margin-bottom: 15px; font-size: 16px;
-                        ">
-                    </div>
+                    
                     
                     <!-- Opción de delivery -->
                     <div style="margin-bottom: 25px;">
@@ -727,3 +712,4 @@ window.toggleDelivery = toggleDelivery
 window.actualizarTotalConDelivery = actualizarTotalConDelivery
 window.cerrarResumenPedido = cerrarResumenPedido
 window.procesarPedidoFinal = procesarPedidoFinal
+window.renderizarCarrito = renderizarCarrito

@@ -118,10 +118,11 @@ export const getDetalleVenta = async (req, res) => {
             .request()
             .input("codigo_factura", sql.Int, codigo_factura)
             .query(`
-                SELECT pf.*, p.nombre, p.categoria, m.nombre AS marca
+                SELECT pf.*, p.nombre, p.categoria, m.nombre AS marca, ISNULL(i.ruta, '/placeholder.svg?height=50&width=50') AS imagen_url
                 FROM producto_factura pf
                 INNER JOIN producto p ON pf.codigo_producto = p.codigo_producto
                 LEFT JOIN marca m ON p.codigo_marca = m.codigo_marca
+                LEFT JOIN imagen i ON p.codigo_imagen = i.codigo_imagen
                 WHERE pf.codigo_factura = @codigo_factura
             `)
 
