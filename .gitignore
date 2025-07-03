@@ -1,6 +1,6 @@
 .env
 /node_modules/
 /database/
-
+/backups/
 /Zuleykas_tables.sql
 /static/imagenes/
