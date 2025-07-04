@@ -814,6 +814,110 @@
                     else if (cat === 'Accesorio') $('#campos-accesorio-actualizar').show();
                 }).trigger('change');
 
+                // ===== FUNCIONALIDAD DE AUTOCOMPLETADO DE DESCRIPCIÓN =====
+
+                // Función para generar descripción automática en AGREGAR
+                function actualizarDescripcionAgregar() {
+                    const categoria = $('#categoria').val();
+                    const nombre = $('#nombre').val();
+                    const marca = $('#marca-input-agregar').val();
+
+                    let descripcion = nombre || '';
+                    if (marca) descripcion += ' | Marca: ' + marca;
+
+                    if (categoria === 'Ropa') {
+                        const material = $('#material-ropa').val();
+                        const color = $('#color-ropa').val();
+                        const tallas = $('#tallas-ropa').val();
+                        const composicion = $('#composicion-ropa').val();
+                        const ajuste = $('#ajuste-ropa').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                        if (composicion) descripcion += ' | Composición: ' + composicion;
+                        if (ajuste) descripcion += ' | Ajuste: ' + ajuste;
+                    } else if (categoria === 'Cosmetico') {
+                        const textura = $('#textura-cosmetico').val();
+                        const tipo = $('#tipo-cosmetico').val();
+                        const color = $('#color-cosmetico').val();
+                        const acabado = $('#acabado-cosmetico').val();
+                        const fabricacion = $('#fecha-fabricacion-cosmetico').val();
+                        const caducidad = $('#fecha-caducidad-cosmetico').val();
+
+                        if (textura) descripcion += ' | Textura: ' + textura;
+                        if (tipo) descripcion += ' | Tipo: ' + tipo;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (acabado) descripcion += ' | Acabado: ' + acabado;
+                        if (fabricacion) descripcion += ' | Fabricación: ' + fabricacion;
+                        if (caducidad) descripcion += ' | Caducidad: ' + caducidad;
+                    } else if (categoria === 'Accesorio') {
+                        const material = $('#material-accesorio').val();
+                        const color = $('#color-accesorio').val();
+                        const tallas = $('#tallas-accesorio').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                    }
+
+                    $('#descripcion').val(descripcion);
+                }
+
+                // Función para generar descripción automática en ACTUALIZAR
+                function actualizarDescripcionActualizar() {
+                    const categoria = $('#categoria-actualizar').val();
+                    const nombre = $('#nombre-actualizar').val();
+                    const marca = $('#marca-input-actualizar').val();
+
+                    let descripcion = nombre || '';
+                    if (marca) descripcion += ' | Marca: ' + marca;
+
+                    if (categoria === 'Ropa') {
+                        const material = $('#material-ropa-actualizar').val();
+                        const color = $('#color-ropa-actualizar').val();
+                        const tallas = $('#tallas-ropa-actualizar').val();
+                        const composicion = $('#composicion-ropa-actualizar').val();
+                        const ajuste = $('#ajuste-ropa-actualizar').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                        if (composicion) descripcion += ' | Composición: ' + composicion;
+                        if (ajuste) descripcion += ' | Ajuste: ' + ajuste;
+                    } else if (categoria === 'Cosmetico') {
+                        const textura = $('#textura-cosmetico-actualizar').val();
+                        const tipo = $('#tipo-cosmetico-actualizar').val();
+                        const color = $('#color-cosmetico-actualizar').val();
+                        const acabado = $('#acabado-cosmetico-actualizar').val();
+                        const fabricacion = $('#fecha-fabricacion-cosmetico-actualizar').val();
+                        const caducidad = $('#fecha-caducidad-cosmetico-actualizar').val();
+
+                        if (textura) descripcion += ' | Textura: ' + textura;
+                        if (tipo) descripcion += ' | Tipo: ' + tipo;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (acabado) descripcion += ' | Acabado: ' + acabado;
+                        if (fabricacion) descripcion += ' | Fabricación: ' + fabricacion;
+                        if (caducidad) descripcion += ' | Caducidad: ' + caducidad;
+                    } else if (categoria === 'Accesorio') {
+                        const material = $('#material-accesorio-actualizar').val();
+                        const color = $('#color-accesorio-actualizar').val();
+                        const tallas = $('#tallas-accesorio-actualizar').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                    }
+
+                    $('#descripcion-actualizar').val(descripcion);
+                }
+
+                // Event listeners para autocompletado en AGREGAR
+                $('#nombre, #marca-input-agregar, #material-ropa, #color-ropa, #tallas-ropa, #composicion-ropa, #ajuste-ropa, #textura-cosmetico, #tipo-cosmetico, #color-cosmetico, #acabado-cosmetico, #fecha-fabricacion-cosmetico, #fecha-caducidad-cosmetico, #material-accesorio, #color-accesorio, #tallas-accesorio').on('input change', actualizarDescripcionAgregar);
+
+                // Event listeners para autocompletado en ACTUALIZAR
+                $('#nombre-actualizar, #marca-input-actualizar, #material-ropa-actualizar, #color-ropa-actualizar, #tallas-ropa-actualizar, #composicion-ropa-actualizar, #ajuste-ropa-actualizar, #textura-cosmetico-actualizar, #tipo-cosmetico-actualizar, #color-cosmetico-actualizar, #acabado-cosmetico-actualizar, #fecha-fabricacion-cosmetico-actualizar, #fecha-caducidad-cosmetico-actualizar, #material-accesorio-actualizar, #color-accesorio-actualizar, #tallas-accesorio-actualizar').on('input change', actualizarDescripcionActualizar);
+
                 // Envío de formulario ACTUALIZAR PRODUCTO
                 $('#form-actualizar-producto').off('submit').on('submit', async function (event) {
                     event.preventDefault();
