@@ -1,6 +1,28 @@
 // Arreglo global para almacenar los productos en el carrito
 let carrito = []
 
+// Debug: Función para inspeccionar productos
+window.debugCarrito = () => {
+    console.log("=== DEBUG CARRITO ===")
+    console.log("Carrito actual:", carrito)
+    console.log("Cache de productos:", window.productosCache)
+    carrito.forEach((producto, index) => {
+        console.log(`Producto ${index}:`, {
+            nombre: producto.nombre,
+            imagen: producto.imagen,
+            tallas: producto.tallas,
+        })
+    })
+}
+
+// Debug: Verificar cuando se carga la página
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Carrito cargado. Cache disponible:", !!window.productosCache)
+    setTimeout(() => {
+        console.log("Cache después de 2 segundos:", !!window.productosCache)
+    }, 2000)
+})
+
 // Función para mostrar detalles del producto (declarada antes de su uso)
 function mostrarDetalleProductoSoloVista(producto) {
     console.log("Mostrando detalles del producto:", producto)
@@ -12,36 +34,116 @@ function agregarAlCarrito(producto) {
     console.log("Agregando producto al carrito:", producto)
     // Buscar por nombre + talla + código_producto
     const index = carrito.findIndex(
-        (p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto
+        (p) => p.nombre === producto.nombre && p.talla === producto.talla && p.codigo_producto === producto.codigo_producto,
     )
-    // --- Imagen robusta: igual que en catálogo/modal ---
-    let imagenMostrar = null;
-    if (producto.talla && producto.tallas && Array.isArray(producto.tallas)) {
-        const tallaObj = producto.tallas.find(t => t.talla === producto.talla);
-        if (tallaObj && tallaObj.imagen && typeof tallaObj.imagen === 'string' && tallaObj.imagen.trim() !== '' && tallaObj.imagen !== '/placeholder.svg?height=50&width=50') {
-            imagenMostrar = tallaObj.imagen;
-        }
+
+    // --- Imagen robusta: usar la misma lógica que funciona en el catálogo ---
+    let imagenMostrar = null
+
+    // 1. Si el producto ya tiene una imagen válida, usarla
+    if (
+        producto.imagen &&
+        typeof producto.imagen === "string" &&
+        producto.imagen.trim() !== "" &&
+        producto.imagen !== "/placeholder.svg?height=50&width=50" &&
+        !producto.imagen.includes("placeholder")
+    ) {
+        imagenMostrar = producto.imagen
     }
-    if (!imagenMostrar && producto.tallas && Array.isArray(producto.tallas) && producto.tallas.length > 0) {
-        for (const t of producto.tallas) {
-            if (t.imagen && typeof t.imagen === 'string' && t.imagen.trim() !== '' && t.imagen !== '/placeholder.svg?height=50&width=50') {
-                imagenMostrar = t.imagen;
-                break;
+
+    // 2. Si no, buscar en las tallas del producto
+    if (!imagenMostrar && producto.tallas && Array.isArray(producto.tallas)) {
+        // Primero buscar la talla específica
+        if (producto.talla) {
+            const tallaEspecifica = producto.tallas.find((t) => t.talla === producto.talla)
+            if (
+                tallaEspecifica &&
+                tallaEspecifica.imagen &&
+                typeof tallaEspecifica.imagen === "string" &&
+                tallaEspecifica.imagen.trim() !== "" &&
+                tallaEspecifica.imagen !== "/placeholder.svg?height=50&width=50" &&
+                !tallaEspecifica.imagen.includes("placeholder")
+            ) {
+                imagenMostrar = tallaEspecifica.imagen
+            }
+        }
+
+        // Si no encontró imagen específica, buscar cualquier imagen válida
+        if (!imagenMostrar) {
+            for (const talla of producto.tallas) {
+                if (
+                    talla.imagen &&
+                    typeof talla.imagen === "string" &&
+                    talla.imagen.trim() !== "" &&
+                    talla.imagen !== "/placeholder.svg?height=50&width=50" &&
+                    !talla.imagen.includes("placeholder")
+                ) {
+                    imagenMostrar = talla.imagen
+                    break
+                }
             }
         }
     }
-    if (!imagenMostrar && producto.imagen && typeof producto.imagen === 'string' && producto.imagen.trim() !== '' && producto.imagen !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.imagen;
-    if (!imagenMostrar && producto.imagen_url && typeof producto.imagen_url === 'string' && producto.imagen_url.trim() !== '' && producto.imagen_url !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.imagen_url;
-    if (!imagenMostrar && producto.url_imagen && typeof producto.url_imagen === 'string' && producto.url_imagen.trim() !== '' && producto.url_imagen !== '/placeholder.svg?height=50&width=50') imagenMostrar = producto.url_imagen;
-    if (!imagenMostrar && producto.imagenes && Array.isArray(producto.imagenes) && producto.imagenes.length > 0) {
-        for (const img of producto.imagenes) {
-            if (typeof img === 'string' && img.trim() !== '' && img !== '/placeholder.svg?height=50&width=50') {
-                imagenMostrar = img;
-                break;
+
+    // 3. Buscar en otras propiedades de imagen
+    if (!imagenMostrar) {
+        const propiedadesImagen = ["imagen_url", "url_imagen", "ruta_imagen"]
+        for (const prop of propiedadesImagen) {
+            if (
+                producto[prop] &&
+                typeof producto[prop] === "string" &&
+                producto[prop].trim() !== "" &&
+                producto[prop] !== "/placeholder.svg?height=50&width=50" &&
+                !producto[prop].includes("placeholder")
+            ) {
+                imagenMostrar = producto[prop]
+                break
             }
         }
     }
-    // ...existing code...
+
+    // 4. Buscar en el cache global de productos si existe
+    if (!imagenMostrar && window.productosCache && Array.isArray(window.productosCache)) {
+        const productoCache = window.productosCache.find((p) => p.nombre === producto.nombre && p.marca === producto.marca)
+
+        if (productoCache) {
+            if (
+                productoCache.imagen &&
+                typeof productoCache.imagen === "string" &&
+                productoCache.imagen.trim() !== "" &&
+                productoCache.imagen !== "/placeholder.svg?height=50&width=50" &&
+                !productoCache.imagen.includes("placeholder")
+            ) {
+                imagenMostrar = productoCache.imagen
+            } else if (productoCache.tallas && Array.isArray(productoCache.tallas)) {
+                for (const talla of productoCache.tallas) {
+                    if (
+                        talla.imagen &&
+                        typeof talla.imagen === "string" &&
+                        talla.imagen.trim() !== "" &&
+                        talla.imagen !== "/placeholder.svg?height=50&width=50" &&
+                        !talla.imagen.includes("placeholder")
+                    ) {
+                        imagenMostrar = talla.imagen
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+    // 5. Asegurar que la ruta sea correcta
+    if (imagenMostrar) {
+        // Si no empieza con http o /, agregar /
+        if (!imagenMostrar.startsWith("http") && !imagenMostrar.startsWith("/")) {
+            imagenMostrar = "/" + imagenMostrar
+        }
+        console.log("Imagen encontrada para carrito:", imagenMostrar)
+    } else {
+        console.log("No se encontró imagen válida para:", producto.nombre)
+        imagenMostrar = "/placeholder.svg?height=50&width=50"
+    }
+
     if (index !== -1) {
         if (carrito[index].cantidad < producto.stock) {
             carrito[index].cantidad += producto.cantidad || 1
@@ -50,8 +152,14 @@ function agregarAlCarrito(producto) {
         }
     } else {
         const cantidadInicial = Number.isInteger(producto.cantidad) && producto.cantidad > 0 ? producto.cantidad : 1
-        // --- Asegura que la imagen esté presente en el objeto del carrito ---
-        carrito.push({ ...producto, cantidad: cantidadInicial, imagen: imagenMostrar })
+        // Crear objeto del carrito con imagen mejorada
+        const productoCarrito = {
+            ...producto,
+            cantidad: cantidadInicial,
+            imagen: imagenMostrar,
+        }
+        console.log("Producto agregado al carrito:", productoCarrito)
+        carrito.push(productoCarrito)
     }
     renderizarCarrito()
 }
@@ -125,11 +233,11 @@ function renderizarCarrito() {
 
     // Actualizar visualmente el input de cantidad si el carrito está visible
     carrito.forEach((producto, index) => {
-        const input = document.querySelector(`#carrito-table tbody tr:nth-child(${index + 1}) input[type='number']`);
+        const input = document.querySelector(`#carrito-table tbody tr:nth-child(${index + 1}) input[type='number']`)
         if (input && input.value != producto.cantidad) {
-            input.value = producto.cantidad;
+            input.value = producto.cantidad
         }
-    });
+    })
 }
 
 // Mostrar detalles del producto del carrito en un modal reutilizando mostrarModalProducto si existe
@@ -384,72 +492,129 @@ function actualizarResumenPedido() {
     carrito.forEach((producto, index) => {
         const productoDiv = document.createElement("div")
         productoDiv.style.cssText = `
-            display: grid; grid-template-columns: 80px 1fr auto auto;
-            gap: 15px; align-items: center; padding: 20px 0;
-            border-bottom: 1px solid #e9ecef;
-        `
+        display: grid; grid-template-columns: 80px 1fr auto auto;
+        gap: 15px; align-items: center; padding: 20px 0;
+        border-bottom: 1px solid #e9ecef;
+    `
 
         const descuentoIndividual = descuentosIndividuales[index] || 0
         const precioConDescuento = producto.precio * (1 - descuentoIndividual / 100)
 
+        // Lógica mejorada para obtener imagen
+        let imagenFinal = producto.imagen
+
+        // Verificar si la imagen actual es válida
+        if (
+            !imagenFinal ||
+            imagenFinal === "/placeholder.svg?height=50&width=50" ||
+            imagenFinal.includes("placeholder") ||
+            imagenFinal.trim() === ""
+        ) {
+            // Buscar imagen en tallas si existe
+            if (producto.tallas && Array.isArray(producto.tallas)) {
+                for (const talla of producto.tallas) {
+                    if (
+                        talla.imagen &&
+                        typeof talla.imagen === "string" &&
+                        talla.imagen.trim() !== "" &&
+                        !talla.imagen.includes("placeholder") &&
+                        talla.imagen !== "/placeholder.svg?height=50&width=50"
+                    ) {
+                        imagenFinal = talla.imagen
+                        break
+                    }
+                }
+            }
+
+            // Buscar en cache global
+            if (
+                (!imagenFinal || imagenFinal.includes("placeholder")) &&
+                window.productosCache &&
+                Array.isArray(window.productosCache)
+            ) {
+                const productoCache = window.productosCache.find((p) => p.nombre === producto.nombre)
+
+                if (productoCache && productoCache.imagen && !productoCache.imagen.includes("placeholder")) {
+                    imagenFinal = productoCache.imagen
+                } else if (productoCache && productoCache.tallas) {
+                    for (const talla of productoCache.tallas) {
+                        if (talla.imagen && !talla.imagen.includes("placeholder")) {
+                            imagenFinal = talla.imagen
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        // Asegurar ruta correcta
+        if (imagenFinal && !imagenFinal.startsWith("http") && !imagenFinal.startsWith("/")) {
+            imagenFinal = "/" + imagenFinal
+        }
+
+        console.log("Imagen final para resumen:", imagenFinal, "Producto:", producto.nombre)
+
         productoDiv.innerHTML = `
-            <div style="
-                width: 80px; height: 80px; background: #f8f9fa; border-radius: 8px;
-                display: flex; align-items: center; justify-content: center; overflow: hidden;
-            ">
-                ${producto.imagen && producto.imagen !== "/placeholder.svg?height=50&width=50"
-                ? `<img src="${producto.imagen}" alt="${producto.nombre}" style="width: 100%; height: 100%; object-fit: cover;">`
+        <div style="
+            width: 80px; height: 80px; background: #f8f9fa; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        ">
+            ${imagenFinal &&
+                imagenFinal !== "/placeholder.svg?height=50&width=50" &&
+                !imagenFinal.includes("placeholder")
+                ? `<img src="${imagenFinal}" alt="${producto.nombre}" 
+                       style="width: 100%; height: 100%; object-fit: cover;" 
+                       onerror="console.log('Error cargando imagen:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                   <div style="color: #6c757d; font-size: 12px; display: none; align-items: center; justify-content: center; width: 100%; height: 100%;">Sin imagen</div>`
                 : '<span style="color: #6c757d; font-size: 12px;">Sin imagen</span>'
             }
+        </div>
+        
+        <div>
+            <div style="font-weight: 600; font-size: 18px; margin-bottom: 5px;">
+                ${producto.nombre}
             </div>
-            
-            <div>
-                <div style="font-weight: 600; font-size: 18px; margin-bottom: 5px;">
-                    ${producto.nombre}
-                </div>
-                <div style="color: #6c757d;">
-                    In stock: ${producto.stock}
-                </div>
-                ${producto.talla ? `<div style="color: #6c757d; font-size: 14px;">Talla: ${producto.talla}</div>` : ""}
-                <div style="margin-top: 8px;">
-                    <input type="number" value="${descuentoIndividual}" min="0" max="100" 
-                           placeholder="% desc." onchange="aplicarDescuentoIndividual(${index}, this.value)"
-                           style="width: 80px; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
-                    <span style="font-size: 12px; color: #6c757d; margin-left: 5px;">% descuento</span>
-                </div>
-                ${descuentoIndividual > 0
-                ? `
-                    <div style="font-size: 14px; color: #28a745; margin-top: 4px;">
-                        Precio original: $${producto.precio.toFixed(2)} → $${precioConDescuento.toFixed(2)}
-                    </div>
-                `
+            <div style="color: #6c757d;">
+                In stock: ${producto.stock}
+            </div>
+            ${producto.talla ? `<div style="color: #6c757d; font-size: 14px;">Talla: ${producto.talla}</div>` : ""}
+            <div style="margin-top: 8px;">
+                <input type="number" value="${descuentoIndividual}" min="0" max="100" 
+                       placeholder="% desc." onchange="aplicarDescuentoIndividual(${index}, this.value)"
+                       style="width: 80px; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
+                <span style="font-size: 12px; color: #6c757d; margin-left: 5px;">% descuento</span>
+            </div>
+            ${descuentoIndividual > 0
+                ? `<div style="font-size: 14px; color: #28a745; margin-top: 4px;">
+                    Precio original: $${producto.precio.toFixed(2)} → $${precioConDescuento.toFixed(2)}
+                   </div>`
                 : ""
             }
-            </div>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button onclick="cambiarCantidadResumen(${index}, -1)" style="
+                background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
+                width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; font-size: 18px; color: #6c757d;
+            ">−</button>
             
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button onclick="cambiarCantidadResumen(${index}, -1)" style="
-                    background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
-                    width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
-                    cursor: pointer; font-size: 18px; color: #6c757d;
-                ">−</button>
-                
-                <span style="
-                    min-width: 40px; text-align: center; font-weight: 600; font-size: 18px;
-                ">${producto.cantidad}</span>
-                
-                <button onclick="cambiarCantidadResumen(${index}, 1)" style="
-                    background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
-                    width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
-                    cursor: pointer; font-size: 18px; color: #6c757d;
-                ">+</button>
-            </div>
+            <span style="
+                min-width: 40px; text-align: center; font-weight: 600; font-size: 18px;
+            ">${producto.cantidad}</span>
             
-            <button onclick="eliminarProductoResumen(${index})" style="
-                background: none; border: none; cursor: pointer; font-size: 20px;
-                color: #dc3545; padding: 5px;
-            ">🗑️</button>
-        `
+            <button onclick="cambiarCantidadResumen(${index}, 1)" style="
+                background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 50%;
+                width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; font-size: 18px; color: #6c757d;
+            ">+</button>
+        </div>
+        
+        <button onclick="eliminarProductoResumen(${index})" style="
+            background: none; border: none; cursor: pointer; font-size: 20px;
+            color: #dc3545; padding: 5px;
+        ">🗑️</button>
+    `
 
         listaProductos.appendChild(productoDiv)
     })
@@ -713,3 +878,4 @@ window.actualizarTotalConDelivery = actualizarTotalConDelivery
 window.cerrarResumenPedido = cerrarResumenPedido
 window.procesarPedidoFinal = procesarPedidoFinal
 window.renderizarCarrito = renderizarCarrito
+window.debugCarrito = window.debugCarrito
