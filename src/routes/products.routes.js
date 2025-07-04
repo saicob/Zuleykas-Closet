@@ -48,9 +48,9 @@ const upload = multer({
 
 // 📦 Rutas para productos
 router.get("/products", pc.getProductsJSON)
-router.get("/products/:id", pc.getProductById) // <-- Buscar por codigo_producto
-router.get("/products/nombre/:nombre", pc.getProductByName) // <-- Si quieres buscar por nombre, usa un prefijo
+router.get("/products/:id", pc.getProductById)
+router.get("/products/nombre/:nombre", pc.getProductByName)
 router.post("/products", upload.single("imagen"), pc.createProduct)
-router.put("/products/:id", pc.updateProduct)
+router.put("/products/:id", upload.single("imagen"), pc.updateProduct)
 
 export default router
