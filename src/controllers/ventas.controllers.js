@@ -77,7 +77,13 @@ export const crearVenta = async (req, res) => {
 export const getVentas = async (req, res) => {
     try {
         const pool = await getConnection()
-        const result = await pool.request().query("SELECT codigo_factura, fecha, total FROM factura ORDER BY fecha DESC")
+        const result = await pool.request().query(`
+            SELECT f.codigo_factura, f.fecha, f.total,
+                   CASE WHEN d.codigo_delivery IS NOT NULL THEN 1 ELSE 0 END AS tiene_delivery
+            FROM factura f
+            LEFT JOIN delivery d ON d.codigo_factura = f.codigo_factura
+            ORDER BY f.fecha DESC
+        `)
         res.json(result.recordset)
     } catch (error) {
         console.error("Error al obtener el historial de ventas:", error)

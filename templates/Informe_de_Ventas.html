@@ -122,7 +122,12 @@
                         </li>
                     </ul>
                 </nav>
-                <button class="logout-button">Cerrar Sesión</button>
+                <!-- <button class="logout-button">Cerrar Sesión</button> -->
+                <button class="help-button" title="Ayuda"
+                    style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                    onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                    ?
+                </button>
             </header>
         </div>
         <div class="section-title-container">
@@ -144,6 +149,7 @@
                             <th style="padding: 10px; text-align: left;">Numero de Venta</th>
                             <th style="padding: 10px; text-align: left;">Fecha</th>
                             <th style="padding: 10px; text-align: left;">Total</th>
+                            <th style="padding: 10px; text-align: left;">Delivery</th>
                         </tr>
                     </thead>
                     <tbody id="ventas-body" style="background-color: white; color: #333;">
@@ -177,6 +183,13 @@
                         <strong>Total:</strong>
                         <p id="total-factura">-</p>
                     </div>
+                </div>
+                <!-- NUEVO: Información de delivery -->
+                <div id="info-delivery" style="display:none; margin-top:10px; background:#f8e8ee; border-radius:8px; padding:12px;">
+                    <strong>Delivery:</strong>
+                    <div><b>Dirección:</b> <span id="delivery-direccion"></span></div>
+                    <div><b>Cliente:</b> <span id="delivery-cliente"></span></div>
+                    <div><b>Costo:</b> <span id="delivery-costo"></span></div>
                 </div>
             </div>
 
@@ -246,7 +259,14 @@
                     {
                         data: 'total',
                         render: function (data) {
-                            return `$${parseFloat(data).toFixed(2)}`;
+                            return `C$${parseFloat(data).toFixed(2)}`;
+                        }
+                    },
+                    {
+                        data: 'tiene_delivery',
+                        title: 'Delivery',
+                        render: function (data) {
+                            return data ? 'Sí' : 'No';
                         }
                     }
                 ],
@@ -282,7 +302,17 @@
                                 month: 'long',
                                 day: 'numeric'
                             }));
-                            $('#total-factura').text(`$${parseFloat(detalles.factura.total).toFixed(2)}`);
+                            $('#total-factura').text(`C$${parseFloat(detalles.factura.total).toFixed(2)}`);
+
+                            // NUEVO: Mostrar delivery si existe
+                            if (detalles.delivery) {
+                                $('#info-delivery').show();
+                                $('#delivery-direccion').text(detalles.delivery.direccion);
+                                $('#delivery-cliente').text(detalles.delivery.cliente);
+                                $('#delivery-costo').text(`C$${parseFloat(detalles.delivery.costo).toFixed(2)}`);
+                            } else {
+                                $('#info-delivery').hide();
+                            }
 
                             // Llenar tabla de productos
                             const productosBody = $('#productos-factura-body');
@@ -304,7 +334,7 @@
                                     { data: 'descripcion', title: 'Descripción', defaultContent: '-', render: function(data){ return data || '-'; } },
                                     { data: 'cantidad', title: 'Cantidad', className: 'dt-center' },
                                     { data: 'categoria', title: 'Categoría' },
-                                    { data: 'precio_unitario', title: 'Precio Unit.', render: function(data){ return `$${parseFloat(data).toFixed(2)}`; }, className: 'dt-right' },
+                                    { data: 'precio_unitario', title: 'Precio Unit.', render: function(data){ return `C$${parseFloat(data).toFixed(2)}`; }, className: 'dt-right' },
                                     { data: 'descuento', title: 'Descuento', render: function(data){ return data ? `${data}%` : '0%'; }, className: 'dt-center' },
                                     { data: null, title: 'Subtotal', render: function(row){
                                         let subtotal = parseFloat(row.subtotal);
@@ -312,7 +342,7 @@
                                         if(desc > 0){
                                             subtotal = subtotal - (subtotal * desc / 100);
                                         }
-                                        return `$${subtotal.toFixed(2)}`;
+                                        return `C$${subtotal.toFixed(2)}`;
                                     }, className: 'dt-right' }
                                 ],
                                 language: {

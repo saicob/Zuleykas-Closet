@@ -46,7 +46,12 @@
                         </li>
                     </ul>
                 </nav>
-                <button class="logout-button">Cerrar Sesión</button>
+            <!-- <button class="logout-button">Cerrar Sesión</button> -->
+            <button class="help-button" title="Ayuda"
+                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                ?
+            </button>
             </header>
         </div>
         <div class="section-title-container">
@@ -77,6 +82,7 @@
                             <th style="padding: 10px; text-align: left;">Talla</th>
                             <th style="padding: 10px; text-align: left;">Proveedor</th>
                             <th style="padding: 10px; text-align: left;">Marca</th>
+                            <th style="padding: 10px; text-align: left;">Local</th>
                         </tr>
                     </thead>
                     <tbody id="productos-body" style="background-color: white; color: #333;">
@@ -638,7 +644,7 @@
                             {
                                 data: 'precio',
                                 render: function (data) {
-                                    return `$${parseFloat(data || 0).toFixed(2)}`;
+                                    return `C$${parseFloat(data || 0).toFixed(2)}`;
                                 }
                             },
                             {
@@ -653,6 +659,7 @@
                             },
                             { data: 'proveedor' },
                             { data: 'marca' },
+                            { data: 'codigo_tienda', title: 'Local', render: function(data){ return data || '1'; } },
                             // Columna oculta para el identificador único
                             { data: 'codigo_producto', visible: false, searchable: false }
                         ],

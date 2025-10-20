@@ -43,9 +43,21 @@ export const getFacturaDetalles = async (req, res) => {
                 WHERE pf.codigo_factura = @codigo_factura
             `)
 
+        // Obtener información de delivery (si existe)
+        const deliveryResult = await pool
+            .request()
+            .input("codigo_factura", sql.Int, codigo_factura)
+            .query(`
+                SELECT d.direccion, d.costo, c.nombre AS cliente
+                FROM delivery d
+                INNER JOIN cliente c ON d.codigo_cliente = c.codigo_cliente
+                WHERE d.codigo_factura = @codigo_factura
+            `)
+
         res.json({
             factura: facturaResult.recordset[0],
             productos: productosResult.recordset,
+            delivery: deliveryResult.recordset.length > 0 ? deliveryResult.recordset[0] : null
         })
     } catch (error) {
         console.error("Error al obtener detalles de factura:", error)

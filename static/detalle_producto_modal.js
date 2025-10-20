@@ -336,4 +336,3 @@ function cerrarDetalleProducto() {
 }
 
 window.mostrarDetalleProductoSoloVista = mostrarDetalleProductoSoloVista
-  

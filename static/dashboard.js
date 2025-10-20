@@ -64,7 +64,7 @@ async function cargarResumenDashboard() {
         const data = await response.json()
 
         // Actualizar tarjetas de resumen
-        document.getElementById("total-ventas").textContent = `$${data.totalVentas ? data.totalVentas.toFixed(2) : "0.00"}`
+        document.getElementById("total-ventas").textContent = `C$${data.totalVentas ? data.totalVentas.toFixed(2) : "0.00"}`
         document.getElementById("productos-stock").textContent = data.totalStock || "0"
         document.getElementById("proveedores-activos").textContent = data.totalProveedores || "0"
     } catch (error) {
@@ -126,7 +126,7 @@ async function cargarGraficoVentasPorPeriodo() {
                     labels: labels,
                     datasets: [
                         {
-                            label: "Ventas ($)",
+                            label: "Ventas (C$)",
                             data: valores,
                             backgroundColor: "rgba(221, 156, 186, 0.2)",
                             borderColor: "rgba(221, 156, 186, 1)",
@@ -153,7 +153,7 @@ async function cargarGraficoVentasPorPeriodo() {
                         },
                         tooltip: {
                             callbacks: {
-                                label: (context) => `$${context.parsed.y.toFixed(2)}`,
+                                label: (context) => `C$${context.parsed.y.toFixed(2)}`,
                             },
                         },
                     },
@@ -161,7 +161,7 @@ async function cargarGraficoVentasPorPeriodo() {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: (value) => "$" + value,
+                                callback: (value) => "C$" + value,
                             },
                         },
                     },
@@ -308,7 +308,7 @@ async function cargarGraficoVentasPorCategoria() {
                                     const value = context.parsed || 0
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0)
                                     const percentage = Math.round((value / total) * 100)
-                                    return `${label}: $${value.toFixed(2)} (${percentage}%)`
+                                    return `${label}: C$${value.toFixed(2)} (${percentage}%)`
                                 },
                             },
                         },
@@ -453,7 +453,7 @@ async function cargarGraficoRentabilidadPorMarca() {
                         },
                         tooltip: {
                             callbacks: {
-                                label: (context) => `${context.dataset.label}: $${context.parsed.y.toFixed(2)}`,
+                                label: (context) => `${context.dataset.label}: C$${context.parsed.y.toFixed(2)}`,
                             },
                         },
                     },
@@ -461,7 +461,7 @@ async function cargarGraficoRentabilidadPorMarca() {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: (value) => "$" + value,
+                                callback: (value) => "C$" + value,
                             },
                         },
                     },

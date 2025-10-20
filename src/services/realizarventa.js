@@ -1,5 +1,5 @@
+import { getConnection, dbSettings } from "../database/connection.js"
 import sql from "mssql"
-import { dbSettings } from "../database/connection.js"
 
 export const realizarVenta = async (productos, delivery = null, costoDelivery = 0) => {
     let transaction
@@ -65,38 +65,28 @@ export const realizarVenta = async (productos, delivery = null, costoDelivery = 
                 `)
         }
 
-        // Si hay delivery, crear cliente y delivery
+        // Si hay delivery, crear cliente y delivery en la misma transacción
         if (delivery && delivery.direccion && delivery.cliente) {
             // Buscar o crear cliente
-            const clienteResult = await transaction
-                .request()
-                .input("nombre", sql.VarChar, delivery.cliente)
+            let clienteId = null
+            const clienteResult = await transaction.request()
+                .input("nombre", sql.NVarChar, delivery.cliente)
                 .query("SELECT codigo_cliente FROM cliente WHERE nombre = @nombre")
-
-            let codigoCliente
-            if (clienteResult.recordset.length === 0) {
-                // Crear nuevo cliente
-                const nuevoClienteResult = await transaction
-                    .request()
-                    .input("nombre", sql.VarChar, delivery.cliente)
-                    .input("direccion", sql.NVarChar, delivery.direccion)
-                    .input("codigo_empleado", sql.Int, 1) // Empleado por defecto
-                    .query(`
-                        INSERT INTO cliente (nombre, direccion, codigo_empleado)
-                        OUTPUT INSERTED.codigo_cliente
-                        VALUES (@nombre, @direccion, @codigo_empleado)
-                    `)
-                codigoCliente = nuevoClienteResult.recordset[0].codigo_cliente
+            if (clienteResult.recordset.length > 0) {
+                clienteId = clienteResult.recordset[0].codigo_cliente
             } else {
-                codigoCliente = clienteResult.recordset[0].codigo_cliente
+                // Crear cliente rápido solo con nombre
+                const insertCliente = await transaction.request()
+                    .input("nombre", sql.NVarChar, delivery.cliente)
+                    .query("INSERT INTO cliente (nombre) OUTPUT INSERTED.codigo_cliente VALUES (@nombre)")
+                clienteId = insertCliente.recordset[0].codigo_cliente
             }
 
-            // Crear registro de delivery
-            await transaction
-                .request()
+            // Insertar en delivery
+            await transaction.request()
                 .input("direccion", sql.NVarChar, delivery.direccion)
                 .input("costo", sql.Decimal(10, 2), delivery.costo || costoDelivery)
-                .input("codigo_cliente", sql.Int, codigoCliente)
+                .input("codigo_cliente", sql.Int, clienteId)
                 .input("codigo_factura", sql.Int, facturaId)
                 .query(`
                     INSERT INTO delivery (direccion, costo, codigo_cliente, codigo_factura)
@@ -115,6 +105,6 @@ export const realizarVenta = async (productos, delivery = null, costoDelivery = 
     } catch (error) {
         console.error("Error al realizar la venta:", error)
         if (transaction) await transaction.rollback()
-        return { success: false, message: "Error al realizar la venta", error: error.message }
+        return { success: false, message: `Error al realizar la venta: ${error.message}`, error: error.message }
     }
 }
