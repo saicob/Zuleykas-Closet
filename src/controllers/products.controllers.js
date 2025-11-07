@@ -155,9 +155,11 @@ export const createProduct = async (req, res) => {
         } = req.body
 
         // Validaciones básicas
-        if (!nombre || !precio_venta || !cantidad || !categoria) {
+        // Ahora el precio de venta se calcula a partir de precio_compra en el servidor,
+        // por lo que validamos que exista precio_compra en lugar de precio_venta enviado por el cliente.
+        if (!nombre || (precio_compra === undefined || precio_compra === null || precio_compra === '') || !cantidad || !categoria) {
             return res.status(400).json({
-                error: "Los campos nombre, precio, stock y categoría son obligatorios",
+                error: "Los campos nombre, precio de compra, stock y categoría son obligatorios",
             })
         }
 
@@ -331,7 +333,12 @@ export const createProduct = async (req, res) => {
                         .input("nombre", sql.VarChar, nombre.trim())
                         .input("descripcion", sql.Text, descripcion || "")
                         .input("precio_compra", sql.Decimal(10, 2), Number.parseFloat(precio_compra) || 0)
-                        .input("precio", sql.Decimal(10, 2), Number.parseFloat(precio_venta))
+                        // Calcular precio de venta en servidor: (precio_compra * 1.50) * 1.15
+                        .input("precio", sql.Decimal(10, 2), (function(){
+                            const pc = Number.parseFloat(precio_compra)
+                            if (isNaN(pc)) return 0
+                            return Number((pc * 1.5 * 1.15).toFixed(2))
+                        })())
                         .input("stock", sql.Int, Number.parseInt(cantidad))
                         .input("estado", sql.Bit, true)
                         .input("categoria", sql.VarChar, categoria)
@@ -391,7 +398,12 @@ export const createProduct = async (req, res) => {
                     .input("nombre", sql.VarChar, nombre.trim())
                     .input("descripcion", sql.Text, descripcion || "")
                     .input("precio_compra", sql.Decimal(10, 2), Number.parseFloat(precio_compra) || 0)
-                    .input("precio", sql.Decimal(10, 2), Number.parseFloat(precio_venta))
+                    // Calcular precio de venta en servidor para producto sin tallas
+                    .input("precio", sql.Decimal(10, 2), (function(){
+                        const pc = Number.parseFloat(precio_compra)
+                        if (isNaN(pc)) return 0
+                        return Number((pc * 1.5 * 1.15).toFixed(2))
+                    })())
                     .input("stock", sql.Int, Number.parseInt(cantidad))
                     .input("estado", sql.Bit, true)
                     .input("categoria", sql.VarChar, categoria)
@@ -554,13 +566,20 @@ export const updateProduct = async (req, res) => {
 
         updateQuery += ` WHERE codigo_producto = @id`
 
+        // Calcular precio de venta en la actualización también
+        const computedPrecioVenta = (function(){
+            const pc = Number.parseFloat(precio_compra)
+            if (isNaN(pc)) return 0
+            return Number((pc * 1.5 * 1.15).toFixed(2))
+        })()
+
         const request = pool
             .request()
             .input("id", sql.Int, id)
             .input("nombre", sql.VarChar, nombre)
             .input("descripcion", sql.Text, descripcion)
             .input("precio_compra", sql.Decimal(10, 2), precio_compra)
-            .input("precio", sql.Decimal(10, 2), precio_venta)
+            .input("precio", sql.Decimal(10, 2), computedPrecioVenta)
             .input("stock", sql.Int, cantidad)
             .input("categoria", sql.VarChar, categoria)
             .input("codigo_tienda", sql.Int, local)

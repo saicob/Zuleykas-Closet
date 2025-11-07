@@ -57,6 +57,18 @@ $("#Actualizar").on("click", async (event) => {
     // Crear FormData para enviar tanto datos como archivo
     const formData = new FormData()
 
+    // Calcular precio_venta en el cliente a partir de precio_compra antes de anexar
+    try {
+        const precioCompraVal = Number.parseFloat(String($("#precio-compra-actualizar").val()).replace(/,/g, '.'))
+        if (!isNaN(precioCompraVal)) {
+            const computed = (precioCompraVal * 1.5 * 1.15).toFixed(2)
+            $("#precio-venta-actualizar").val(computed)
+        }
+    } catch (e) {
+        // si hay error no bloqueamos el flujo; el servidor también calculará
+        console.warn('No se pudo calcular precio_venta en cliente:', e)
+    }
+
     // Agregar todos los campos del formulario
     formData.append("nombre", $("#nombre-actualizar").val())
     formData.append("proveedor", $("#proveedor-input-actualizar").val())

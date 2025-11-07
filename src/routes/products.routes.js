@@ -3,6 +3,7 @@ import * as pc from "../controllers/products.controllers.js"
 import multer from "multer"
 import path from "path"
 import fs from "fs"
+// authentication removed - routes are public
 
 const router = Router()
 
@@ -50,6 +51,7 @@ const upload = multer({
 router.get("/products", pc.getProductsJSON)
 router.get("/products/:id", pc.getProductById)
 router.get("/products/nombre/:nombre", pc.getProductByName)
+// Only admin can create/update products
 router.post("/products", upload.single("imagen"), pc.createProduct)
 router.put("/products/:id", upload.single("imagen"), pc.updateProduct)
 

@@ -77,9 +77,7 @@
                             <option value="2">2</option>
                         </select>
                     </div>
-                    <button id="ver-carrito" style="background: none; border: none; cursor: pointer; font-size: 24px;">
-                        🛒
-                    </button>
+                    <button id="ver-carrito" class="icon-button" title="Ver carrito">🛒</button>
                     <input type="text" id="productInput" placeholder="Buscar producto..." />
                 </div>
                 <div class="suggestions" id="suggestions"></div>
@@ -104,8 +102,8 @@
             </thead>
             <tbody></tbody>
         </table>
-        <p id="carrito-total">Total: C$0.00</p>
-        <button id="finalizar-compra">Finalizar Compra</button>
+    <p id="carrito-total">Total: C$0.00</p>
+    <button id="finalizar-compra" class="action-button">Finalizar Compra</button>
     </aside>
     </main>
     <script src="/script.js"></script>
@@ -113,6 +111,7 @@
     <script src="/autocompletar_catalogo.js"></script>
     <script src="/catalogo.js"></script>
     <script src="/detalle_producto_modal.js"></script>
+    
 
     <!-- Modal solo vista para detalle de producto en carrito -->
     <div id="detalle-producto-modal"
@@ -128,8 +127,7 @@
             <p id="detalle-producto-stock" style="color:#d17b98;"></p>
             <p id="detalle-producto-talla" style="color:#d17b98;"></p>
             <p id="detalle-producto-descripcion" style="color:#888; margin-top:10px;"></p>
-            <button onclick="cerrarDetalleProducto()"
-                style="margin-top:20px; background:#eee; border:none; border-radius:8px; padding:8px 24px; font-size:16px; cursor:pointer;">Cerrar</button>
+            <button onclick="cerrarDetalleProducto()" class="btn-secondary" style="margin-top:20px;">Cerrar</button>
         </div>
     </div>
 

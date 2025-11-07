@@ -7,6 +7,31 @@ const formAgregarProducto = document.getElementById("form-agregar-producto")
 const cancelarBtn = document.getElementById("Cancelar")
 let enviandoProducto = false
 
+// --- Cálculo automático de precio de venta a partir de precio de compra ---
+const precioCompraInput = document.getElementById('precio-compra')
+const precioVentaInput = document.getElementById('precio-venta')
+const precioCompraActualizarInput = document.getElementById('precio-compra-actualizar')
+const precioVentaActualizarInput = document.getElementById('precio-venta-actualizar')
+
+function calcularPrecioVenta(precioCompra) {
+  const p = Number.parseFloat(String(precioCompra).replace(/,/g, '.'))
+  if (isNaN(p)) return ''
+  const resultado = p * 1.50 * 1.15
+  return resultado.toFixed(2)
+}
+
+if (precioCompraInput && precioVentaInput) {
+  precioCompraInput.addEventListener('input', () => {
+    precioVentaInput.value = calcularPrecioVenta(precioCompraInput.value)
+  })
+}
+
+if (precioCompraActualizarInput && precioVentaActualizarInput) {
+  precioCompraActualizarInput.addEventListener('input', () => {
+    precioVentaActualizarInput.value = calcularPrecioVenta(precioCompraActualizarInput.value)
+  })
+}
+
 // ===== FUNCIONES PARA AGREGAR PRODUCTO =====
 function mostrarPreview(file) {
   if (file && file.type.startsWith("image/")) {

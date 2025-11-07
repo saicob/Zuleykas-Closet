@@ -8,6 +8,7 @@ import ventasRoutes from "./routes/ventas.routes.js"
 import dashboardRoutes from "./routes/dashboard.routes.js"
 import facturaRoutes from "./routes/factura.routes.js"
 import backupRoutes from "./routes/backup.routes.js"
+// user/auth system fully removed
 import path from "path"
 import { fileURLToPath } from "url"
 
@@ -37,5 +38,6 @@ app.use("/api/ventas", ventasRoutes)
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/factura", facturaRoutes)
 app.use("/api/backup", backupRoutes)
+// users routes fully removed
 
 export default app

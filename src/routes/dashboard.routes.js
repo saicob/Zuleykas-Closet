@@ -3,6 +3,7 @@ import { getConnection } from "../database/connection.js"
 import sql from "mssql"
 
 const router = Router()
+// authentication removed - dashboard endpoints are public
 
 // Obtener resumen de datos para el dashboard
 router.get("/resumen", async (req, res) => {
@@ -156,6 +157,77 @@ router.get("/rentabilidad-por-marca", async (req, res) => {
     } catch (error) {
         console.error("Error al obtener rentabilidad por marca:", error)
         res.status(500).json({ error: "Error al obtener rentabilidad por marca" })
+    }
+})
+
+// Obtener rentabilidad mensual (ventas, costos, ganancia, margen %)
+router.get("/rentabilidad-mensual", async (req, res) => {
+    try {
+        const { month, year } = req.query
+        const pool = await getConnection()
+
+        // Si no se envía month/year, usar mes y año actuales
+        const now = new Date()
+        const m = month ? Number.parseInt(month, 10) : now.getMonth() + 1
+        const y = year ? Number.parseInt(year, 10) : now.getFullYear()
+
+        const result = await pool.request()
+            .input('month', sql.Int, m)
+            .input('year', sql.Int, y)
+            .query(`
+                SELECT
+                    ISNULL(SUM(pf.subtotal), 0) as ventas_totales,
+                    ISNULL(SUM(p.precio_compra * pf.cantidad), 0) as costo_total,
+                    ISNULL(SUM(pf.subtotal) - SUM(p.precio_compra * pf.cantidad), 0) as ganancia
+                FROM factura f
+                JOIN producto_factura pf ON f.codigo_factura = pf.codigo_factura
+                JOIN producto p ON pf.codigo_producto = p.codigo_producto
+                WHERE MONTH(f.fecha) = @month AND YEAR(f.fecha) = @year
+            `)
+
+        const row = result.recordset[0] || { ventas_totales: 0, costo_total: 0, ganancia: 0 }
+        const ventas = Number(row.ventas_totales) || 0
+        const costo = Number(row.costo_total) || 0
+        const ganancia = Number(row.ganancia) || 0
+        const margen_porcentaje = ventas === 0 ? 0 : Number(((ganancia / ventas) * 100).toFixed(2))
+
+        res.json({ ventas_totales: ventas, costo_total: costo, ganancia, margen_porcentaje })
+    } catch (error) {
+        console.error('Error al obtener rentabilidad mensual:', error)
+        res.status(500).json({ error: 'Error al obtener rentabilidad mensual' })
+    }
+})
+
+// Detalle diario de rentabilidad dentro del mes (para graficar)
+router.get("/rentabilidad-mensual/detalle", async (req, res) => {
+    try {
+        const { month, year } = req.query
+        const pool = await getConnection()
+
+        const now = new Date()
+        const m = month ? Number.parseInt(month, 10) : now.getMonth() + 1
+        const y = year ? Number.parseInt(year, 10) : now.getFullYear()
+
+        const result = await pool.request()
+            .input('month', sql.Int, m)
+            .input('year', sql.Int, y)
+            .query(`
+                SELECT CONVERT(varchar(10), f.fecha, 23) as fecha,
+                       ISNULL(SUM(pf.subtotal),0) as ventas_totales,
+                       ISNULL(SUM(p.precio_compra * pf.cantidad),0) as costo_total,
+                       ISNULL(SUM(pf.subtotal) - SUM(p.precio_compra * pf.cantidad),0) as ganancia
+                FROM factura f
+                JOIN producto_factura pf ON f.codigo_factura = pf.codigo_factura
+                JOIN producto p ON pf.codigo_producto = p.codigo_producto
+                WHERE MONTH(f.fecha) = @month AND YEAR(f.fecha) = @year
+                GROUP BY CONVERT(varchar(10), f.fecha, 23)
+                ORDER BY CONVERT(varchar(10), f.fecha, 23)
+            `)
+
+        res.json(result.recordset)
+    } catch (error) {
+        console.error('Error al obtener detalle diario de rentabilidad:', error)
+        res.status(500).json({ error: 'Error al obtener detalle diario de rentabilidad' })
     }
 })
 
