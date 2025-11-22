@@ -32,7 +32,138 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (filtroCategoria) {
         filtroCategoria.addEventListener("change", filtrarPorCategoria)
     }
+
+    // Inicializar selector month input para rentabilidad
+    initRentabilidadMonthInput()
+    // Cargar rentabilidad por defecto (mes actual) y el gráfico diario
+    await cargarRentabilidadMensual()
+    await cargarGraficoRentabilidadMensualDetalle()
 })
+
+// Inicializar selects de mes y año
+function initRentabilidadMonthInput() {
+    const inputMonth = document.getElementById('rentabilidad-month')
+    const boton = document.getElementById('btn-mostrar-rentabilidad')
+    if (!inputMonth || !boton) return
+
+    // Establecer valor por defecto al mes actual (YYYY-MM)
+    const now = new Date()
+    const yyyy = now.getFullYear()
+    const mm = String(now.getMonth() + 1).padStart(2, '0')
+    inputMonth.value = `${yyyy}-${mm}`
+
+    boton.addEventListener('click', async () => {
+        await cargarRentabilidadMensual()
+        await cargarGraficoRentabilidadMensualDetalle()
+    })
+}
+
+// Cargar rentabilidad mensual desde la API
+async function cargarRentabilidadMensual() {
+    try {
+        const inputMonth = document.getElementById('rentabilidad-month')
+        if (!inputMonth) return
+
+        const val = inputMonth.value // formato YYYY-MM
+        if (!val) return
+        const [year, month] = val.split('-')
+
+        const resp = await fetch(`http://localhost:3000/api/dashboard/rentabilidad-mensual?month=${encodeURIComponent(Number(month))}&year=${encodeURIComponent(Number(year))}`)
+        if (!resp.ok) throw new Error('Error al obtener rentabilidad mensual')
+
+        const data = await resp.json()
+        // Actualizar UI
+        document.getElementById('rm-ventas').textContent = `C$ ${Number(data.ventas_totales || 0).toFixed(2)}`
+        document.getElementById('rm-costo').textContent = `C$ ${Number(data.costo_total || 0).toFixed(2)}`
+        document.getElementById('rm-ganancia').textContent = `C$ ${Number(data.ganancia || 0).toFixed(2)}`
+        document.getElementById('rm-margen').textContent = `${Number(data.margen_porcentaje || 0).toFixed(2)} %`
+    } catch (error) {
+        console.error('Error al cargar rentabilidad mensual:', error)
+        mostrarError('No se pudo obtener la rentabilidad del mes seleccionado')
+    }
+}
+
+// Cargar detalle diario de rentabilidad para el mes y crear el gráfico
+async function cargarGraficoRentabilidadMensualDetalle() {
+    try {
+        const inputMonth = document.getElementById('rentabilidad-month')
+        if (!inputMonth) return
+        const val = inputMonth.value // YYYY-MM
+        if (!val) return
+        const [year, month] = val.split('-')
+
+        const resp = await fetch(`http://localhost:3000/api/dashboard/rentabilidad-mensual/detalle?month=${encodeURIComponent(Number(month))}&year=${encodeURIComponent(Number(year))}`)
+        if (!resp.ok) throw new Error('Error al obtener detalle diario')
+        const rows = await resp.json()
+
+        // rows expected: [{fecha, ventas_totales, costo_total, ganancia}, ...]
+        const labels = rows.map(r => r.fecha)
+        const ventas = rows.map(r => Number(r.ventas_totales || 0))
+        const costos = rows.map(r => Number(r.costo_total || 0))
+        const ganancias = rows.map(r => Number(r.ganancia || 0))
+
+        const ctx = document.getElementById('grafico-rentabilidad-mensual')
+        if (!ctx) return
+
+        if (window.graficoRentabilidadMensual) {
+            window.graficoRentabilidadMensual.data.labels = labels
+            window.graficoRentabilidadMensual.data.datasets[0].data = ventas
+            window.graficoRentabilidadMensual.data.datasets[1].data = costos
+            window.graficoRentabilidadMensual.data.datasets[2].data = ganancias
+            window.graficoRentabilidadMensual.update()
+        } else {
+            window.graficoRentabilidadMensual = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Ventas (C$)',
+                            data: ventas,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.15)',
+                            tension: 0.2,
+                            pointRadius: 3,
+                        },
+                        {
+                            label: 'Costos (C$)',
+                            data: costos,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.12)',
+                            tension: 0.2,
+                            pointRadius: 3,
+                        },
+                        {
+                            label: 'Ganancias (C$)',
+                            data: ganancias,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.12)',
+                            tension: 0.2,
+                            pointRadius: 3,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Rentabilidad diaria (mes seleccionado)' },
+                        tooltip: { callbacks: { label: (ctx) => `C$${Number(ctx.parsed.y).toFixed(2)}` } }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: { parser: 'yyyy-MM-dd', unit: 'day', displayFormats: { day: 'dd/MM' } },
+                        },
+                        y: { beginAtZero: true, ticks: { callback: v => 'C$' + v } }
+                    }
+                }
+            })
+        }
+    } catch (error) {
+        console.error('Error al cargar gráfico de rentabilidad mensual detalle:', error)
+    }
+}
 
 // Función para cargar scripts externos
 function loadScript(url) {

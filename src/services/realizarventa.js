@@ -1,5 +1,6 @@
 import { getConnection, dbSettings } from "../database/connection.js"
 import sql from "mssql"
+import { notify } from './notificationService.js'
 
 export const realizarVenta = async (productos, delivery = null, costoDelivery = 0) => {
     let transaction
@@ -96,6 +97,18 @@ export const realizarVenta = async (productos, delivery = null, costoDelivery = 
 
         // Confirmar la transacción
         await transaction.commit()
+
+        // Emitir notificación en tiempo real a clientes conectados
+        try {
+            notify('notification', {
+                type: 'venta',
+                message: delivery ? 'Venta con delivery realizada' : 'Venta realizada',
+                facturaId,
+                total: totalFinal,
+            })
+        } catch (e) {
+            console.warn('No se pudo emitir notificación de venta:', e)
+        }
 
         return {
             success: true,

@@ -165,14 +165,17 @@
         <!-- Tarjetas de resumen -->
         <div class="dashboard-container">
             <div class="dashboard-card">
+                <div class="card-accent"></div>
                 <h3>Total Ventas</h3>
                 <p id="total-ventas">Cargando...</p>
             </div>
             <div class="dashboard-card">
+                <div class="card-accent"></div>
                 <h3>Productos en Stock</h3>
                 <p id="productos-stock">Cargando...</p>
             </div>
             <div class="dashboard-card">
+                <div class="card-accent"></div>
                 <h3>Proveedores Activos</h3>
                 <p id="proveedores-activos">Cargando...</p>
             </div>
@@ -200,6 +203,37 @@
                         <option value="Lencería">Lencería</option>
                     </select>
                 </div>
+                <div>
+                    <label for="rentabilidad-month">Mes/Año:</label>
+                    <input type="month" id="rentabilidad-month" name="rentabilidad-month">
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <button id="btn-mostrar-rentabilidad" class="action-button">Mostrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados de rentabilidad mensual -->
+        <div id="rentabilidad-mensual-result" style="max-width:900px; margin: 20px auto 30px auto; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Ventas (Mes)</h3>
+                <p id="rm-ventas">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Costo (Mes)</h3>
+                <p id="rm-costo">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Ganancia (Mes)</h3>
+                <p id="rm-ganancia">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Margen %</h3>
+                <p id="rm-margen">Cargando...</p>
             </div>
         </div>
 
@@ -244,10 +278,18 @@
                     <canvas id="grafico-rentabilidad"></canvas>
                 </div>
             </div>
+            <!-- Gráfico de rentabilidad diaria del mes seleccionado -->
+            <div class="chart-container" style="grid-column: span 2;">
+                <h3>Rentabilidad diaria (mes seleccionado)</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-rentabilidad-mensual"></canvas>
+                </div>
+            </div>
         </div>
     </main>
     <script src="/script.js"></script>
     <script src="/dashboard.js"></script>
+    
 </body>
 
 </html>

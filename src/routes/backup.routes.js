@@ -1,7 +1,8 @@
 import { Router } from "express"
 import { createBackup, getBackups, restoreBackup, deleteBackup } from "../controllers/backup.controllers.js"
-
 const router = Router()
+
+// authentication removed - routes are public
 
 // Crear backup
 router.post("/create", createBackup)
