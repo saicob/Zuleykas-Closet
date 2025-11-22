@@ -1,6 +1,18 @@
 // Arreglo global para almacenar los productos en el carrito
 let carrito = []
 
+// --- NUEVO: sistema de listeners para notificar cambios del carrito ---
+const _carritoListeners = []
+function notifyCarritoListeners() {
+    try {
+        _carritoListeners.forEach(cb => {
+            try { cb(carrito) } catch (err) { console.error("Listener carrito error:", err) }
+        })
+    } catch (err) {
+        console.error("Error notificando listeners:", err)
+    }
+}
+
 // Debug: Función para inspeccionar productos
 window.debugCarrito = () => {
     console.log("=== DEBUG CARRITO ===")
@@ -162,12 +174,14 @@ function agregarAlCarrito(producto) {
         carrito.push(productoCarrito)
     }
     renderizarCarrito()
+    notifyCarritoListeners() // <-- notificar después de cambiar
 }
 
 // Elimina un producto del carrito por índice
 function eliminarDelCarrito(index) {
     carrito.splice(index, 1)
     renderizarCarrito()
+    notifyCarritoListeners() // <-- notificar
 }
 
 // Cambia la cantidad de un producto (aumenta o disminuye)
@@ -185,6 +199,7 @@ function cambiarCantidad(index, delta) {
         carrito[index].cantidad = nuevoValor
     }
     renderizarCarrito()
+    notifyCarritoListeners() // <-- notificar
 }
 
 // Muestra el contenido del carrito en la tabla HTML
@@ -197,10 +212,12 @@ function renderizarCarrito() {
 
     tbody.innerHTML = ""
     let total = 0
+    let cantidadTotal = 0
 
     carrito.forEach((producto, index) => {
         const subtotal = producto.precio * producto.cantidad
         total += subtotal
+        cantidadTotal += Number(producto.cantidad) || 0
 
         const tr = document.createElement("tr")
         tr.innerHTML = `
@@ -230,6 +247,13 @@ function renderizarCarrito() {
     if (totalElement) {
         totalElement.textContent = `Total: $${total.toFixed(2)}`
     }
+
+    // Actualizar badges del header (compatibilidad con distintas páginas)
+    const badgeIds = ["carrito-count", "cart-count", "carrito-count-header"]
+    badgeIds.forEach(id => {
+        const el = document.getElementById(id)
+        if (el) el.textContent = cantidadTotal
+    })
 
     // Actualizar visualmente el input de cantidad si el carrito está visible
     carrito.forEach((producto, index) => {
@@ -298,6 +322,7 @@ function actualizarCantidad(index, nuevaCantidad) {
 
     carrito[index].cantidad = cantidad
     renderizarCarrito()
+    notifyCarritoListeners() // <-- notificar
 }
 
 // Mostrar resumen de pedido en lugar de finalizar directamente
@@ -361,6 +386,9 @@ function crearModalResumenPedido() {
                     font-family: 'Great Vibes', cursive; font-size: 36px; 
                     color: #dd9cba; margin: 0;
                 ">Zuleyka's Closet</h1>
+
+                <!-- Mostrar datos de contacto si existen (Tienda Online) -->
+                <div id="resumen-datos-cliente" style="margin-top:12px; font-size:14px; color:#555;"></div>
             </div>
 
             <!-- Contenido principal -->
@@ -479,8 +507,26 @@ let descuentosIndividuales = {}
 function actualizarResumenPedido() {
     const listaProductos = document.getElementById("productos-resumen-lista")
     const carritoCount = document.getElementById("carrito-count")
+    const datosClienteDiv = document.getElementById("resumen-datos-cliente")
 
     if (!listaProductos || !carritoCount) return
+
+    // Mostrar datos de contacto si están presentes (ventana tienda online)
+    if (window.deliveryInfo) {
+        if (datosClienteDiv) {
+            datosClienteDiv.innerHTML = `
+                <div style="display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                    <span><strong>Cliente:</strong> ${window.deliveryInfo.cliente}</span>
+                    <span><strong>Email:</strong> ${window.deliveryInfo.email}</span>
+                    <span><strong>Teléfono:</strong> ${window.deliveryInfo.telefono}</span>
+                    <span><strong>Dirección:</strong> ${window.deliveryInfo.direccion}</span>
+                    <span><strong>Ciudad:</strong> ${window.deliveryInfo.ciudad}</span>
+                </div>
+            `
+        }
+    } else {
+        if (datosClienteDiv) datosClienteDiv.innerHTML = ''
+    }
 
     // Actualizar contador
     carritoCount.textContent = carrito.length
@@ -554,6 +600,13 @@ function actualizarResumenPedido() {
 
         console.log("Imagen final para resumen:", imagenFinal, "Producto:", producto.nombre)
 
+        // Si estamos en tienda online, deshabilitar input de descuento
+        const descuentoInputHtml = window.isTiendaOnline
+            ? `<input type="number" value="${descuentoIndividual}" min="0" max="100" disabled style="width:80px; padding:4px 8px; border:1px solid #dee2e6; border-radius:4px; font-size:14px;"> <span style="font-size:12px;color:#6c757d;margin-left:5px;">% descuento (no permitido)</span>`
+            : `<input type="number" value="${descuentoIndividual}" min="0" max="100" 
+                   placeholder="% desc." onchange="aplicarDescuentoIndividual(${index}, this.value)"
+                   style="width: 80px; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;"> <span style="font-size:12px;color:#6c757d;margin-left:5px;">% descuento</span>`
+
         productoDiv.innerHTML = `
         <div style="
             width: 80px; height: 80px; background: #f8f9fa; border-radius: 8px;
@@ -579,10 +632,7 @@ function actualizarResumenPedido() {
             </div>
             ${producto.talla ? `<div style="color: #6c757d; font-size: 14px;">Talla: ${producto.talla}</div>` : ""}
             <div style="margin-top: 8px;">
-                <input type="number" value="${descuentoIndividual}" min="0" max="100" 
-                       placeholder="% desc." onchange="aplicarDescuentoIndividual(${index}, this.value)"
-                       style="width: 80px; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 14px;">
-                <span style="font-size: 12px; color: #6c757d; margin-left: 5px;">% descuento</span>
+                ${descuentoInputHtml}
             </div>
             ${descuentoIndividual > 0
                 ? `<div style="font-size: 14px; color: #28a745; margin-top: 4px;">
@@ -748,21 +798,28 @@ async function procesarPedidoFinal() {
         return
     }
 
-    // Validar datos de delivery si está seleccionado
-    const deliveryOption = document.getElementById("delivery-option")
+    // Preferir deliveryInfo proporcionado por la Tienda Online
     let datosDelivery = null
-
-    if (deliveryOption && deliveryOption.checked) {
-        const direccion = document.getElementById("delivery-direccion").value.trim()
-        const cliente = document.getElementById("delivery-cliente").value.trim()
-        const costo = Number.parseFloat(document.getElementById("delivery-costo").value) || 0
-
-        if (!direccion || !cliente) {
-            alert("Por favor, complete la dirección y nombre del cliente para el delivery.")
-            return
+    if (window.deliveryInfo) {
+        datosDelivery = {
+            direccion: window.deliveryInfo.direccion,
+            cliente: window.deliveryInfo.cliente,
+            costo: window.deliveryInfo.costo || 0
         }
+    } else {
+        // Validar datos de delivery si está seleccionado desde el modal de resumen
+        const deliveryOption = document.getElementById("delivery-option")
+        if (deliveryOption && deliveryOption.checked) {
+            const direccion = document.getElementById("delivery-direccion").value.trim()
+            const cliente = document.getElementById("delivery-cliente").value.trim()
+            const costo = Number.parseFloat(document.getElementById("delivery-costo").value) || 0
 
-        datosDelivery = { direccion, cliente, costo }
+            if (!direccion || !cliente) {
+                alert("Por favor, complete la dirección y nombre del cliente para el delivery.")
+                return
+            }
+            datosDelivery = { direccion, cliente, costo }
+        }
     }
 
     // Preparar datos de productos con descuentos aplicados
@@ -844,22 +901,30 @@ function toggleCarrito() {
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM cargado, configurando carrito...")
 
-    const botonCarrito = document.getElementById("ver-carrito")
-    if (botonCarrito) {
-        botonCarrito.addEventListener("click", toggleCarrito)
-        console.log("Botón carrito configurado")
-    } else {
-        console.error("No se encontró el botón del carrito")
+    // Soportar ambos botones que usan las distintas vistas
+    const botonVerCarrito = document.getElementById("ver-carrito")
+    const botonOpenCart = document.getElementById("open-cart")
+
+    if (botonVerCarrito) {
+        botonVerCarrito.addEventListener("click", toggleCarrito)
+        console.log("Botón 'ver-carrito' configurado")
+    }
+    if (botonOpenCart) {
+        botonOpenCart.addEventListener("click", toggleCarrito)
+        console.log("Botón 'open-cart' configurado")
     }
 
-    // Configurar botón finalizar compra
+    // Configurar botón finalizar compra (si existe)
     const botonFinalizar = document.getElementById("finalizar-compra")
     if (botonFinalizar) {
         botonFinalizar.addEventListener("click", finalizarCompra)
         console.log("Botón finalizar compra configurado")
     } else {
-        console.error("No se encontró el botón finalizar compra")
+        console.warn("No se encontró el botón finalizar compra")
     }
+
+    // Al cargar, renderizar para sincronizar UI
+    renderizarCarrito()
 })
 
 window.agregarAlCarrito = agregarAlCarrito
@@ -879,3 +944,58 @@ window.cerrarResumenPedido = cerrarResumenPedido
 window.procesarPedidoFinal = procesarPedidoFinal
 window.renderizarCarrito = renderizarCarrito
 window.debugCarrito = window.debugCarrito
+
+// --- NUEVO: carritoManager público para que otras vistas consuman el mismo carrito ---
+window.carritoManager = {
+    agregar: (producto) => {
+        agregarAlCarrito(producto)
+    },
+    obtener: () => {
+        // devolver copia superficial para evitar manipulaciones externas directas
+        return carrito
+    },
+    cambiarCantidad: (idx, cantidad) => {
+        // Si cantidad parece delta (ej. +1/-1) lo tratamos como delta, si es entero lo establecemos
+        if (typeof cantidad === "number" && Number.isInteger(cantidad)) {
+            // tratar como cantidad absoluta
+            if (cantidad <= 0) {
+                eliminarDelCarrito(idx)
+            } else {
+                carrito[idx].cantidad = cantidad
+                renderizarCarrito()
+                notifyCarritoListeners()
+            }
+        } else {
+            // fallback: intentar interpretar como delta
+            cambiarCantidad(idx, Number(cantidad))
+        }
+    },
+    eliminar: (idx) => {
+        eliminarDelCarrito(idx)
+    },
+    obtenerCantidad: () => {
+        return carrito.reduce((s, p) => s + (Number(p.cantidad) || 0), 0)
+    },
+    vaciar: () => {
+        carrito = []
+        renderizarCarrito()
+        notifyCarritoListeners()
+    },
+    escuchar: (callback) => {
+        if (typeof callback === "function") {
+            _carritoListeners.push(callback)
+            return () => {
+                const i = _carritoListeners.indexOf(callback)
+                if (i !== -1) _carritoListeners.splice(i, 1)
+            }
+        }
+        return () => {}
+    }
+}
+
+// --- ALIAS GLOBALES (compatibilidad) ---
+window.cambiarCantidadCarrito = (idx, delta) => cambiarCantidad(idx, delta)
+window.agregarAlCarrito = agregarAlCarrito // asegurar referencia
+window.eliminarDelCarrito = eliminarDelCarrito
+window.renderizarCarrito = renderizarCarrito
+window.obtenerCarrito = () => carrito
