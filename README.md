@@ -11,3 +11,6 @@ npm install env
 
 ## Instalar multer para manejar archivos
 npm install multer
+
+## Instalar Socket.io
+npm install socket.io
