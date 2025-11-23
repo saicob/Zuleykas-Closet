@@ -904,6 +904,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Soportar ambos botones que usan las distintas vistas
     const botonVerCarrito = document.getElementById("ver-carrito")
     const botonOpenCart = document.getElementById("open-cart")
+    const botonTogglePanel = document.getElementById("toggle-cart-panel")
 
     if (botonVerCarrito) {
         botonVerCarrito.addEventListener("click", toggleCarrito)
@@ -912,6 +913,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (botonOpenCart) {
         botonOpenCart.addEventListener("click", toggleCarrito)
         console.log("Botón 'open-cart' configurado")
+    }
+    if (botonTogglePanel) {
+        botonTogglePanel.addEventListener("click", toggleCarrito)
+        console.log("Botón 'toggle-cart-panel' configurado")
     }
 
     // Configurar botón finalizar compra (si existe)

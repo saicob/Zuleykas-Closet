@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
 (async () => {
     try {
         server.listen(PORT, () => {
-            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+            console.log(`Servidor corriendo en http://localhost:${PORT}/TiendaOnline.html`);
         });
     } catch (err) {
         console.error('Error inicializando servicios:', err);
