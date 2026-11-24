@@ -1,14 +1,28 @@
-import { Router } from "express";
-import * as m from "../controllers/marca.controllers.js";
+import { Router } from 'express';
+import {
+  getMarcasJSON,
+  getMarcaByName,
+  createMarca,
+  updateMarca,
+  deleteMarca
+} from '../controllers/marca.controllers.js';
+// authentication removed - routes are public
 
 const router = Router();
 
-/*get para obtener
-post para ingresar
-put para actualizar  
-delete para eleminiar*/
+// Obtener todas las marcas (admin + cajero)
+router.get('/', getMarcasJSON);
 
-//obtiene todos los productos
-router.get('/marcas', m.getMarcas)
+// Obtener una marca por nombre
+router.get('/:nombre', getMarcaByName);
+
+// Crear una nueva marca (admin)
+router.post('/', createMarca);
+
+// Actualizar una marca por código (admin)
+router.put('/:codigo_marca', updateMarca);
+
+// Eliminar una marca por código (admin)
+router.delete('/:codigo_marca', deleteMarca);
 
 export default router;

@@ -1,27 +1,17 @@
-import express from 'express';
-import { realizarVenta } from '../database/connection.js';
 
-const router = express.Router();
+import { Router } from 'express';
+import { crearVenta, getVentas } from '../controllers/ventas.controllers.js';
+// authentication removed - routes are public
 
-router.post('/realizarventa', async (req, res) => {
-    try {
-        const { cliente, productos } = req.body;
+const router = Router();
 
-        if (!productos || productos.length === 0) {
-            return res.status(400).json({ success: false, message: 'No se enviaron productos.' });
-        }
+// Crear una nueva venta (admin or cajero)
+router.post('/', crearVenta);
 
-        const result = await realizarVenta(cliente, productos);
+// Obtener el historial de ventas (admin or cajero)
+router.get('/', getVentas);
 
-        if (result.success) {
-            res.status(200).json(result);
-        } else {
-            res.status(500).json(result);
-        }
-    } catch (error) {
-        console.error('Error en la ruta /realizarventa:', error);
-        res.status(500).json({ success: false, message: 'Error interno del servidor.', error: error.message });
-    }
-});
-
+//Obtener detalles de una venta 
+//router.get('/:id', getDetalleVenta);
+// No hay referencias a Local1, solo rutas de ventas
 export default router;

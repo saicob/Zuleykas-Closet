@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Crear Venta</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+    <section id="menú">
+        <div class="rectangle">
+             <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+          
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Crear Venta</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá realizar ventas de productos. Seleccione los productos que
+            desea vender y añádalos al carrito. Luego, podrá finalizar la compra.</p>
+    </section>
+
+
+    <!-- Contenido central -->
+    <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
+        <section id="catalogo" style="display: block;">
+
+            <!-- barra de busqueda del catalogo -->
+            <div class="autocomplete-container">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="form-group">
+                        <label for="local">Local</label>
+                        <select id="local" name="local">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <button id="ver-carrito" class="icon-button" title="Ver carrito">🛒</button>
+                    <input type="text" id="productInput" placeholder="Buscar producto..." />
+                </div>
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+            <div class="catalogo-container"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;"></div>
+
+    </main>
+
+
+    <aside id="carrito-panel">
+        <h2>🛒 Carrito</h2>
+        <table id="carrito-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cant.</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    <p id="carrito-total">Total: C$0.00</p>
+    <button id="finalizar-compra" class="action-button">Finalizar Compra</button>
+    </aside>
+    </main>
+    <script src="/script.js"></script>
+    <script src="/carrito.js"></script>
+    <script src="/autocompletar_catalogo.js"></script>
+    <script src="/catalogo.js"></script>
+    <script src="/detalle_producto_modal.js"></script>
+    
+
+    <!-- Modal solo vista para detalle de producto en carrito -->
+    <div id="detalle-producto-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:12px; padding:32px; max-width:350px; margin:auto; text-align:center; position:relative;">
+            <div id="detalle-producto-imagen"
+                style="width:220px; height:220px; background:#f5f5f5; margin:auto; display:flex; align-items:center; justify-content:center; border-radius:12px;">
+                <span style="color:#aaa;">Sin imagen</span>
+            </div>
+            <h2 id="detalle-producto-nombre" style="margin-top:20px;"></h2>
+            <p id="detalle-producto-precio" style="color:#d17b98; font-weight:bold;"></p>
+            <p id="detalle-producto-stock" style="color:#d17b98;"></p>
+            <p id="detalle-producto-talla" style="color:#d17b98;"></p>
+            <p id="detalle-producto-descripcion" style="color:#888; margin-top:10px;"></p>
+            <button onclick="cerrarDetalleProducto()" class="btn-secondary" style="margin-top:20px;">Cerrar</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

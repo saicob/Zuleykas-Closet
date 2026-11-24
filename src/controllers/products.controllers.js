@@ -1,105 +1,87 @@
-import { getConnection } from "../database/connection.js";
-import sql from 'mssql';
+import { productService } from "../services/product.service.js"
 
-export const getProducts = async (req, res) => { 
-    const pool = await getConnection();
-    const result = await pool.request().query('SELECT * FROM producto')
-
-    console.log(result) 
-    res.send("Obteniendo productos")
-}
-
-export const getProductByName = async (req, res) => { 
-    const { nombre } = req.params; // Obtener el nombre del producto desde los parámetros de la ruta
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('nombre', sql.VarChar, nombre) // Usar sql.VarChar para el tipo de dato
-        .query('SELECT * FROM producto WHERE nombre = @nombre')
-    
-    console.log(result)
-    res.send("Obteniendo un producto")
-}
-
-export const createProduct = async (req, res) => { 
+export const getProducts = async (req, res) => {
     try {
-    const {
-      nombre,
-      descripcion,
-      precio,
-      stock,
-      estado,
-      codigo_tienda,
-      codigo_imagen,
-      codigo_categoria,
-      tipo_producto,
-      datos_tipo,
-      codigo_marca
-    } = req.body;
-
-    // Insertar en producto
-    const result = await pool.query(`
-      INSERT INTO producto (nombre, descripcion, precio, stock, estado, codigo_tienda, codigo_imagen, codigo_categoria)
-      OUTPUT INSERTED.codigo_producto
-      VALUES (@nombre, @descripcion, @precio, @stock, @estado, @codigo_tienda, @codigo_imagen, @codigo_categoria)
-    `, {
-      nombre,
-      descripcion,
-      precio,
-      stock,
-      estado,
-      codigo_tienda,
-      codigo_imagen,
-      codigo_categoria
-    });
-
-    const codigo_producto = result.recordset[0].codigo_producto;
-
-    // Insertar según tipo
-    if (tipo_producto === 'ropa') {
-      await pool.query(`
-        INSERT INTO ropa (codigo_talla, codigo_producto, codigo_marca)
-        VALUES (@codigo_talla, @codigo_producto, @codigo_marca)
-      `, {
-        codigo_talla: datos_tipo.codigo_talla,
-        codigo_producto,
-        codigo_marca
-      });
-    } else if (tipo_producto === 'accesorio') {
-      await pool.query(`
-        INSERT INTO accesorio (medida, material, codigo_marca, codigo_producto)
-        VALUES (@medida, @material, @codigo_marca, @codigo_producto)
-      `, {
-        medida: datos_tipo.medida,
-        material: datos_tipo.material,
-        codigo_marca,
-        codigo_producto
-      });
-    } else if (tipo_producto === 'cosmetico') {
-      await pool.query(`
-        INSERT INTO cosmetico (fecha_fabricacion, fecha_caducidad, codigo_producto, codigo_marca)
-        VALUES (@fecha_fabricacion, @fecha_caducidad, @codigo_producto, @codigo_marca)
-      `, {
-        fecha_fabricacion: datos_tipo.fecha_fabricacion,
-        fecha_caducidad: datos_tipo.fecha_caducidad,
-        codigo_producto,
-        codigo_marca
-      });
+        const result = await productService.getProducts()
+        console.log(result)
+        res.send("Obteniendo productos")
+    } catch (error) {
+        console.error("Error al obtener productos:", error)
+        res.status(500).json({ error: "Error del servidor" })
     }
+}
 
-    res.status(201).json({ message: 'Producto agregado exitosamente', codigo_producto });
-  } catch (error) {
-    console.error('Error al agregar producto:', error);
-    res.status(500).json({ error: 'Error del servidor' });
-  }
-};
+export const getProductByName = async (req, res) => {
+    try {
+        const { nombre } = req.params
+        const product = await productService.getProductByName(nombre)
 
+        if (product) {
+            res.json(product)
+        } else {
+            res.status(404).json({ error: "Producto no encontrado" })
+        }
+    } catch (error) {
+        console.error("Error al obtener el producto:", error)
+        res.status(500).json({ error: "Error del servidor" })
+    }
+}
 
 export const getProductsJSON = async (req, res) => {
     try {
-        const pool = await getConnection();
-        const result = await pool.request().query('SELECT * FROM producto');
-        res.json(result.recordset); // Enviar los productos como JSON
+        const productos = await productService.getProductsJSON()
+        res.json(productos)
     } catch (error) {
-        res.status(500).send('Error al obtener los productos');
+        console.error("Error al obtener los productos:", error.message, error.stack)
+        res.status(500).json({ error: "Error al obtener los productos: " + error.message })
     }
-};
+}
+
+export const createProduct = async (req, res) => {
+    try {
+        const codigos_productos = await productService.createProduct(req.body, req.file)
+
+        res.status(201).json({
+            message: "Producto(s) agregado(s) exitosamente",
+            codigos_productos,
+            imagen_subida: !!req.file,
+        })
+    } catch (error) {
+        console.error("Error al agregar producto:", error)
+        const status = error.message.includes("Validation") ? 400 : 500
+        res.status(status).json({
+            error: error.message.replace("Validation: ", ""),
+        })
+    }
+}
+
+export const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params
+        await productService.updateProduct(id, req.body, req.file)
+
+        res.status(200).json({
+            message: "Producto actualizado exitosamente",
+            imagen_actualizada: !!req.file,
+        })
+    } catch (error) {
+        console.error("Error al actualizar producto:", error)
+        res.status(500).json({ error: "Error del servidor: " + error.message })
+    }
+}
+
+export const getProductById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const product = await productService.getProductById(id)
+        
+        if (product) {
+            res.json(product)
+        } else {
+            res.status(404).json({ error: "Producto no encontrado" })
+        }
+    } catch (error) {
+        console.error("Error al obtener el producto por ID:", error)
+        res.status(500).json({ error: "Error del servidor" })
+    }
+}

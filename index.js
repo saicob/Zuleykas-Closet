@@ -1,7 +1,5 @@
-import app from "./src/app.js"
-import { getConnection } from "./src/database/connection.js"
+// Delegate startup to src/index.js which initializes socket.io, services and routes.
+import './src/index.js'
 
-getConnection()
-
-app.listen(3000)
-console.log("servidor iniciado 2")
+// Note: src/index.js creates the HTTP server and starts listening on the configured PORT.
+  

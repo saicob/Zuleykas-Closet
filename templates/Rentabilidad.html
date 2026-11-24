@@ -1,71 +1,262 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Rentabilidad</title>
-</head>
-<body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
-        </button>
-    </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de Venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
+    <title>Dashboard</title>
+    <style>
+    .dashboard-container {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 32px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 
-    <!-- Contenido central -->
-    <main class="content">
-        <form class="rentability-form">
-            <h2>Rentabilidad</h2>
-            <div class="form-group">
-                <label for="rentability-date">Año</label>
-                <input type="number" id="rentability-date">
+    .dashboard-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(209, 106, 138, 0.10);
+        padding: 26px 36px;
+        min-width: 210px;
+        text-align: center;
+        transition: box-shadow 0.2s, transform 0.2s;
+        border-top: 4px solid #f8a8b9;
+        position: relative;
+    }
+
+    .dashboard-card h3 {
+        font-size: 1.13rem;
+        color: #d16a8a;
+        margin-bottom: 8px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .dashboard-card p {
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin: 0;
+        color: #333;
+        letter-spacing: 0.5px;
+    }
+
+    .dashboard-card:after {
+        content: '';
+    }
+    .filters-container input,
+    .filters-container select {
+        border-radius: 8px;
+        border: 1.5px solid #e0bfc7;
+        padding: 6px 10px;
+        font-size: 1rem;
+        margin-right: 10px;
+        margin-bottom: 8px;
+        background: #faf7fa;
+        color: #333;
+        transition: border 0.2s;
+    }
+
+    .filters-container input:focus,
+    .filters-container select:focus {
+        border: 1.5px solid #d16a8a;
+        outline: none;
+    }
+    </style>
+</head>
+
+<body>
+    <section id="menú">
+        <div class="rectangle">
+             <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+          
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Dashboard</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá visualizar un resumen de los datos más importantes del
+            negocio, como ventas totales, productos en stock, proveedores activos y clientes registrados.</p>
+    </section>
+
+    <!-- Contenido principal -->
+    <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
+        <!-- Mensaje de error -->
+        <div id="error-container"
+            style="display: none; background-color: #ffdddd; color: #ff0000; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+        </div>
+
+        <!-- Tarjetas de resumen -->
+        <div class="dashboard-container">
+            <div class="dashboard-card">
+                <div class="card-accent"></div>
+                <h3>Total Ventas</h3>
+                <p id="total-ventas">Cargando...</p>
             </div>
-            <div class="form-group">
-                <div class="month-buttons">
-                    <button class="month-button">ENERO</button>
-                    <button class="month-button">FEBRERO</button>
-                    <button class="month-button">MARZO</button>
-                    <button class="month-button">ABRIL</button>
-                    <button class="month-button">MAYO</button>
-                    <button class="month-button">JUNIO</button>
-                    <button class="month-button">JULIO</button>
-                    <button class="month-button">AGOSTO</button>
-                    <button class="month-button">SEPTIEMBRE</button>
-                    <button class="month-button">OCTUBRE</button>
-                    <button class="month-button">NOVIEMBRE</button>
-                    <button class="month-button">DICIEMBRE</button>
+            <div class="dashboard-card">
+                <div class="card-accent"></div>
+                <h3>Productos en Stock</h3>
+                <p id="productos-stock">Cargando...</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-accent"></div>
+                <h3>Proveedores Activos</h3>
+                <p id="proveedores-activos">Cargando...</p>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-container">
+            <h3>Filtros</h3>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div>
+                    <label for="fecha-inicio">Fecha Inicio:</label>
+                    <input type="date" id="fecha-inicio" name="fecha-inicio">
+                </div>
+                <div>
+                    <label for="fecha-fin">Fecha Fin:</label>
+                    <input type="date" id="fecha-fin" name="fecha-fin">
+                </div>
+                <div>
+                    <label for="filtro-categoria">Categoría:</label>
+                    <select id="filtro-categoria" name="filtro-categoria">
+                        <option value="">Todas las categorías</option>
+                        <option value="Ropa">Ropa</option>
+                        <option value="Accesorios">Accesorios</option>
+                        <option value="Cosmetico">Cosméticos</option>
+                        <option value="Lencería">Lencería</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="rentabilidad-month">Mes/Año:</label>
+                    <input type="month" id="rentabilidad-month" name="rentabilidad-month">
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <button id="btn-mostrar-rentabilidad" class="action-button">Mostrar</button>
                 </div>
             </div>
-        </form>
+        </div>
+
+        <!-- Resultados de rentabilidad mensual -->
+        <div id="rentabilidad-mensual-result" style="max-width:900px; margin: 20px auto 30px auto; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Ventas (Mes)</h3>
+                <p id="rm-ventas">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Costo (Mes)</h3>
+                <p id="rm-costo">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Ganancia (Mes)</h3>
+                <p id="rm-ganancia">Cargando...</p>
+            </div>
+            <div class="dashboard-card" style="min-width:180px;">
+                <div class="card-accent"></div>
+                <h3>Margen %</h3>
+                <p id="rm-margen">Cargando...</p>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="charts-container">
+            <!-- Gráfico de ventas por período -->
+            <div class="chart-container">
+                <h3>Ventas por Período</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-ventas"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de productos más vendidos -->
+            <div class="chart-container">
+                <h3>Productos Más Vendidos</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-productos"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de ventas por categoría -->
+            <div class="chart-container">
+                <h3>Ventas por Categoría</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-categorias"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de proveedores activos -->
+            <div class="chart-container">
+                <h3>Proveedores Activos</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-proveedores"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de rentabilidad por marca -->
+            <div class="chart-container" style="grid-column: span 2;">
+                <h3>Rentabilidad por Marca</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-rentabilidad"></canvas>
+                </div>
+            </div>
+            <!-- Gráfico de rentabilidad diaria del mes seleccionado -->
+            <div class="chart-container" style="grid-column: span 2;">
+                <h3>Rentabilidad diaria (mes seleccionado)</h3>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="grafico-rentabilidad-mensual"></canvas>
+                </div>
+            </div>
+        </div>
     </main>
     <script src="/script.js"></script>
+    <script src="/dashboard.js"></script>
+    
 </body>
+
 </html>

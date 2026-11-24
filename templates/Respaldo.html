@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/backup/backup.css">
+    <title>Respaldo - Zuleyka's Closet</title>
+</head>
+
+<body>
+    <section id="menú">
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+          
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Respaldos</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá crear y gestionar respaldos de la base de datos. Mantenga sus
+            datos seguros con copias de seguridad regulares.</p>
+
+    </section>
+
+    <main class="content">
+        <!-- Sección para crear backup -->
+        <div class="backup-section">
+            <div class="backup-header">
+                <h2>Crear Nuevo Respaldo</h2>
+                <button id="createBackupBtn" class="create-backup-btn">
+                    <span class="btn-icon">💾</span>
+                    Crear Respaldo
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div id="loadingSpinner" class="loading-container" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando respaldo...</p>
+        </div>
+
+        <!-- Sección de respaldos disponibles -->
+        <div class="backups-section">
+            <div class="backups-header">
+                <h2>Respaldos Disponibles</h2>
+                <button id="refreshBtn" class="refresh-btn">
+                    <span class="btn-icon">🔄</span>
+                    Actualizar
+                </button>
+            </div>
+
+            <div id="backupsContainer" class="backups-grid">
+                <!-- Los backups se cargarán aquí dinámicamente -->
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">📁</div>
+                <h3>No hay respaldos disponibles</h3>
+                <p>Crea tu primer respaldo para comenzar a proteger tus datos</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Confirmar Restauración</h3>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-box">
+                    <p><strong>¿Estás seguro de usar este respaldo?</strong></p>
+                    <p>Esta acción reemplazará completamente la base de datos actual y no se puede deshacer.</p>
+                </div>
+                <div class="backup-details">
+                    <h4>Información del Respaldo:</h4>
+                    <div class="detail-item">
+                        <span class="label">Archivo:</span>
+                        <span id="modalFilename" class="value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Fecha:</span>
+                        <span id="modalDate" class="value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Tamaño:</span>
+                        <span id="modalSize" class="value"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelRestore" class="btn-cancel">Cancelar</button>
+                <button id="confirmRestore" class="btn-confirm">Sí, Restaurar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/backup/backup.js"></script>
+    
+</body>
+
+</html>

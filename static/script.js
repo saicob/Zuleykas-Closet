@@ -1,137 +1,113 @@
-// Barra lateral izquierda, Configuración de Dropdowns
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.menu .dropdown');
 
-document.addEventListener("DOMContentLoaded", () => {
-    const dropdowns = document.querySelectorAll(".dropdown");
-
-    // Manejo de hover: abrir al pasar el mouse
     dropdowns.forEach(dropdown => {
-        const menuItem = dropdown.querySelector(".menu-item");
+        const link = dropdown.querySelector('a');
+        const content = dropdown.querySelector('.dropdown-content');
+        dropdown._keepOpen = false;
 
-        dropdown.addEventListener("mouseenter", () => {
-            dropdown.classList.add("active");
-        });
-
-        dropdown.addEventListener("mouseleave", () => {
-            if (!dropdown.classList.contains("clicked")) {
-                dropdown.classList.remove("active");
+        // Mostrar al hacer hover (ya lo hace el CSS, pero dejamos la lógica por si acaso)
+        dropdown.addEventListener('mouseenter', () => {
+            if (!dropdown._keepOpen) {
+                content.classList.add('show');
             }
         });
 
-        //  Clic para mantener activo el dropdown
-        menuItem.addEventListener("click", (e) => {
-            e.stopPropagation(); // Evita que el clic se propague al body
-            dropdowns.forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove("active", "clicked");
+        dropdown.addEventListener('mouseleave', () => {
+            if (!dropdown._keepOpen) {
+                content.classList.remove('show');
+            }
+        });
+
+        // Toggle al hacer clic en el enlace principal
+        link.addEventListener('click', function (e) {
+            if (link.getAttribute('href') === '#') {
+                e.preventDefault();
+
+                if (dropdown._keepOpen) {
+                    // Ya estaba abierto por clic → cerrar
+                    dropdown._keepOpen = false;
+                    content.classList.remove('show');
+                } else {
+                    // Cierra otros dropdowns fijados
+                    dropdowns.forEach(d => {
+                        if (d !== dropdown) {
+                            d._keepOpen = false;
+                            const otherContent = d.querySelector('.dropdown-content');
+                            if (otherContent) otherContent.classList.remove('show');
+                        }
+                    });
+
+                    // Abrir este dropdown
+                    dropdown._keepOpen = true;
+                    content.classList.add('show');
                 }
+            }
+        });
+    });
+
+    // Cierra los dropdowns si se hace clic fuera del menú
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.menu')) {
+            dropdowns.forEach(dropdown => {
+                dropdown._keepOpen = false;
+                const content = dropdown.querySelector('.dropdown-content');
+                if (content) content.classList.remove('show');
             });
-
-            dropdown.classList.toggle("clicked");
-            dropdown.classList.toggle("active");
-        });
-    });
-
-    // Clic fuera del menú para cerrar el dropdown activo
-    document.addEventListener("click", () => {
-        dropdowns.forEach(dropdown => {
-            dropdown.classList.remove("active", "clicked");
-        });
-    });
-
-    // Ocultar y mostrar Agregar Proveedor Local 1
-    const proveedorLocal1 = document.getElementById('proveedor_local1');
-    if (proveedorLocal1) {
-        proveedorLocal1.addEventListener('change', function() {
-            const nuevoProveedor = document.getElementById('nuevo-proveedor_local1');
-            if (this.value === 'nuevo') {
-                nuevoProveedor.style.display = 'block';
-            } else {
-                nuevoProveedor.style.display = 'none';
-            }
-        });
-    }
-
-    // Ocultar y mostrar Agregar Marca Local 1
-    const marcaLocal1 = document.getElementById('marca_local1');
-    if (marcaLocal1) {
-        marcaLocal1.addEventListener('change', function() {
-            const nuevaMarca = document.getElementById('nueva-marca_local1');
-            if (this.value === 'nueva') {
-                nuevaMarca.style.display = 'block';
-            } else {
-                nuevaMarca.style.display = 'none';
-            }
-        });
-    }
-
-    // Ocultar y mostrar Agregar Proveedor Local 2
-    const proveedorLocal2 = document.getElementById('proveedor_local2');
-    if (proveedorLocal2) {
-        proveedorLocal2.addEventListener('change', function() {
-            const nuevoProveedor = document.getElementById('nuevo-proveedor_local2');
-            if (this.value === 'nuevo') {
-                nuevoProveedor.style.display = 'block';
-            } else {
-                nuevoProveedor.style.display = 'none';
-            }
-        });
-    }
-
-    // Ocultar y mostrar Agregar Marca Local 2
-    const marcaLocal2 = document.getElementById('marca_local2');
-    if (marcaLocal2) {
-        marcaLocal2.addEventListener('change', function() {
-            const nuevaMarca = document.getElementById('nueva-marca_local2');
-            if (this.value === 'nueva') {
-                nuevaMarca.style.display = 'block';
-            } else {
-                nuevaMarca.style.display = 'none';
-            }
-        });
-    }
-
-    // Toggle between sections when a table row is clicked
-    const tableBody = document.getElementById('productos-table');
-    const verProductosSection = document.getElementById('Ver_Productos');
-    const actualizarProductoSection = document.getElementById('Actualizar_Producto');
-    const actualizarButton = document.getElementById('actualizar-button');
-
-    tableBody.addEventListener('click', (event) => {
-        const row = event.target.closest('tr');
-        if (row) {
-            verProductosSection.style.display = 'none';
-            actualizarProductoSection.style.display = 'block';
         }
     });
-
-    // Refresh the page when the actualizar button is clicked
-    if (actualizarButton) {
-        actualizarButton.addEventListener('click', () => {
-            location.reload();
-        });
-    }
-
-    // Initially show the Ver_Productos section and hide Actualizar_Producto
-    verProductosSection.style.display = 'block';
-    actualizarProductoSection.style.display = 'none';
 });
 
-// Ocultar y mostrar Agregar Proveedor
-document.getElementById('proveedor').addEventListener('change', function() {
-    const nuevoProveedor = document.getElementById('nuevo-proveedor');
-    if (this.value === 'nuevo') {
-        nuevoProveedor.style.display = 'block';
-    } else {
-        nuevoProveedor.style.display = 'none';
+// ===== Socket.IO client (auto-load + notifications) =====
+(function initSocketNotifications() {
+    // Cargar script cliente de socket.io dinámicamente si no existe
+    function loadSocketClient(cb) {
+        if (window.io) return cb()
+        const s = document.createElement('script')
+        s.src = '/socket.io/socket.io.js'
+        s.onload = cb
+        s.onerror = () => console.warn('No se pudo cargar /socket.io/socket.io.js')
+        document.head.appendChild(s)
     }
-});
 
-// Ocultar y mostrar Agregar Marca
-document.getElementById('marca').addEventListener('change', function() {
-    const nuevaMarca = document.getElementById('nueva-marca');
-    if (this.value === 'nueva') {
-        nuevaMarca.style.display = 'block';
-    } else {
-        nuevaMarca.style.display = 'none';
-    }
-});
+    loadSocketClient(() => {
+        try {
+            if (!window.io) return
+            const socket = io()
+            socket.on('connect', () => {
+                console.log('Socket conectado:', socket.id)
+            })
+
+            // Manejar notificaciones entrantes
+            socket.on('notification', (payload) => {
+                try {
+                    // Intentar usar showToast si existe (templates lo definen), si no, crear mínimo
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(payload.message || 'Notificación', payload.type === 'venta' ? 'success' : 'success', 6000)
+                    } else {
+                        // Crear contenedor si no existe
+                        let container = document.getElementById('toast-container')
+                        if (!container) {
+                            container = document.createElement('div')
+                            container.id = 'toast-container'
+                            container.style.cssText = 'position: fixed; top: 30px; right: 30px; z-index:2000;'
+                            document.body.appendChild(container)
+                        }
+                        const toast = document.createElement('div')
+                        toast.style.cssText = 'min-width:220px; max-width:350px; background:#4BB543; color:white; padding:14px 24px; border-radius:8px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); font-size:16px; font-family:inherit; opacity:0.97;'
+                        toast.textContent = payload.message || JSON.stringify(payload)
+                        container.appendChild(toast)
+                        setTimeout(() => {
+                            toast.style.opacity = '0'
+                            setTimeout(() => toast.remove(), 400)
+                        }, 5000)
+                    }
+                } catch (err) {
+                    console.error('Error al mostrar notificación entrante:', err)
+                }
+            })
+        } catch (err) {
+            console.warn('No se pudo inicializar socket notifications:', err)
+        }
+    })
+})()

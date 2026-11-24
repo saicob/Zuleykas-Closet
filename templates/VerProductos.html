@@ -1,57 +1,1039 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
     <title>Ver Productos</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 </head>
-<body style="background-color: pink;">
-    <header style="background-color: pink; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-        <h1>Sistema de administración</h1>
-        <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
-            Cerrar Sesión
-        </button>
-    </header>
-    <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
-        <ul style="list-style: none; padding: 0;">
-            <li><strong>📦 Productos</strong></li>
-            <li><a href="VerProductos.html">Ver Productos</a></li>
-            <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-            <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-            <li><a href="Actualizar_Marcas.html">Marca</a></li>
-            <li><strong>🤝 Proveedores</strong></li>
-            <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
-            <li><strong>💸 Ventas</strong></li>
-            <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
-            <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-            <li><a href="Local1.html">Crear Venta Local 1</a></li>
-            <li><a href="Local2.html">Crear Venta Local 2</a></li>
-            <li><strong>👥 Empleados</strong></li>
-            <li><a href="Lista_de_Empleados.html">Empleados</a></li>
-        </ul>
-    </aside>
-    <main style="margin-left: 220px; padding: 20px;">
-        <section>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <label for="buscar">Buscar</label>
-                <input type="text" id="buscar" placeholder="Value" style="padding: 5px;">
+
+<body>
+    <section id="menú">
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+          
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Lista de Productos</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá visualizar todos los productos registrados en el inventario.
+            Además, tendrá la opción de agregar nuevos productos, actualizarlos y consultar su estado.</p>
+    </section>
+
+    <!-- Contenido central -->
+    <main style="margin-left: center; padding: 20px; margin-top: calc(5% + 260px);">
+        <section id="Ver_Productos" style="display: block;">
+            <button id="mostrar-agregar-producto" class="action-button">
+                Agregar Producto
+            </button>
+            <div style="overflow-x: auto;">
+                <table id="productos-table" class="display"
+                    style="width: 100%; min-width: 800px; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
+                    <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
+                        <tr>
+                            <th style="padding: 10px; text-align: left;">Imagen</th>
+                            <th style="padding: 10px; text-align: left;">Nombre</th>
+                            <th style="padding: 10px; text-align: left;">Descripción</th>
+                            <th style="padding: 10px; text-align: left;">Precio</th>
+                            <th style="padding: 10px; text-align: left;">Stock</th>
+                            <th style="padding: 10px; text-align: left;">Categoría</th>
+                            <th style="padding: 10px; text-align: left;">Talla</th>
+                            <th style="padding: 10px; text-align: left;">Proveedor</th>
+                            <th style="padding: 10px; text-align: left;">Marca</th>
+                            <th style="padding: 10px; text-align: left;">Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productos-body" style="background-color: white; color: #333;">
+                        <!-- Aquí se llenarán los datos de los productos -->
+                    </tbody>
+                </table>
             </div>
-            <table border="1" style="width: 100%; border-collapse: collapse; text-align: left; background-color: white;">
-                <thead style="background-color: lightgray;">
-                    <tr>
-                        <th style="padding: 10px;">Nombre</th>
-                        <th style="padding: 10px;">Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="productos-table">
-                    <tr>
-                        <td style="padding: 10px;">Victoria's Secret</td>
-                        <td style="padding: 10px;">Activo</td>
-                    </tr>
-                </tbody>
-            </table>
         </section>
-    </main>
+
+        <!-- Modal Agregar Producto -->
+        <section id="Agregar-Producto"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Registrar producto</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo producto</p>
+
+            <form id="form-agregar-producto" enctype="multipart/form-data"
+                style="width: 100%; max-width: 1000px; margin: 0 auto; border-top: 5px solid #f8a8b9;">
+                <!-- Primera fila: Nombre y Local -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="local">Local</label>
+                        <select id="local" name="local">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Imagen y campos del lado derecho -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <!-- Imagen -->
+                    <div class="form-group" style="text-align: center;">
+                        <label for="imagen">Seleccionar Imagen</label>
+                        <div id="drop-area"
+                            style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; position: relative; min-height: 150px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
+                            <input type="file" name="imagen" id="imagen" accept="image/*" style="display: none;">
+                            <span id="label-imagen" style="color: #999; display: block;">Sube una imagen o
+                                arrastra</span>
+                            <img id="preview" src="/placeholder.svg"
+                                style="max-width: 100px; display: none; margin: 10px auto;" />
+                            <button type="button" id="quitarImagen"
+                                style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
+                        </div>
+                    </div>
+
+                    <!-- Campos del lado derecho -->
+                    <div style="display: grid; grid-template-rows: repeat(3, 1fr); gap: 15px;">
+                        <div class="form-group">
+                            <label for="proveedor-input-agregar">Proveedor</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="autocomplete-marca-proveedor-container" style="flex: 1;">
+                                    <input type="text" id="proveedor-input-agregar" name="proveedor" autocomplete="off"
+                                        style="width: 100%;">
+                                    <div id="proveedor-suggestions-agregar" class="suggestions-marca-proveedor"></div>
+                                </div>
+                                <button type="button" id="add-proveedor-btn-agregar" title="Agregar proveedor"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoria">Categoría</label>
+                            <select id="categoria" name="categoria">
+                                <option value="Ropa">Ropa</option>
+                                <option value="Accesorio">Joyeria y Accesorio</option>
+                                <option value="Cosmetico">Cosmético</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="marca-input-agregar">Marca</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="autocomplete-marca-proveedor-container" style="flex: 1;">
+                                    <input type="text" id="marca-input-agregar" name="marca" autocomplete="off"
+                                        style="width: 100%;">
+                                    <div id="marca-suggestions-agregar" class="suggestions-marca-proveedor"></div>
+                                </div>
+                                <button type="button" id="add-marca-btn-agregar" title="Agregar marca"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos según categoría -->
+                <div id="campos-ropa" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="material-ropa">Material</label>
+                            <input type="text" id="material-ropa" name="material_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-ropa">Color</label>
+                            <input type="text" id="color-ropa" name="color_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="tallas-ropa">Tallas (separadas por coma)</label>
+                            <input type="text" id="tallas-ropa" name="tallas_ropa" placeholder="S,M,L,XL">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="composicion-ropa">Composición</label>
+                            <input type="text" id="composicion-ropa" name="composicion_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="ajuste-ropa">Tipo de ajuste</label>
+                            <input type="text" id="ajuste-ropa" name="ajuste_ropa">
+                        </div>
+                    </div>
+                </div>
+                <div id="campos-cosmetico" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="textura-cosmetico">Textura</label>
+                            <input type="text" id="textura-cosmetico" name="textura_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo-cosmetico">Tipo</label>
+                            <input type="text" id="tipo-cosmetico" name="tipo_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-cosmetico">Color</label>
+                            <input type="text" id="color-cosmetico" name="color_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="acabado-cosmetico">Acabado</label>
+                            <input type="text" id="acabado-cosmetico" name="acabado_cosmetico">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="fecha-fabricacion-cosmetico">Fecha de fabricación</label>
+                            <input type="date" id="fecha-fabricacion-cosmetico" name="fecha_fabricacion_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-caducidad-cosmetico">Fecha de caducidad</label>
+                            <input type="date" id="fecha-caducidad-cosmetico" name="fecha_caducidad_cosmetico">
+                        </div>
+                    </div>
+                </div>
+                <div id="campos-accesorio" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="material-accesorio">Material</label>
+                            <input type="text" id="material-accesorio" name="material_accesorio">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-accesorio">Color</label>
+                            <input type="text" id="color-accesorio" name="color_accesorio">
+                        </div>
+                        <div class="form-group">
+                            <label for="tallas-accesorio">Tallas (separadas por coma)</label>
+                            <input type="text" id="tallas-accesorio" name="tallas_accesorio"
+                                placeholder="Única, S, M, L">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tercera fila: Precios y cantidad -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="precio-compra">Precio de compra</label>
+                        <input type="text" id="precio-compra" name="precio_compra">
+                    </div>
+                    <div class="form-group">
+                        <label for="precio-venta">Precio de venta</label>
+                        <input type="text" id="precio-venta" name="precio_venta">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="text" id="cantidad" name="cantidad">
+                    </div>
+                </div>
+                <!-- Fin tercera fila -->
+
+                <!-- Descripción -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" rows="4"
+                        style="resize: none; width: 100%;"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="Agregar" class="action-button">Registrar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Modal Actualizar Producto - EXACTAMENTE IGUAL AL DE AGREGAR -->
+        <section id="Actualizar-Producto"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Actualizar producto</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Actualizar un producto existente</p>
+
+            <form id="form-actualizar-producto" enctype="multipart/form-data"
+                style="width: 100%; max-width: 1000px; margin: 0 auto; border-top: 5px solid #f8a8b9;">
+                <!-- Primera fila: Nombre y Local -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre-actualizar">Nombre</label>
+                        <input type="text" id="nombre-actualizar" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="local-actualizar">Local</label>
+                        <select id="local-actualizar" name="local">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Imagen y campos del lado derecho - EXACTAMENTE IGUAL AL DE AGREGAR -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <!-- Imagen - MISMA ESTRUCTURA QUE FUNCIONA EN AGREGAR -->
+                    <div class="form-group" style="text-align: center;">
+                        <label for="imagen-actualizar">Seleccionar Imagen</label>
+                        <div id="drop-area-actualizar"
+                            style="border: 1px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; position: relative; min-height: 150px; display: flex; flex-direction: column; justify-content: center; cursor: pointer;">
+                            <input type="file" name="imagen" id="imagen-actualizar" accept="image/*"
+                                style="display: none;">
+                            <span id="label-imagen-actualizar" style="color: #999; display: block;">Haz clic para
+                                cambiar imagen</span>
+                            <img id="preview-actualizar" src="/placeholder.svg"
+                                style="max-width: 100px; display: none; margin: 10px auto;" />
+                            <button type="button" id="quitarImagen-actualizar"
+                                style="display: none; position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer;">✖</button>
+                        </div>
+                    </div>
+
+                    <!-- Campos del lado derecho -->
+                    <div style="display: grid; grid-template-rows: repeat(3, 1fr); gap: 15px;">
+                        <div class="form-group">
+                            <label for="proveedor-input-actualizar">Proveedor</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="autocomplete-marca-proveedor-container" style="flex: 1;">
+                                    <input type="text" id="proveedor-input-actualizar" name="proveedor"
+                                        autocomplete="off" style="width: 100%;">
+                                    <div id="proveedor-suggestions-actualizar" class="suggestions-marca-proveedor">
+                                    </div>
+                                </div>
+                                <button type="button" id="add-proveedor-btn-actualizar" title="Agregar proveedor"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoria-actualizar">Categoría</label>
+                            <select id="categoria-actualizar" name="categoria">
+                                <option value="">Selecciona una categoría</option>
+                                <option value="Ropa">Ropa</option>
+                                <option value="Accesorio">Joyeria y Accesorio</option>
+                                <option value="Cosmetico">Cosmético</option>
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="marca-input-actualizar">Marca</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="autocomplete-marca-proveedor-container" style="flex: 1;">
+                                    <input type="text" id="marca-input-actualizar" name="marca" autocomplete="off"
+                                        style="width: 100%;">
+                                    <div id="marca-suggestions-actualizar" class="suggestions-marca-proveedor"></div>
+                                </div>
+                                <button type="button" id="add-marca-btn-actualizar" title="Agregar marca"
+                                    style="background: none; border: none; font-size: 20px; cursor: pointer; flex-shrink: 0;">➕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos dinámicos según categoría -->
+                <div id="campos-ropa-actualizar" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="material-ropa-actualizar">Material</label>
+                            <input type="text" id="material-ropa-actualizar" name="material_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-ropa-actualizar">Color</label>
+                            <input type="text" id="color-ropa-actualizar" name="color_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="tallas-ropa-actualizar">Tallas (separadas por coma)</label>
+                            <input type="text" id="tallas-ropa-actualizar" name="tallas_ropa" placeholder="S,M,L,XL">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="composicion-ropa-actualizar">Composición</label>
+                            <input type="text" id="composicion-ropa-actualizar" name="composicion_ropa">
+                        </div>
+                        <div class="form-group">
+                            <label for="ajuste-ropa-actualizar">Tipo de ajuste</label>
+                            <input type="text" id="ajuste-ropa-actualizar" name="ajuste_ropa">
+                        </div>
+                    </div>
+                </div>
+                <div id="campos-cosmetico-actualizar" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="textura-cosmetico-actualizar">Textura</label>
+                            <input type="text" id="textura-cosmetico-actualizar" name="textura_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo-cosmetico-actualizar">Tipo</label>
+                            <input type="text" id="tipo-cosmetico-actualizar" name="tipo_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-cosmetico-actualizar">Color</label>
+                            <input type="text" id="color-cosmetico-actualizar" name="color_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="acabado-cosmetico-actualizar">Acabado</label>
+                            <input type="text" id="acabado-cosmetico-actualizar" name="acabado_cosmetico">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="fecha-fabricacion-cosmetico-actualizar">Fecha de fabricación</label>
+                            <input type="date" id="fecha-fabricacion-cosmetico-actualizar"
+                                name="fecha_fabricacion_cosmetico">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-caducidad-cosmetico-actualizar">Fecha de caducidad</label>
+                            <input type="date" id="fecha-caducidad-cosmetico-actualizar"
+                                name="fecha_caducidad_cosmetico">
+                        </div>
+                    </div>
+                </div>
+                <div id="campos-accesorio-actualizar" style="display:none; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label for="material-accesorio-actualizar">Material</label>
+                            <input type="text" id="material-accesorio-actualizar" name="material_accesorio">
+                        </div>
+                        <div class="form-group">
+                            <label for="color-accesorio-actualizar">Color</label>
+                            <input type="text" id="color-accesorio-actualizar" name="color_accesorio">
+                        </div>
+                        <div class="form-group">
+                            <label for="tallas-accesorio-actualizar">Tallas (separadas por coma)</label>
+                            <input type="text" id="tallas-accesorio-actualizar" name="tallas_accesorio"
+                                placeholder="Única, S, M, L">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tercera fila: Precios y cantidad -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="precio-compra-actualizar">Precio de compra</label>
+                        <input type="number" id="precio-compra-actualizar" name="precio_compra" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="precio-venta-actualizar">Precio de venta</label>
+                        <input type="text" id="precio-venta-actualizar" name="precio_venta">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad-actualizar">Cantidad</label>
+                        <input type="text" id="cantidad-actualizar" name="cantidad">
+                    </div>
+                </div>
+                <!-- Fin tercera fila -->
+
+                <!-- Descripción -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="descripcion-actualizar">Descripción</label>
+                    <textarea id="descripcion-actualizar" name="descripcion" rows="4"
+                        style="resize: none; width: 100%;"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar-Actualizar" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="Actualizar" class="action-button">Actualizar</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="overlay"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+        </div>
+
+        <!-- Secciones para agregar marca y proveedor -->
+        <section id="Agregar-Marca"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 16px; width: 90vw; max-width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Agregar Marca</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar una nueva marca</p>
+            <form id="agregar-marca-form" style="border-top: 5px solid #f8a8b9;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select name="estado" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar" class="btn-secondary">Cancelar</button>
+                    <button type="submit" class="action-button">Agregar</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="Agregar-Proveedor"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 16px; width: 90vw; max-width: 600px;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Agregar Proveedor</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;">Registrar un nuevo proveedor</p>
+            <form id="agregar-proveedor-form" style="border-top: 5px solid #f8a8b9;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select name="estado" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" id="Cancelar" class="btn-secondary">Cancelar</button>
+                    <button type="submit" class="action-button">Agregar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Toast Notification Container -->
+        <div id="toast-container" style="position: fixed; top: 30px; right: 30px; z-index: 2000;"></div>
+
+        <script>
+            // Toast notification function
+            function showToast(message, type = 'success', duration = 3000) {
+                const toastContainer = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.style.cssText = `min-width:220px; max-width:350px; background:${type === 'success' ? '#4BB543' : '#e74c3c'}; color:white; padding:14px 24px; border-radius:8px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15); font-size:16px; font-family:inherit; opacity:0.97; display:flex; align-items:center; gap:10px;`;
+                toast.innerHTML = `<span>${message}</span>`;
+                toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 400);
+                }, duration);
+            }
+        </script>
+
+        <style>
+            .toast.toast-success {
+                background: #4BB543;
+            }
+
+            .toast.toast-error {
+                background: #e74c3c;
+            }
+        </style>
+
+        <script src="/script.js"></script>
+        <script src="/autocompletar_productomarca.js"></script>
+        <script src="/autocompletar_productoproveedor.js"></script>
+        <script src="/agregar_productomarca.js"></script>
+        <script src="/agregar_productoproveedor.js"></script>
+        <script src="/cargarimagenes.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                const agregarProductoSection = $('#Agregar-Producto');
+                const actualizarProductoSection = $('#Actualizar-Producto');
+                const overlay = $('#overlay');
+                let tablaInicializada = false;
+                let currentProductId = null;
+
+                // Inicializar DataTable una sola vez
+                function inicializarTabla() {
+                    if (tablaInicializada) return;
+
+                    const table = $('#productos-table').DataTable({
+                        scrollX: true,
+                        scrollY: "400px",
+                        scrollCollapse: true,
+                        processing: true,
+                        deferRender: true,
+                        responsive: true,
+                        ajax: {
+                            url: 'http://localhost:3000/api/products',
+                            dataSrc: function (productos) {
+                                // Aplanar productos: cada talla es una fila
+                                const filas = [];
+                                productos.forEach(producto => {
+                                    if (Array.isArray(producto.tallas) && producto.tallas.length > 0) {
+                                        producto.tallas.forEach(tallaObj => {
+                                            filas.push({
+                                                ...producto,
+                                                talla: tallaObj.talla,
+                                                stock: tallaObj.stock,
+                                                codigo_producto: tallaObj.codigo_producto,
+                                                precio: tallaObj.precio ?? producto.precio,
+                                                precio_compra: tallaObj.precio_compra ?? producto.precio_compra,
+                                                fecha_fabricacion: tallaObj.fecha_fabricacion ?? producto.fecha_fabricacion,
+                                                fecha_caducidad: tallaObj.fecha_caducidad ?? producto.fecha_caducidad
+                                            });
+                                        });
+                                    } else {
+                                        filas.push({ ...producto, talla: '', stock: producto.stock, codigo_producto: producto.codigo_producto });
+                                    }
+                                });
+                                return filas;
+                            },
+                            cache: true,
+                            error: function (xhr, error, thrown) {
+                                console.error('Error al cargar productos:', error, thrown);
+                                showToast('No se pudieron cargar los productos. Verifica que el servidor esté corriendo.', 'error');
+                            }
+                        },
+                        columns: [
+                            {
+                                data: 'imagen',
+                                render: function (data, type, row) {
+                                    if (type === 'display') {
+                                        const imgSrc = data || '/placeholder.svg?height=50&width=50';
+                                        return `<img src="${imgSrc}" alt="${row.nombre}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background: #f5f5f5;" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" onload="this.style.display='block'; if(this.nextElementSibling) this.nextElementSibling.style.display='none';"><div style="display: none; width: 50px; height: 50px; background: #f5f5f5; border-radius: 4px; align-items: center; justify-content: center; font-size: 12px; color: #999;">Sin imagen</div>`;
+                                    }
+                                    return data;
+                                }
+                            },
+                            { data: 'nombre' },
+                            {
+                                data: 'descripcion',
+                                render: function (data) {
+                                    return data && data.length > 50 ? data.substring(0, 50) + '...' : (data || 'Sin descripción');
+                                }
+                            },
+                            {
+                                data: 'precio',
+                                render: function (data) {
+                                    return `C$${parseFloat(data || 0).toFixed(2)}`;
+                                }
+                            },
+                            {
+                                data: 'stock'
+                            },
+                            { data: 'categoria' },
+                            {
+                                data: 'talla',
+                                render: function (data) {
+                                    return data || 'N/A';
+                                }
+                            },
+                            { data: 'proveedor' },
+                            { data: 'marca' },
+                            { data: 'codigo_tienda', title: 'Local', render: function(data){ return data || '1'; } },
+                            // Columna oculta para el identificador único
+                            { data: 'codigo_producto', visible: false, searchable: false }
+                        ],
+                        language: {
+                            search: "Buscar:",
+                            lengthMenu: "Mostrar _MENU_ registros",
+                            info: "Mostrando _START_ a _END_ de _TOTAL_ productos",
+                            paginate: {
+                                first: "Primero",
+                                last: "Último",
+                                next: "Siguiente",
+                                previous: "Anterior"
+                            },
+                            emptyTable: "No hay productos registrados",
+                            loadingRecords: "Cargando productos...",
+                            processing: "Procesando..."
+                        }
+                    });
+
+                    tablaInicializada = true;
+                    return table;
+                }
+
+                // Inicializar tabla al cargar la página
+                const table = inicializarTabla();
+
+                // Mostrar sección Agregar Producto
+                $('#mostrar-agregar-producto').on('click', function () {
+                    agregarProductoSection.show();
+                    overlay.show();
+                });
+
+                // Cancelar Agregar
+                $('#Agregar-Producto #Cancelar').on('click', function () {
+                    $('#form-agregar-producto')[0].reset();
+                    agregarProductoSection.hide();
+                    overlay.hide();
+                });
+
+                // Cancelar Actualizar
+                $('#Cancelar-Actualizar').on('click', function () {
+                    $('#form-actualizar-producto')[0].reset();
+                    actualizarProductoSection.hide();
+                    overlay.hide();
+                });
+
+                // ===== MANEJO DE IMÁGENES PARA ACTUALIZAR - EXACTAMENTE IGUAL AL DE AGREGAR =====
+
+                // Clic en área de imagen para actualizar
+                $(document).on('click', '#drop-area-actualizar', function (e) {
+                    if (!$(e.target).is('#quitarImagen-actualizar')) {
+                        console.log('Clic en área actualizar - abriendo selector');
+                        $('#imagen-actualizar').trigger('click');
+                    }
+                });
+
+                // Clic en label para actualizar
+                $(document).on('click', '#label-imagen-actualizar', function (e) {
+                    e.preventDefault();
+                    console.log('Clic en label actualizar - abriendo selector');
+                    $('#imagen-actualizar').trigger('click');
+                });
+
+                // Cambio de archivo para actualizar
+                $(document).on('change', '#imagen-actualizar', function (e) {
+                    console.log('Archivo seleccionado para actualizar');
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#preview-actualizar').attr('src', e.target.result).show();
+                            $('#quitarImagen-actualizar').show();
+                            $('#label-imagen-actualizar').hide();
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Quitar imagen para actualizar
+                $(document).on('click', '#quitarImagen-actualizar', function (e) {
+                    e.stopPropagation();
+                    console.log('Quitando imagen actualizar');
+                    $('#preview-actualizar').hide().attr('src', '/placeholder.svg');
+                    $('#imagen-actualizar').val('');
+                    $('#quitarImagen-actualizar').hide();
+                    $('#label-imagen-actualizar').show();
+                });
+
+                // Mostrar formulario de actualización al hacer clic en una fila
+                $('#productos-table tbody').off('click').on('click', 'tr', async function () {
+                    const data = table.row(this).data();
+                    if (data) {
+                        try {
+                            // Usar el nombre del producto para obtener los detalles
+                            const response = await fetch(`http://localhost:3000/api/products/nombre/${encodeURIComponent(data.nombre)}`);
+                            if (response.ok) {
+                                const product = await response.json();
+
+                                // Llenar el formulario con los datos del producto
+                                $('#nombre-actualizar').val(product.nombre);
+                                $('#proveedor-input-actualizar').val(product.proveedor || '');
+                                $('#precio-compra-actualizar').val(product.precio_compra || '');
+                                $('#precio-venta-actualizar').val(product.precio || '');
+                                $('#cantidad-actualizar').val(product.stock || '');
+                                $('#descripcion-actualizar').val(product.descripcion || '');
+                                $('#local-actualizar').val(product.codigo_tienda || '1');
+                                $('#categoria-actualizar').val(product.categoria || '');
+                                $('#marca-input-actualizar').val(product.marca || '');
+
+                                // Mostrar imagen actual si existe
+                                if (product.imagen && product.imagen !== '/placeholder.svg?height=50&width=50') {
+                                    $('#preview-actualizar').attr('src', product.imagen).show();
+                                    $('#label-imagen-actualizar').hide();
+                                    $('#quitarImagen-actualizar').show();
+                                } else {
+                                    $('#preview-actualizar').hide();
+                                    $('#label-imagen-actualizar').show();
+                                    $('#quitarImagen-actualizar').hide();
+                                }
+
+                                // Limpiar el input de imagen para nueva selección
+                                $('#imagen-actualizar').val('');
+
+                                // Guardar el ID del producto para la actualización
+                                currentProductId = product.codigo_producto;
+
+                                // Mostrar el formulario de actualización
+                                actualizarProductoSection.show();
+                                overlay.show();
+                            } else {
+                                showToast('Error al obtener los detalles del producto', 'error');
+                            }
+                        } catch (error) {
+                            console.error('Error al obtener los detalles del producto:', error);
+                            showToast('Error al cargar los datos del producto', 'error');
+                        }
+                    }
+                });
+
+                // Mostrar/ocultar campos dinámicos según categoría en AGREGAR
+                $('#categoria').on('change', function () {
+                    const cat = $(this).val();
+                    $('#campos-ropa').hide();
+                    $('#campos-cosmetico').hide();
+                    $('#campos-accesorio').hide();
+                    if (cat === 'Ropa') $('#campos-ropa').show();
+                    else if (cat === 'Cosmetico') $('#campos-cosmetico').show();
+                    else if (cat === 'Accesorio') $('#campos-accesorio').show();
+                }).trigger('change');
+
+                // Mostrar/ocultar campos dinámicos según categoría en ACTUALIZAR
+                $('#categoria-actualizar').on('change', function () {
+                    const cat = $(this).val();
+                    $('#campos-ropa-actualizar').hide();
+                    $('#campos-cosmetico-actualizar').hide();
+                    $('#campos-accesorio-actualizar').hide();
+                    if (cat === 'Ropa') $('#campos-ropa-actualizar').show();
+                    else if (cat === 'Cosmetico') $('#campos-cosmetico-actualizar').show();
+                    else if (cat === 'Accesorio') $('#campos-accesorio-actualizar').show();
+                }).trigger('change');
+
+                // ===== FUNCIONALIDAD DE AUTOCOMPLETADO DE DESCRIPCIÓN =====
+
+                // Función para generar descripción automática en AGREGAR
+                function actualizarDescripcionAgregar() {
+                    const categoria = $('#categoria').val();
+                    const nombre = $('#nombre').val();
+                    const marca = $('#marca-input-agregar').val();
+
+                    let descripcion = nombre || '';
+                    if (marca) descripcion += ' | Marca: ' + marca;
+
+                    if (categoria === 'Ropa') {
+                        const material = $('#material-ropa').val();
+                        const color = $('#color-ropa').val();
+                        const tallas = $('#tallas-ropa').val();
+                        const composicion = $('#composicion-ropa').val();
+                        const ajuste = $('#ajuste-ropa').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                        if (composicion) descripcion += ' | Composición: ' + composicion;
+                        if (ajuste) descripcion += ' | Ajuste: ' + ajuste;
+                    } else if (categoria === 'Cosmetico') {
+                        const textura = $('#textura-cosmetico').val();
+                        const tipo = $('#tipo-cosmetico').val();
+                        const color = $('#color-cosmetico').val();
+                        const acabado = $('#acabado-cosmetico').val();
+                        const fabricacion = $('#fecha-fabricacion-cosmetico').val();
+                        const caducidad = $('#fecha-caducidad-cosmetico').val();
+
+                        if (textura) descripcion += ' | Textura: ' + textura;
+                        if (tipo) descripcion += ' | Tipo: ' + tipo;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (acabado) descripcion += ' | Acabado: ' + acabado;
+                        if (fabricacion) descripcion += ' | Fabricación: ' + fabricacion;
+                        if (caducidad) descripcion += ' | Caducidad: ' + caducidad;
+                    } else if (categoria === 'Accesorio') {
+                        const material = $('#material-accesorio').val();
+                        const color = $('#color-accesorio').val();
+                        const tallas = $('#tallas-accesorio').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                    }
+
+                    $('#descripcion').val(descripcion);
+                }
+
+                // Función para generar descripción automática en ACTUALIZAR
+                function actualizarDescripcionActualizar() {
+                    const categoria = $('#categoria-actualizar').val();
+                    const nombre = $('#nombre-actualizar').val();
+                    const marca = $('#marca-input-actualizar').val();
+
+                    let descripcion = nombre || '';
+                    if (marca) descripcion += ' | Marca: ' + marca;
+
+                    if (categoria === 'Ropa') {
+                        const material = $('#material-ropa-actualizar').val();
+                        const color = $('#color-ropa-actualizar').val();
+                        const tallas = $('#tallas-ropa-actualizar').val();
+                        const composicion = $('#composicion-ropa-actualizar').val();
+                        const ajuste = $('#ajuste-ropa-actualizar').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                        if (composicion) descripcion += ' | Composición: ' + composicion;
+                        if (ajuste) descripcion += ' | Ajuste: ' + ajuste;
+                    } else if (categoria === 'Cosmetico') {
+                        const textura = $('#textura-cosmetico-actualizar').val();
+                        const tipo = $('#tipo-cosmetico-actualizar').val();
+                        const color = $('#color-cosmetico-actualizar').val();
+                        const acabado = $('#acabado-cosmetico-actualizar').val();
+                        const fabricacion = $('#fecha-fabricacion-cosmetico-actualizar').val();
+                        const caducidad = $('#fecha-caducidad-cosmetico-actualizar').val();
+
+                        if (textura) descripcion += ' | Textura: ' + textura;
+                        if (tipo) descripcion += ' | Tipo: ' + tipo;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (acabado) descripcion += ' | Acabado: ' + acabado;
+                        if (fabricacion) descripcion += ' | Fabricación: ' + fabricacion;
+                        if (caducidad) descripcion += ' | Caducidad: ' + caducidad;
+                    } else if (categoria === 'Accesorio') {
+                        const material = $('#material-accesorio-actualizar').val();
+                        const color = $('#color-accesorio-actualizar').val();
+                        const tallas = $('#tallas-accesorio-actualizar').val();
+
+                        if (material) descripcion += ' | Material: ' + material;
+                        if (color) descripcion += ' | Color: ' + color;
+                        if (tallas) descripcion += ' | Tallas: ' + tallas;
+                    }
+
+                    $('#descripcion-actualizar').val(descripcion);
+                }
+
+                // Event listeners para autocompletado en AGREGAR
+                $('#nombre, #marca-input-agregar, #material-ropa, #color-ropa, #tallas-ropa, #composicion-ropa, #ajuste-ropa, #textura-cosmetico, #tipo-cosmetico, #color-cosmetico, #acabado-cosmetico, #fecha-fabricacion-cosmetico, #fecha-caducidad-cosmetico, #material-accesorio, #color-accesorio, #tallas-accesorio').on('input change', actualizarDescripcionAgregar);
+
+                // Event listeners para autocompletado en ACTUALIZAR
+                $('#nombre-actualizar, #marca-input-actualizar, #material-ropa-actualizar, #color-ropa-actualizar, #tallas-ropa-actualizar, #composicion-ropa-actualizar, #ajuste-ropa-actualizar, #textura-cosmetico-actualizar, #tipo-cosmetico-actualizar, #color-cosmetico-actualizar, #acabado-cosmetico-actualizar, #fecha-fabricacion-cosmetico-actualizar, #fecha-caducidad-cosmetico-actualizar, #material-accesorio-actualizar, #color-accesorio-actualizar, #tallas-accesorio-actualizar').on('input change', actualizarDescripcionActualizar);
+
+                // Envío de formulario ACTUALIZAR PRODUCTO
+                $('#form-actualizar-producto').off('submit').on('submit', async function (event) {
+                    event.preventDefault();
+
+                    if (!currentProductId) {
+                        showToast('Error: No se ha seleccionado un producto para actualizar', 'error');
+                        return;
+                    }
+
+                    // Crear FormData para enviar tanto datos como archivo
+                    const formData = new FormData();
+
+                    // Agregar todos los campos del formulario
+                    formData.append('nombre', $('#nombre-actualizar').val());
+                    formData.append('proveedor', $('#proveedor-input-actualizar').val());
+                    formData.append('precio_compra', $('#precio-compra-actualizar').val());
+                    formData.append('precio_venta', $('#precio-venta-actualizar').val());
+                    formData.append('cantidad', $('#cantidad-actualizar').val());
+                    formData.append('descripcion', $('#descripcion-actualizar').val());
+                    formData.append('local', $('#local-actualizar').val());
+                    formData.append('categoria', $('#categoria-actualizar').val() || 'Ropa');
+                    formData.append('marca', $('#marca-input-actualizar').val() || '');
+
+                    // Agregar la imagen si se seleccionó una nueva
+                    const imagenInput = $('#imagen-actualizar')[0];
+                    if (imagenInput && imagenInput.files && imagenInput.files[0]) {
+                        formData.append('imagen', imagenInput.files[0]);
+                        console.log('Imagen agregada al FormData:', imagenInput.files[0].name);
+                    }
+
+                    try {
+                        // Cambiar el texto del botón mientras se procesa
+                        const botonActualizar = $('#Actualizar');
+                        const textoOriginal = botonActualizar.text();
+                        botonActualizar.text('Actualizando...').prop('disabled', true);
+
+                        const response = await fetch(`http://localhost:3000/api/products/${currentProductId}`, {
+                            method: 'PUT',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            showToast('Producto actualizado exitosamente' + (result.imagen_actualizada ? ' con nueva imagen' : ''), 'success');
+
+                            // Cerrar el modal
+                            actualizarProductoSection.hide();
+                            overlay.hide();
+
+                            // Limpiar el formulario
+                            $('#form-actualizar-producto')[0].reset();
+                            $('#preview-actualizar').hide();
+                            $('#quitarImagen-actualizar').hide();
+                            $('#imagen-actualizar').val('');
+                            $('#label-imagen-actualizar').show();
+
+                            // Refrescar la tabla
+                            table.ajax.reload();
+                        } else {
+                            showToast('Error al actualizar el producto: ' + (result.error || result.message || 'Error desconocido'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('Error de conexión al actualizar el producto', 'error');
+                    } finally {
+                        // Restaurar el botón
+                        $('#Actualizar').text('Actualizar').prop('disabled', false);
+                    }
+                });
+
+                // Botones + para agregar proveedor y marca desde formulario de actualización
+                $('#add-proveedor-btn-actualizar').on('click', function () {
+                    $('#Agregar-Proveedor').show();
+                    overlay.show();
+                });
+
+                $('#add-marca-btn-actualizar').on('click', function () {
+                    $('#Agregar-Marca').show();
+                    overlay.show();
+                });
+
+                // Botones + para agregar proveedor y marca desde formulario de agregar
+                $('#add-proveedor-btn-agregar').on('click', function () {
+                    $('#Agregar-Proveedor').show();
+                    overlay.show();
+                });
+
+                $('#add-marca-btn-agregar').on('click', function () {
+                    $('#Agregar-Marca').show();
+                    overlay.show();
+                });
+
+                // Cancelar formularios de agregar marca/proveedor
+                $('#Agregar-Proveedor #Cancelar, #Agregar-Marca #Cancelar').on('click', function (event) {
+                    event.preventDefault();
+                    $(this).closest('form')[0].reset();
+                    $(this).closest('section').hide();
+                    overlay.hide();
+                });
+
+                // Refrescar tabla después de agregar producto
+                window.refrescarTablaProductos = function () {
+                    if (tablaInicializada) {
+                        $('#productos-table').DataTable().ajax.reload(null, false);
+                    }
+                };
+            });
+    </script>
+    
 </body>
+
 </html>

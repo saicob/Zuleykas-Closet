@@ -1,65 +1,409 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Agregar Productos Local 1</title>
-</head>
-<body>
-    <header>
-        <h1>Sistema de administración</h1>
-        <button class="logout-button">
-            <img src="logout-icon.png" alt="Cerrar sesión">
-        </button>
-    </header>
-    <!-- Menú lateral -->
-    <aside class="sidebar">
-        <ul>
-            <li class="dropdown">
-                <div class="menu-item">📦 Productos</div>
-                <ul class="dropdown-content">
-                    <li><a href="VerProductos.html">Ver Productos</a></li>
-                    <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-                    <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-                    <li><a href="Actualizar_Marcas.html">Marca</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="Actualizar_Proveedores.html" class="menu-item">🤝 Proveedores</a>
-            </li>
-            <li class="dropdown">
-                <div class="menu-item">💸 Ventas</div>
-                <ul class="dropdown-content">
-                    <li><a href="Informe_de_Ventas.html">Informe de venta</a></li>
-                    <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-                    <li><a href="Local1.html">Local 1</a></li>
-                    <li><a href="Local2.html">Local 2</a></li>
-                </ul>
-            </li>
-        </ul>
-    </aside>
+    <title>Informe de Ventas</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 
-   <!-- Contenido central -->
-   <main class="content">
-    <form>
-        <h2>Informe de Ventas</h2>
-        <label for="sales-date">Fecha de venta </label>
-        <div class="form-group">
-            <label for="start-date">Inicio </label>
-            <input type="date" id="start-date">
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <style>
+        #Detalles-Venta {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(209, 106, 138, 0.13);
+            padding: 28px 32px 18px 32px !important;
+            max-width: 800px;
+            border-top: 5px solid #f8a8b9;
+        }
+
+        #Detalles-Venta h2 {
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2rem !important;
+            color: #d16a8a;
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        #Detalles-Venta h3 {
+            color: #a07a8c;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        #info-factura {
+            color: #888;
+            font-size: 1.01rem;
+            margin-bottom: 18px;
+        }
+
+        #Detalles-Venta strong {
+            color: #d16a8a;
+            font-weight: 600;
+        }
+
+        #Detalles-Venta table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(209, 106, 138, 0.07);
+            margin-bottom: 10px;
+        }
+
+        #Detalles-Venta th {
+            background: #f8e8ee;
+            color: #a07a8c;
+            font-weight: 700;
+            font-size: 1.01rem;
+            border: 1px solid #e0bfc7 !important;
+        }
+
+        #Detalles-Venta td {
+            background: #fff;
+            color: #333;
+            border: 1px solid #e0bfc7 !important;
+            font-size: 0.98rem;
+        }
+
+        #Cerrar-Detalles {
+            background: #f8a8b9;
+
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            font-size: 1.08rem;
+
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(248, 168, 185, 0.08);
+            transition: background 0.18s;
+        }
+
+        #Cerrar-Detalles:hover {
+            background: #d16a8a;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="menú" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: white;">
+        <div class="rectangle">
+             <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+          
+            </header>
         </div>
-        <div class="form-group">
-            <label for="end-date">Fin</label>
-            <input type="date" id="end-date">
+        <div class="section-title-container">
+            <div class="section-title">Informe de Ventas</div>
         </div>
-        <div class="form-group">
-            <button type="submit">Mostrar</button>
-            <button type="submit">Mostrar Todo</button>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text"> En este apartado podrá visualizar el informe de ventas. Podrá filtrar por fecha y
+            ver el total de ventas realizadas en un periodo específico.</p>
+    </section>
+
+    <!-- Contenido central -->
+    <main style="margin-top: 350px; padding: 20px;">
+        <section id="informe-ventas">
+            <div style="overflow-x: auto;">
+                <table id="ventas-table" class="display"
+                    style="width: 100%; min-width: 600px; border-collapse: collapse; background-color: white; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
+                    <thead style="background-color: #f9f9f9; border-bottom: 2px solid #ddd;">
+                        <tr>
+                            <th style="padding: 10px; text-align: left;">Numero de Venta</th>
+                            <th style="padding: 10px; text-align: left;">Fecha</th>
+                            <th style="padding: 10px; text-align: left;">Total</th>
+                            <th style="padding: 10px; text-align: left;">Delivery</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventas-body" style="background-color: white; color: #333;">
+                        <!-- Aquí se llenarán los datos de las ventas -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Modal para mostrar detalles de la venta -->
+        <section id="Detalles-Venta"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; border-radius: 16px; width: 90vw; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-family: 'Great Vibes', cursive; font-size: 24px; text-align: center; margin-bottom: 10px;">
+                Detalles de la Venta</h2>
+            <p style="text-align: center; font-size: 14px; margin-bottom: 20px;" id="info-factura">Información detallada
+                de la factura</p>
+
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #dd9cba; margin-bottom: 10px;">Información de la Factura</h3>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <strong>Número de Factura:</strong>
+                        <p id="numero-factura">-</p>
+                    </div>
+                    <div>
+                        <strong>Fecha:</strong>
+                        <p id="fecha-factura">-</p>
+                    </div>
+                    <div>
+                        <strong>Total:</strong>
+                        <p id="total-factura">-</p>
+                    </div>
+                </div>
+                <!-- NUEVO: Información de delivery -->
+                <div id="info-delivery" style="display:none; margin-top:10px; background:#f8e8ee; border-radius:8px; padding:12px;">
+                    <strong>Delivery:</strong>
+                    <div><b>Dirección:</b> <span id="delivery-direccion"></span></div>
+                    <div><b>Cliente:</b> <span id="delivery-cliente"></span></div>
+                    <div><b>Costo:</b> <span id="delivery-costo"></span></div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #dd9cba; margin-bottom: 10px;">Productos Vendidos</h3>
+                <div style="overflow-x: auto;">
+                    <table id="productos-factura-table" class="display"
+                        style="width: 100%; min-width: 600px; border-collapse: collapse; background-color: white; border: 1px solid #ddd;">
+                        <thead style="background-color: #f9f9f9;">
+                            <tr>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Producto</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Descripción</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Cantidad</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Categoría</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Precio Unit.</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Descuento</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productos-factura-body">
+                            <!-- Aquí se llenarán los productos de la factura -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                <button type="button" id="Cerrar-Detalles" class="btn-secondary">Cerrar</button>
+            </div>
+        </section>
+
+        <div id="overlay-detalles"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
         </div>
-    </form>
-</main>
+    </main>
 
     <script src="/script.js"></script>
+    <script>
+        $(document).ready(function () {
+            const detallesVentaSection = $('#Detalles-Venta');
+            const overlayDetalles = $('#overlay-detalles');
+
+            // Inicializar DataTable
+            const table = $('#ventas-table').DataTable({
+                scrollX: true,
+                scrollY: "400px",
+                scrollCollapse: true,
+                responsive: true,
+                ajax: {
+                    url: 'http://localhost:3000/api/ventas',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'codigo_factura', title: 'Número de Venta' },
+                    {
+                        data: 'fecha',
+                        render: function (data) {
+                            const date = new Date(data);
+                            return date.toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                        }
+                    },
+                    {
+                        data: 'total',
+                        render: function (data) {
+                            return `C$${parseFloat(data).toFixed(2)}`;
+                        }
+                    },
+                    {
+                        data: 'tiene_delivery',
+                        title: 'Delivery',
+                        render: function (data) {
+                            return data ? 'Sí' : 'No';
+                        }
+                    }
+                ],
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                },
+                error: function (xhr, error, thrown) {
+                    console.error('Error al cargar los datos:', error, thrown);
+                }
+            });
+
+            // Manejar clic en fila para mostrar detalles
+            $('#ventas-table tbody').on('click', 'tr', async function () {
+                const data = table.row(this).data();
+                if (data) {
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/factura/detalles/${data.codigo_factura}`);
+                        if (response.ok) {
+                            const detalles = await response.json();
+
+                            // Llenar información de la factura
+                            $('#numero-factura').text(detalles.factura.codigo_factura);
+                            $('#fecha-factura').text(new Date(detalles.factura.fecha).toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            }));
+                            $('#total-factura').text(`C$${parseFloat(detalles.factura.total).toFixed(2)}`);
+
+                            // NUEVO: Mostrar delivery si existe
+                            if (detalles.delivery) {
+                                $('#info-delivery').show();
+                                $('#delivery-direccion').text(detalles.delivery.direccion);
+                                $('#delivery-cliente').text(detalles.delivery.cliente);
+                                $('#delivery-costo').text(`C$${parseFloat(detalles.delivery.costo).toFixed(2)}`);
+                            } else {
+                                $('#info-delivery').hide();
+                            }
+
+                            // Llenar tabla de productos
+                            const productosBody = $('#productos-factura-body');
+                            productosBody.empty();
+
+                            // Destruir DataTable anterior si existe
+                            if ($.fn.DataTable.isDataTable('#productos-factura-table')) {
+                                $('#productos-factura-table').DataTable().destroy();
+                            }
+
+                            $('#productos-factura-table').DataTable({
+                                data: detalles.productos,
+                                searching: false,
+                                paging: false,
+                                info: false,
+                                ordering: false,
+                                columns: [
+                                    { data: 'nombre', title: 'Producto' },
+                                    { data: 'descripcion', title: 'Descripción', defaultContent: '-', render: function(data){ return data || '-'; } },
+                                    { data: 'cantidad', title: 'Cantidad', className: 'dt-center' },
+                                    { data: 'categoria', title: 'Categoría' },
+                                    { data: 'precio_unitario', title: 'Precio Unit.', render: function(data){ return `C$${parseFloat(data).toFixed(2)}`; }, className: 'dt-right' },
+                                    { data: 'descuento', title: 'Descuento', render: function(data){ return data ? `${data}%` : '0%'; }, className: 'dt-center' },
+                                    { data: null, title: 'Subtotal', render: function(row){
+                                        let subtotal = parseFloat(row.subtotal);
+                                        let desc = parseFloat(row.descuento) || 0;
+                                        if(desc > 0){
+                                            subtotal = subtotal - (subtotal * desc / 100);
+                                        }
+                                        return `C$${subtotal.toFixed(2)}`;
+                                    }, className: 'dt-right' }
+                                ],
+                                language: {
+                                    emptyTable: 'No hay productos en la factura',
+                                    zeroRecords: 'No hay productos en la factura',
+                                    infoEmpty: '',
+                                    info: '',
+                                },
+                                createdRow: function(row, data, dataIndex) {
+                                    $(row).find('td').css({
+                                        'padding': '8px',
+                                        'border': '1px solid #e0bfc7',
+                                        'background': '#fff',
+                                        'color': '#333',
+                                        'font-size': '0.98rem'
+                                    });
+                                },
+                                headerCallback: function(thead, data, start, end, display) {
+                                    $(thead).find('th').css({
+                                        'background': '#f8e8ee',
+                                        'color': '#a07a8c',
+                                        'font-weight': '700',
+                                        'font-size': '1.01rem',
+                                        'border': '1px solid #e0bfc7'
+                                    });
+                                }
+                            });
+
+                            // Mostrar el modal
+                            detallesVentaSection.show();
+                            overlayDetalles.show();
+                        } else {
+                            alert('Error al obtener los detalles de la venta');
+                        }
+                    } catch (error) {
+                        console.error('Error al obtener detalles de la venta:', error);
+                        alert('Error al cargar los detalles de la venta');
+                    }
+                }
+            });
+
+            // Cerrar modal de detalles
+            $('#Cerrar-Detalles').on('click', function () {
+                detallesVentaSection.hide();
+                overlayDetalles.hide();
+            });
+
+            // Cerrar modal al hacer clic en el overlay
+            overlayDetalles.on('click', function () {
+                detallesVentaSection.hide();
+                overlayDetalles.hide();
+            });
+        });
+    </script>
+    
 </body>
+
 </html>

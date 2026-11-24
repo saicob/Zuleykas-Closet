@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Zuleyka Closet</title>
+    <title>Zuleyka's Closet</title>
 </head>
+
 <body>
-    <header style="background-color: pink; display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-        <h1>Zuleyka Closet <span style="font-size: 0.8em;">*logo*</span></h1>
-        <button class="logout-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
-            Cerrar Sesión
-        </button>
-    </header>
-    <aside class="sidebar" style="background-color: pink; padding: 10px; width: 200px; height: 100vh; position: fixed;">
-        <ul style="list-style: none; padding: 0;">
-            <li><strong>📦 Productos</strong></li>
-            <li><a href="VerProductos.html">Ver Productos</a></li>
-            <li><a href="Agregar_Productos_Local1.html">Agregar Productos Local 1</a></li>
-            <li><a href="Agregar_Productos_Local2.html">Agregar Productos Local 2</a></li>
-            <li><a href="Actualizar_Marcas.html">Marca</a></li>
-            <li><strong>🤝 Proveedores</strong></li>
-            <li><a href="Actualizar_Proveedores.html">Proveedores</a></li>
-            <li><strong>💸 Ventas</strong></li>
-            <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
-            <li><a href="Rentabilidad.html">Rentabilidad</a></li>
-            <li><a href="Local1.html">Crear Venta Local 1</a></li>
-            <li><a href="Local2.html">Crear Venta Local 2</a></li>
-            <li><strong>👥 Empleados</strong></li>
-            <li><a href="Lista_de_Empleados.html">Empleados</a></li>
-        </ul>
-    </aside>
-    <main style="margin-left: 220px; padding: 20px;">
-        <!-- Contenido central -->
-        <h1>Zuleyka Closet</h1>
-        <p>Bienvenido al sistema de administración.</p>
+    <section id="menú">
+        <div class="rectangle">
+            <header class="top-menu">
+                <div class="logo">
+                    <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li class="dropdown">
+                            <a href="#">Productos</a>
+                            <ul class="dropdown-content">
+                                <li><a href="VerProductos.html">Lista de Productos</a></li>
+                                <li><a href="Marcas.html">Marcas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Proveedor.html" class="menu-button">Proveedores</a>
+                        </li>
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#">Ventas</a>
+                            <ul class="dropdown-content">
+                                <li><a href="Informe_de_Ventas.html">Informe de Ventas</a></li>
+                                <li><a href="Rentabilidad.html">Rentabilidad</a></li>
+                                <li><a href="Crear_venta.html">Crear Venta</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="Respaldo.html" class="menu-button">Respaldo</a>
+                        </li>
+                    </ul>
+                </nav>
+                <button class="logout-button" onclick="window.location.href='TiendaOnline.html'">Cerrar Sesión</button>
+            </header>
+        </div>
+        <div class="section-title-container">
+            <div class="section-title">Lista de Productos</div>
+        </div>
+        <h1 class="outside-title">Zuleyka's Closet</h1>
+        <p class="description-text">En este apartado podrá visualizar todos los productos registrados en el inventario.
+            Además, tendrá la opción de agregar nuevos productos, actualizarlos y consultar su estado.</p>
+    </section>
+
+    <main class="content">
     </main>
+    <script src="/script.js"></script>
 </body>
+
 </html>
