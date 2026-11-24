@@ -4,3 +4,7 @@
 /backups/
 /Zuleykas_tables.sql
 /static/imagenes/
+/node_modules/
+/database/
+
+/Zuleykas_tables.sql/
