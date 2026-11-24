@@ -151,6 +151,34 @@ body {
     background-color: #c47ba7;
 }
 
+/* Styling for menu logout buttons added across templates */
+.menu-button.logout-btn,
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+    color: #fff !important;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(209,106,138,0.12);
+}
+
+.menu-button.logout-btn::before {
+    content: "⎋"; /* simple logout icon fallback */
+    display: inline-block;
+    font-size: 14px;
+    opacity: 0.95;
+}
+
+.menu-button.logout-btn:hover,
+.logout-button:hover {
+    transform: translateY(-2px);
+}
+
 /* Título decorativo */
 .outside-title {
     font-family: "Great Vibes", cursive;

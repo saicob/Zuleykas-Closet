@@ -599,6 +599,13 @@
 			<div class="search-bar">
 				<input type="text" id="search-input" placeholder="Buscar productos...">
 			</div>
+			<button onclick="window.location.href='Login.html'" class="menu-button logout-btn">Iniciar Sesión</button>
+            
+			<button class="sesion-button" title="Iniciar sesión"
+                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                ?
+            </button>
 			<div class="cart-icon" id="open-cart">
 				🛒
 				<span class="cart-badge" id="cart-count">0</span>
@@ -668,7 +675,7 @@
 
 	<!-- REEMPLAZADO: Panel del carrito (visual igual a Crear_venta) y modal de datos del cliente -->
 	<aside id="carrito-panel">
-		<h2>🛒 Carrito</h2>
+		<h2 id="toggle-cart-panel" style="cursor: pointer">🛒 Carrito</h2>
 		<table id="carrito-table">
 			<thead>
 				<tr>
@@ -1226,11 +1233,9 @@
 			configurarEventos() {
 				console.log("[v0] Configurando eventos");
 
-				// Click carrito
-				document.getElementById("open-cart").addEventListener("click", () => {
-					this.abrirModal("modal-checkout");
-					this.actualizarTablaCarrito();
-				});
+				// Click carrito: usar toggleCarrito si existe (cierra si ya está abierto), si no, abrir modal
+				// El control del botón 'open-cart' lo gestiona ahora /static/carrito.js (toggleCarrito).
+				// No añadimos aquí otro listener para evitar ejecuciones duplicadas.
 
 				// Filtros
 				document.querySelectorAll(".categoria-filter").forEach(e =>

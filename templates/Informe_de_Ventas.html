@@ -93,7 +93,7 @@
 <body>
     <section id="menú" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: white;">
         <div class="rectangle">
-            <header class="top-menu">
+             <header class="top-menu">
                 <div class="logo">
                     <img src="/Zuleykas _Closet_logo.jpg" alt="Zuleyka's Closet Logo" style="height: 80px;">
                 </div>
@@ -110,11 +110,6 @@
                             <a href="Proveedor.html" class="menu-button">Proveedores</a>
                         </li>
 
-                        <!-- Nuevo botón para acceder a la Tienda Online -->
-                        <li>
-                            <a href="TiendaOnline.html" class="menu-button">Tienda Online</a>
-                        </li>
-
                         <li class="dropdown">
                             <a href="#">Ventas</a>
                             <ul class="dropdown-content">
@@ -126,14 +121,20 @@
                         <li>
                             <a href="Respaldo.html" class="menu-button">Respaldo</a>
                         </li>
+                         <!-- Botón de Cerrar Sesión -->
+                        <li>
+                            <button onclick="window.location.href='TiendaOnline.html'" class="menu-button logout-btn">Cerrar Sesión</button>
+                        </li>
+                        <li>
+                            <button class="help-button" title="Ayuda"
+                                style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
+                                onclick="window.open('Manual de Usuario.pdf', '_blank')">
+                                ?
+                            </button>
+                        </li>
                     </ul>
                 </nav>
-                <!-- <button class="logout-button">Cerrar Sesión</button> -->
-                <button class="help-button" title="Ayuda"
-                    style="font-size: 22px; background: linear-gradient(135deg, #f8a8b9 60%, #fff0f5 100%); border: none; cursor: pointer; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 2px 8px rgba(248,168,185,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: box-shadow 0.2s, background 0.2s;"
-                    onclick="window.open('Manual de Usuario.pdf', '_blank')">
-                    ?
-                </button>
+          
             </header>
         </div>
         <div class="section-title-container">
